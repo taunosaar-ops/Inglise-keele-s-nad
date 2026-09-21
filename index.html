@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inglise keele sõnade treenija</title>
     
-    <!-- PWA Manifest -->
+    <!-- PWA Manifest ja Service Worker seadistus -->
     <link rel="manifest" id="dynamic-manifest">
-    <meta name="theme-color" content="#3498db">
+    <meta name="theme-color" content="#2980b9">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Sõnade treenija">
+    <meta name="apple-mobile-web-app-title" content="Inglise sõnad">
 
     <!-- Laeme Tesseract.js raamatukogu pildilt teksti lugemiseks -->
     <script src="https://unpkg.com/tesseract.js@v4.1.1/dist/tesseract.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
+            background-color: #f0f4f8;
             color: #333;
             max-width: 600px;
             margin: 30px auto;
@@ -26,10 +26,10 @@
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        h1, h2 { color: #2c3e50; text-align: center; }
+        h1, h2 { color: #1b4f72; text-align: center; }
         .menu, .section { margin-bottom: 20px; }
         button {
-            background-color: #3498db;
+            background-color: #2980b9;
             color: white;
             border: none;
             padding: 10px 15px;
@@ -40,13 +40,14 @@
             width: 100%;
             box-sizing: border-box;
         }
-        button:hover { background-color: #2980b9; }
+        button:hover { background-color: #2471a3; }
         button.secondary { background-color: #7f8c8d; }
         button.secondary:hover { background-color: #626d70; }
         button.success { background-color: #27ae60; }
         button.success:hover { background-color: #219653; }
-        button.admin-btn { background-color: #e67e22; }
-        button.admin-btn:hover { background-color: #d35400; }
+        button.admin-btn { background-color: #d35400; }
+        button.admin-btn:hover { background-color: #b94400; }
+
         input[type="text"], input[type="file"], input[type="password"] {
             padding: 10px;
             width: calc(100% - 22px);
@@ -83,7 +84,7 @@
         .correct { color: #27ae60; }
         .incorrect { color: #c0392b; }
         .stats { text-align: center; font-size: 14px; color: #666; margin-bottom: 15px; }
-        .loading-box { text-align: center; font-style: italic; color: #e67e22; margin: 10px 0; }
+        .loading-box { text-align: center; font-style: italic; color: #d35400; margin: 10px 0; }
         textarea {
             width: 100%;
             height: 80px;
@@ -106,7 +107,7 @@
 </head>
 <body>
 
-    <h1>Sõnade treenija</h1>
+    <h1>Inglise keele sõnade treenija</h1>
 
     <!-- PEAMENÜÜ -->
     <div id="main-menu" class="menu">
@@ -155,7 +156,7 @@
         <button onclick="addWord()" class="success">Lisa sõna käsitsi</button>
 
         <div style="margin-top: 15px;">
-            <label style="font-size: 14px; font-weight: bold;">Tuvastatud või muudetav tekst (Rida-realt: eng - est):</label>
+            <label style="font-size: 14px; font-weight: bold;">Tuvastatud või muudetav tekst (Rida-realt: inglise - eesti):</label>
             <textarea id="bulk-text" placeholder="Näiteks:&#10;apple - õun&#10;school - kool"></textarea>
             <button onclick="addBulkWords()">Lisa tekstikastist sõnad</button>
         </div>
@@ -189,17 +190,17 @@
     </div>
 
 <script>
-    // Dünaamiline manifest, mis lubab ikoonina avaekraanile lisada
+    // Dünaamiline PWA manifest inglise keele jaoks
     const manifestData = {
         "name": "Inglise keele sõnade treenija",
-        "short_name": "Sõnaraamat",
+        "short_name": "Inglise sõnad",
         "start_url": "./",
         "display": "standalone",
         "background_color": "#ffffff",
-        "theme_color": "#3498db",
+        "theme_color": "#2980b9",
         "icons": [
             {
-                "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>",
+                "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇬🇧</text></svg>",
                 "sizes": "192x192",
                 "type": "image/svg+xml"
             }
@@ -208,14 +209,68 @@
     const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
     document.getElementById('dynamic-manifest').href = URL.createObjectURL(manifestBlob);
 
+    // Service Worker registreerimine
+    if ('serviceWorker' in navigator) {
+        const swCode = `
+            self.addEventListener('install', e => self.skipWaiting());
+            self.addEventListener('activate', e => self.clients.claim());
+            self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
+        `;
+        const swBlob = new Blob([swCode], { type: 'text/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(err => console.log('SW error:', err));
+    }
+
     // PAROOL LOOJA VAATE JAOKS
     const ADMIN_PASSWORD = "1234";
 
-    let words = JSON.parse(localStorage.getItem('sonaraamat_words')) || [
+    // Inglise keele uued sõnad
+    let words = JSON.parse(localStorage.getItem('sonaraamat_eng_words')) || [
         { eng: "apple", est: "õun" },
         { eng: "school", est: "kool" },
         { eng: "book", est: "raamat" },
-        { eng: "computer", est: "arvuti" }
+        { eng: "computer", est: "arvuti" },
+        { eng: "them", est: "neid" },
+        { eng: "all", est: "kõik" },
+        { eng: "bad", est: "halb" },
+        { eng: "especially", est: "eriti" },
+        { eng: "test", est: "kontrolltöö" },
+        { eng: "lucky", est: "õnnelik,õnnetoov" },
+        { eng: "tell", est: "ütlema,siin" },
+        { eng: "secret", est: "saladus,salajane" },
+        { eng: "why", est: "miks" },
+        { eng: "may", est: "võima,tohtima" },
+        { eng: "lose", est: "kaotama" },
+        { eng: "its", est: "selle oma(eluta olendi puhul)" },
+        { eng: "magic", est: "nõidus,maagia" },
+        { eng: "guess", est: "ära arvama" },
+        { eng: "thirty", est: "kolmkümmend" },
+        { eng: "forty", est: "nelikümmend" },
+        { eng: "fifty", est: "viiskümmend" },
+        { eng: "sixty", est: "kuuskümmend" },
+        { eng: "seventy", est: "seitsekümmend" },
+        { eng: "eighty", est: "kaheksakümmend" },
+        { eng: "ninety", est: "üheksakümmend" },
+        { eng: "hundred", est: "sada" },
+        { eng: "afternoon", est: "pärastlõuna" },
+        { eng: "in the afternoon", est: "pärastlõunal" },
+        { eng: "hold", est: "hoidma,pidama" },
+        { eng: "Hold on!", est: "Oota!" },
+        { eng: "post", est: "postitama" },
+        { eng: "address", est: "aadress" },
+        { eng: "laptop", est: "sülearvuti" },
+        { eng: "love", est: "armastama" },
+        { eng: "paper", est: "paber" },
+        { eng: "remember", est: "mäletama" },
+        { eng: "swan", est: "luik" },
+        { eng: "station", est: "jaam" },
+        { eng: "road", est: "tee,maantee" },
+        { eng: "helpful", est: "abivalmis" },
+        { eng: "same", est: "sama" },
+        { eng: "bigger", est: "suurem" },
+        { eng: "smaller", est: "väiksem" },
+        { eng: "than", est: "kui(võrdluses)" },
+        { eng: "circle", est: "ring" },
+        { eng: "make up", est: "moodustama" }
     ];
 
     let currentMode = '';
@@ -226,7 +281,7 @@
     let activeQuestion = null;
 
     function saveWordsToStorage() {
-        localStorage.setItem('sonaraamat_words', JSON.stringify(words));
+        localStorage.setItem('sonaraamat_eng_words', JSON.stringify(words));
     }
 
     function showSection(sectionId) {
@@ -340,7 +395,7 @@
                 }
             }
         ).then(({ data: { text } }) => {
-            statusEl.innerText = "✅ Tekst loetud! Kontrolli allolevat kasti ja vajuta 'Lisa sõnad'.";
+            statusEl.innerText = "✅ Tekst loetud! Kontrolli allolevat kasti ja vajuta 'Lisa tekstikastist sõnad'.";
             document.getElementById('bulk-text').value = text;
         }).catch(err => {
             console.error(err);
