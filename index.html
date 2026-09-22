@@ -57,6 +57,15 @@
         .btn-audio:hover {
             background-color: #27ae60;
         }
+        .option-btn {
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            border: 1px solid #bdc3c7;
+            margin: 8px 0;
+        }
+        .option-btn:hover {
+            background-color: #dcdde1;
+        }
         .hidden {
             display: none;
         }
@@ -93,6 +102,12 @@
             <option value="all">⭐ Kõik unitid korraga (1-20)</option>
         </select>
 
+        <label for="mode-select">Vali testiliik:</label>
+        <select id="mode-select">
+            <option value="input">Kirjuta vastus ise</option>
+            <option value="choices">Vali 4 variandi seast</option>
+        </select>
+
         <label for="direction-select">Vali suund:</label>
         <select id="direction-select">
             <option value="en-et">Inglise -> Eesti</option>
@@ -110,8 +125,19 @@
         
         <h3 id="question-prompt">Küsimus siia</h3>
         
-        <input type="text" id="user-answer" placeholder="Sisesta vastus..." autocomplete="off">
-        <button onclick="checkAnswer()">Vasta</button>
+        <!-- Režiim 1: Kirjutamine -->
+        <div id="input-mode-container">
+            <input type="text" id="user-answer" placeholder="Sisesta vastus..." autocomplete="off">
+            <button onclick="checkInputAnswer()">Vasta</button>
+        </div>
+
+        <!-- Režiim 2: 4 valikuvõimalust -->
+        <div id="choices-mode-container" class="hidden">
+            <button class="option-btn" onclick="checkChoiceAnswer(0)" id="choice-0"></button>
+            <button class="option-btn" onclick="checkChoiceAnswer(1)" id="choice-1"></button>
+            <button class="option-btn" onclick="checkChoiceAnswer(2)" id="choice-2"></button>
+            <button class="option-btn" onclick="checkChoiceAnswer(3)" id="choice-3"></button>
+        </div>
         
         <div id="feedback-box" class="hidden"></div>
     </div>
@@ -355,9 +381,12 @@
     let score = 0;
     let mistakes = [];
     let direction = "en-et";
+    let testMode = "input";
     let currentEnglishWord = "";
+    let currentCorrectAnswer = "";
+    let currentChoices = [];
+    let allAvailableAnswers = [];
 
-    // Täida uniti valiku rippmenüü automaatselt
     window.onload = function() {
         const select = document.getElementById("unit-select");
         for (let unitName in vocabulary) {
@@ -367,16 +396,23 @@
             select.appendChild(option);
         }
 
-        // Enter klahviga vastamine
+        // Koonda kõik võimalikud vastused valikvastuste genereerimiseks
+        for (let unit in vocabulary) {
+            for (let eng in vocabulary[unit]) {
+                allAvailableAnswers.push({ eng, est: vocabulary[unit][eng] });
+            }
+        }
+
         document.getElementById("user-answer").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
-                checkAnswer();
+                checkInputAnswer();
             }
         });
     };
 
     function startQuiz() {
         const selectedUnit = document.getElementById("unit-select").value;
+        testMode = document.getElementById("mode-select").value;
         direction = document.getElementById("direction-select").value;
         
         let questionsObj = {};
@@ -388,7 +424,6 @@
             questionsObj = vocabulary[selectedUnit];
         }
 
-        // Teisenda objekt massiiviks ja sega ära
         currentQuestions = Object.entries(questionsObj);
         shuffle(currentQuestions);
 
@@ -398,6 +433,17 @@
 
         document.getElementById("setup-screen").classList.add("hidden");
         document.getElementById("quiz-screen").classList.remove("hidden");
+
+        const inputContainer = document.getElementById("input-mode-container");
+        const choicesContainer = document.getElementById("choices-mode-container");
+
+        if (testMode === "input") {
+            inputContainer.classList.remove("hidden");
+            choicesContainer.classList.add("hidden");
+        } else {
+            inputContainer.classList.add("hidden");
+            choicesContainer.classList.remove("hidden");
+        }
         
         loadQuestion();
     }
@@ -424,6 +470,7 @@
 
         let [eng, est] = currentQuestions[currentIndex];
         currentEnglishWord = eng;
+        currentCorrectAnswer = (direction === "en-et") ? est : eng;
 
         const audioBtn = document.getElementById("audio-btn");
         const promptEl = document.getElementById("question-prompt");
@@ -431,40 +478,85 @@
         if (direction === "en-et") {
             promptEl.textContent = `Kuidas on eesti keeles: "${eng}"?`;
             audioBtn.classList.remove("hidden");
-            playAudio(); // Mängib automaatselt ette
+            playAudio();
         } else {
             promptEl.textContent = `Kuidas on inglise keeles: "${est}"?`;
             audioBtn.classList.add("hidden");
         }
 
-        document.getElementById("user-answer").focus();
+        if (testMode === "input") {
+            document.getElementById("user-answer").focus();
+        } else {
+            setupChoices();
+        }
+    }
+
+    function setupChoices() {
+        // Genereeri 3 vale vastust ja 1 õige
+        let wrongPool = allAvailableAnswers.filter(item => {
+            let val = (direction === "en-et") ? item.est : item.eng;
+            return val.toLowerCase() !== currentCorrectAnswer.toLowerCase();
+        });
+        shuffle(wrongPool);
+
+        let choices = [currentCorrectAnswer];
+        for (let i = 0; i < 3 && i < wrongPool.length; i++) {
+            let val = (direction === "en-et") ? wrongPool[i].est : wrongPool[i].eng;
+            choices.push(val);
+        }
+        shuffle(choices);
+        currentChoices = choices;
+
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`choice-${i}`).textContent = choices[i];
+            document.getElementById(`choice-${i}`).disabled = false;
+        }
     }
 
     function playAudio() {
         if ('speechSynthesis' in window && currentEnglishWord) {
-            window.speechSynthesis.cancel(); // Peata eelmine heli
+            window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(currentEnglishWord);
             utterance.lang = 'en-US';
             window.speechSynthesis.speak(utterance);
         }
     }
 
-    function checkAnswer() {
+    function checkInputAnswer() {
         let userAnswer = document.getElementById("user-answer").value.trim();
         let [eng, est] = currentQuestions[currentIndex];
-        let correctAnswer = (direction === "en-et") ? est : eng;
 
-        // Kontrolli kas vastus kattub (tõstutundetu)
-        if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+        if (userAnswer.toLowerCase() === currentCorrectAnswer.toLowerCase()) {
             score++;
             showFeedback(true, "Õige!");
         } else {
             mistakes.push({eng, est});
-            showFeedback(false, `Vale! Õige vastus oli: ${correctAnswer}`);
+            showFeedback(false, `Vale! Õige vastus oli: ${currentCorrectAnswer}`);
         }
 
         currentIndex++;
-        setTimeout(loadQuestion, 1800); // Ootab 1.8 sekundit enne järgmise küsimuse toomist
+        setTimeout(loadQuestion, 1800);
+    }
+
+    function checkChoiceAnswer(index) {
+        // Blokeeri nupud, et mitu korda klõpsata ei saaks
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`choice-${i}`).disabled = true;
+        }
+
+        let chosenAnswer = currentChoices[index];
+        let [eng, est] = currentQuestions[currentIndex];
+
+        if (chosenAnswer.toLowerCase() === currentCorrectAnswer.toLowerCase()) {
+            score++;
+            showFeedback(true, "Õige!");
+        } else {
+            mistakes.push({eng, est});
+            showFeedback(false, `Vale! Õige vastus oli: ${currentCorrectAnswer}`);
+        }
+
+        currentIndex++;
+        setTimeout(loadQuestion, 1800);
     }
 
     function showFeedback(isCorrect, text) {
