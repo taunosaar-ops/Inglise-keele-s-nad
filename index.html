@@ -105,6 +105,16 @@
             max-height: 350px;
             overflow-y: auto;
         }
+        .speak-btn {
+            background-color: #f39c12;
+            width: auto;
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 18px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        .speak-btn:hover { background-color: #d68910; }
     </style>
 </head>
 <body>
@@ -179,7 +189,11 @@
         <h2 id="quiz-title">Harjutamine</h2>
         <div class="stats" id="quiz-stats">Küsimus 1 / 5</div>
         
-        <p id="question-text" style="font-size: 20px; text-align: center; font-weight: bold;"></p>
+        <div style="text-align: center; margin-bottom: 15px;">
+            <span id="question-text" style="font-size: 20px; font-weight: bold;"></span>
+            <!-- Kõlari nupp hääldamiseks -->
+            <button id="speak-button" class="speak-btn hidden" onclick="speakCurrentWord()" title="Kuula hääldust">🔊</button>
+        </div>
         
         <!-- Valikvastuste konteiner -->
         <div id="choices-container" style="display: flex; flex-direction: column; gap: 8px;" class="hidden"></div>
@@ -1015,11 +1029,9 @@
         ]
     };
 
-    // Laadime andmed (kui brauseris on vanad andmed, kirjutame need vajadusel üle või saame puhta lehe)
     let savedUnits = JSON.parse(localStorage.getItem('sonaraamat_units'));
     let units = savedUnits && typeof savedUnits === 'object' && !Array.isArray(savedUnits) ? savedUnits : DEFAULT_UNITS;
 
-    // Kui soovid, et brauser alati uuendaks vaikimisi andmetega, võid salvestada uuesti:
     saveUnitsToStorage();
 
     let activeModeType = ''; 
@@ -1053,14 +1065,12 @@
         
         document.getElementById('unit-selection-title').innerText = modeType === 'choice' ? 'Vali teema (Ristküsitlus)' : 'Vali teema (Kirjutamine)';
 
-        // Nupp "Kõik teemad kokku"
         const allBtn = document.createElement('button');
         allBtn.innerText = "⭐ Kõik teemad kokku";
         allBtn.className = "success";
         allBtn.onclick = () => selectUnit('ALL');
         container.appendChild(allBtn);
 
-        // Nupud iga Unit-i jaoks
         Object.keys(units).forEach(unitName => {
             const btn = document.createElement('button');
             btn.innerText = `📁 ${unitName} (${units[unitName].length} sõna)`;
@@ -1195,6 +1205,24 @@
         });
     }
 
+    // --- HÄÄLDAMISE FUNKTSIOONID ---
+    function speakWord(word) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // Peata eelnev heli
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US'; // Ameerika inglise keel (või 'en-GB' Briti jaoks)
+            utterance.rate = 0.85;    // Veidi aeglasem tempo lastele
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    function speakCurrentWord() {
+        if (activeQuestion) {
+            speakWord(activeQuestion.eng);
+        }
+    }
+    // -------------------------------
+
     function startQuiz(direction) {
         quizDirection = direction; 
         
@@ -1231,6 +1259,7 @@
         
         if (currentIndex >= currentQuizList.length) {
             document.getElementById('question-text').innerText = `Harjutus läbi! Sinu tulemus: ${score} / ${currentQuizList.length} õiget.`;
+            document.getElementById('speak-button').classList.add('hidden');
             document.getElementById('choices-container').classList.add('hidden');
             document.getElementById('write-container').classList.add('hidden');
             document.getElementById('quiz-stats').innerText = '';
@@ -1240,10 +1269,17 @@
         document.getElementById('quiz-stats').innerText = `Küsimus ${currentIndex + 1} / ${currentQuizList.length}`;
         activeQuestion = currentQuizList[currentIndex];
         
+        const speakBtn = document.getElementById('speak-button');
+
         if (quizDirection === 'est') {
+            // Suund: Inglise -> Eesti (küsime ingliskeelset sõna)
             document.getElementById('question-text').innerText = `Mis on sõna "${activeQuestion.eng}" tähendus eesti keeles?`;
+            speakBtn.classList.remove('hidden'); // Näita kõlari nuppu
+            speakWord(activeQuestion.eng);       // Ütle sõna automaatselt ette
         } else {
+            // Suund: Eesti -> Inglise (küsime eestikeelset tõlget)
             document.getElementById('question-text').innerText = `Kuidas on inglise keeles "${activeQuestion.est}"?`;
+            speakBtn.classList.add('hidden');    // Eestikeelse küsimuse puhul pole kohe vaja hääldada
         }
 
         if (activeModeType === 'choice') {
@@ -1281,13 +1317,14 @@
         });
     }
 
-    (function() {
-        // Automaatne puhastus või uuendus vajadusel
-    })();
-
     function checkChoiceAnswer(selectedOpt) {
         const feedbackEl = document.getElementById('feedback');
         let targetVal = quizDirection === 'est' ? activeQuestion.est : activeQuestion.eng;
+
+        // Kui vastatiesti -> Inglise suunal, loeme pärast vastust õige ingliskeelse sõna ette, et laps kuuleks
+        if (quizDirection === 'eng') {
+            speakWord(activeQuestion.eng);
+        }
 
         if (selectedOpt === targetVal) {
             feedbackEl.innerText = "Õige!";
@@ -1306,6 +1343,10 @@
         let targetVal = quizDirection === 'est' ? activeQuestion.est : activeQuestion.eng;
         const correctAns = targetVal.toLowerCase();
         const feedbackEl = document.getElementById('feedback');
+
+        if (quizDirection === 'eng') {
+            speakWord(activeQuestion.eng);
+        }
 
         if (userAns === correctAns) {
             feedbackEl.innerText = "Väga hea, õige!";
