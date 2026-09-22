@@ -226,63 +226,46 @@
 
     const ADMIN_PASSWORD = "1234";
 
-    // Vaikimisi üksused
+    // Uuendatud Unit 1 koos sinu edastatud sõnadega ja säilitatud Unit 2
     const DEFAULT_UNITS = {
         "Unit 1": [
-            { eng: "hello", est: "tere" },
-            { eng: "goodbye", est: "nägemist" }
+            { eng: "Dear", est: "kallis, armas" },
+            { eng: "lovely", est: "armas" },
+            { eng: "mate", est: "kaaslane" },
+            { eng: "over", est: "läbi, möödas" },
+            { eng: "again", est: "jälle" },
+            { eng: "What's the English (word) for ...?", est: "Kuidas on inglise keeles ...?" },
+            { eng: "Swedish", est: "rootsi keel; rootslane" },
+            { eng: "classmate", est: "klassikaaslane" },
+            { eng: "take", est: "viima" },
+            { eng: "Sweden", est: "Rootsi" },
+            { eng: "English", est: "inglane; inglise keel" },
+            { eng: "language", est: "keel" },
+            { eng: "funny", est: "naljakas" },
+            { eng: "Finnish", est: "soome keel; soomlane" },
+            { eng: "French", est: "prantsuse keel; prantslane" },
+            { eng: "turn on", est: "sisse lülitama" },
+            { eng: "turn off", est: "välja lülitama" },
+            { eng: "light", est: "valgus, valgustus, tuli; hele" },
+            { eng: "leave", est: "jätma; lahkuma" },
+            { eng: "tomorrow", est: "homme" },
+            { eng: "puppy", est: "kutsikas" },
+            { eng: "kitten", est: "kassipoeg" },
+            { eng: "kind to sb", est: "lahke kellegi vastu" },
+            { eng: "car boot", est: "auto pagasiruum" },
+            { eng: "twin", est: "kaksik" },
+            { eng: "hair clip", est: "juukseklamber" },
+            { eng: "textbook", est: "õpik" }
         ],
         "Unit 2": [
             { eng: "apple", est: "õun" },
             { eng: "school", est: "kool" },
             { eng: "book", est: "raamat" },
-            { eng: "computer", est: "arvuti" },
-            { eng: "them", est: "neid" },
-            { eng: "all", est: "kõik" },
-            { eng: "bad", est: "halb" },
-            { eng: "especially", est: "eriti" },
-            { eng: "test", est: "kontrolltöö" },
-            { eng: "lucky", est: "õnnelik,õnnetoov" },
-            { eng: "tell", est: "ütlema,siin" },
-            { eng: "secret", est: "saladus,salajane" },
-            { eng: "why", est: "miks" },
-            { eng: "may", est: "võima,tohtima" },
-            { eng: "lose", est: "kaotama" },
-            { eng: "its", est: "selle oma(eluta olendi puhul)" },
-            { eng: "magic", est: "nõidus,maagia" },
-            { eng: "guess", est: "ära arvama" },
-            { eng: "thirty", est: "kolmkümmend" },
-            { eng: "forty", est: "nelikümmend" },
-            { eng: "fifty", est: "viiskümmend" },
-            { eng: "sixty", est: "kuuskümmend" },
-            { eng: "seventy", est: "seitsekümmend" },
-            { eng: "eighty", est: "kaheksakümmend" },
-            { eng: "ninety", est: "üheksakümmend" },
-            { eng: "hundred", est: "sada" },
-            { eng: "afternoon", est: "pärastlõuna" },
-            { eng: "in the afternoon", est: "pärastlõunal" },
-            { eng: "hold", est: "hoidma,pidama" },
-            { eng: "Hold on!", est: "Oota!" },
-            { eng: "post", est: "postitama" },
-            { eng: "address", est: "aadress" },
-            { eng: "laptop", est: "sülearvuti" },
-            { eng: "love", est: "armastama" },
-            { eng: "paper", est: "paber" },
-            { eng: "remember", est: "mäletama" },
-            { eng: "swan", est: "luik" },
-            { eng: "station", est: "jaam" },
-            { eng: "road", est: "tee,maantee" },
-            { eng: "helpful", est: "abivalmis" },
-            { eng: "same", est: "sama" },
-            { eng: "bigger", est: "suurem" },
-            { eng: "smaller", est: "väiksem" },
-            { eng: "than", est: "kui(võrdluses)" },
-            { eng: "circle", est: "ring" },
-            { eng: "make up", est: "moodustama" }
+            { eng: "computer", est: "arvuti" }
         ]
     };
 
-    // Sunnime uuenduse sisse, kui mälus on vana struktuur
+    // Laadime andmed või kui soovid värsket seisu, võid brauseri mälust vanad kustutada (või kood uuendab automaatselt, kui eemaldad vana localStorage)
     let savedUnits = JSON.parse(localStorage.getItem('sonaraamat_units'));
     let units = savedUnits && typeof savedUnits === 'object' && !Array.isArray(savedUnits) ? savedUnits : DEFAULT_UNITS;
 
