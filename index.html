@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inglise keele sõnade treenija</title>
+    <title>Sõnade treenija (Teemade kaupa)</title>
     
     <!-- PWA Manifest ja Service Worker seadistus -->
     <link rel="manifest" id="dynamic-manifest">
     <meta name="theme-color" content="#2980b9">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Inglise sõnad">
+    <meta name="apple-mobile-web-app-title" content="Sõnade treenija">
 
     <!-- Laeme Tesseract.js raamatukogu pildilt teksti lugemiseks -->
     <script src="https://unpkg.com/tesseract.js@v4.1.1/dist/tesseract.min.js"></script>
@@ -48,7 +48,7 @@
         button.admin-btn { background-color: #d35400; }
         button.admin-btn:hover { background-color: #b94400; }
 
-        input[type="text"], input[type="file"], input[type="password"] {
+        input[type="text"], input[type="file"], input[type="password"], select {
             padding: 10px;
             width: calc(100% - 22px);
             margin-bottom: 10px;
@@ -107,43 +107,48 @@
 </head>
 <body>
 
-    <h1>Inglise keele sõnade treenija</h1>
+    <h1>Sõnade treenija</h1>
 
     <!-- PEAMENÜÜ -->
     <div id="main-menu" class="menu">
         <p style="text-align: center;">Vali tegevus:</p>
-        <button onclick="showChoiceMenu()">Ristküsitlus (Valikud)</button>
-        <button onclick="showWriteMenu()">Kirjutamisharjutus</button>
+        <button onclick="showUnitSelection('choice')">Ristküsitlus (Valikud)</button>
+        <button onclick="showUnitSelection('write')">Kirjutamisharjutus</button>
         <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
         <button onclick="requestAdminAccess()" class="admin-btn">🔒 Sõnade haldamine (Ainult loojale)</button>
     </div>
 
-    <!-- RISTKÜSITLUSE ALAMENÜÜ (SUUNA VALIK) -->
-    <div id="choice-menu-section" class="section hidden">
-        <h2>Ristküsitlus (Valikvastused)</h2>
-        <div class="mode-select-box">
-            <p style="margin-top: 0; font-weight: bold;">Vali harjutamise suund:</p>
-            <button onclick="startQuiz('choice', 'eng-est')">Inglise ➔ Eesti (vali eesti keelne vaste)</button>
-            <button onclick="startQuiz('choice', 'est-eng')" class="success">Eesti ➔ Inglise (vali inglise keelne vaste)</button>
+    <!-- TEEMA / UNIT VALIKU MENÜÜ -->
+    <div id="unit-selection-section" class="section hidden">
+        <h2 id="unit-selection-title">Vali teema</h2>
+        <div class="mode-select-box" id="unit-buttons-container">
+            <!-- Siia genereeritakse dünaamiliselt nupud teemade kaupa -->
         </div>
         <button class="secondary" onclick="showSection('main-menu')" style="margin-top: 15px;">Tagasi menüüsse</button>
     </div>
 
-    <!-- KIRJUTAMISE ALAMENÜÜ (SUUNA VALIK) -->
-    <div id="write-menu-section" class="section hidden">
-        <h2>Kirjutamisharjutus</h2>
+    <!-- REŽIIMI JA SUUNA VALIKU VAADE -->
+    <div id="direction-section" class="section hidden">
+        <h2 id="direction-title">Harjutamise suund</h2>
         <div class="mode-select-box">
-            <p style="margin-top: 0; font-weight: bold;">Vali harjutamise suund:</p>
-            <button onclick="startQuiz('write', 'eng-est')">Inglise ➔ Eesti (kirjuta eesti keeles)</button>
-            <button onclick="startQuiz('write', 'est-eng')" class="success">Eesti ➔ Inglise (kirjuta inglise keeles)</button>
+            <p style="margin-top: 0; font-weight: bold;" id="selected-unit-label"></p>
+            <button onclick="startQuiz('est')">Inglise ➔ Eesti</button>
+            <button onclick="startQuiz('eng')" class="success">Eesti ➔ Inglise</button>
         </div>
-        <button class="secondary" onclick="showSection('main-menu')" style="margin-top: 15px;">Tagasi menüüsse</button>
+        <button class="secondary" onclick="showUnitSelection(activeModeType)" style="margin-top: 15px;">Tagasi teemade valikusse</button>
     </div>
 
     <!-- SÕNADE LISAMISE VAADE (KAITSTUD) -->
     <div id="add-section" class="section hidden">
         <h2>Sõnade haldamine (Looja vaade)</h2>
         
+        <div style="margin-bottom: 10px;">
+            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Vali teema (Unit), kuhu sõnad lisatakse:</label>
+            <select id="admin-unit-select" onchange="updateWordListUI()">
+                <!-- Valikud täidetakse koodist -->
+            </select>
+        </div>
+
         <!-- Pildi üleslaadimine -->
         <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px dashed #cbd5e1;">
             <label style="font-weight: bold; display: block; margin-bottom: 5px;">📸 Lisa õpiku pilt:</label>
@@ -153,7 +158,7 @@
 
         <input type="text" id="eng-word" placeholder="Inglise keelne sõna (nt apple)">
         <input type="text" id="est-word" placeholder="Eesti keelne tõlge (nt õun)">
-        <button onclick="addWord()" class="success">Lisa sõna käsitsi</button>
+        <button onclick="addWord()" class="success">Lisa sõna valitud teemasse</button>
 
         <div style="margin-top: 15px;">
             <label style="font-size: 14px; font-weight: bold;">Tuvastatud või muudetav tekst (Rida-realt: inglise - eesti):</label>
@@ -161,7 +166,7 @@
             <button onclick="addBulkWords()">Lisa tekstikastist sõnad</button>
         </div>
 
-        <h3 style="margin-top: 20px;">Salvestatud sõnad (<span id="word-count">0</span>):</h3>
+        <h3 style="margin-top: 20px;">Valitud teema sõnad (<span id="word-count">0</span>):</h3>
         <ul id="word-list" class="word-list"></ul>
         
         <button class="secondary" onclick="showSection('main-menu')" style="margin-top: 15px;">Tagasi menüüsse</button>
@@ -185,15 +190,15 @@
 
         <div id="feedback" class="feedback"></div>
         <div style="text-align: center; margin-top: 20px;">
-            <button class="secondary" onclick="showSection('main-menu')">Lõpeta / Tagasi</button>
+            <button class="secondary" onclick="showUnitSelection(activeModeType)">Lõpeta / Tagasi</button>
         </div>
     </div>
 
 <script>
-    // Dünaamiline PWA manifest inglise keele jaoks
+    // Dünaamiline PWA manifest
     const manifestData = {
-        "name": "Inglise keele sõnade treenija",
-        "short_name": "Inglise sõnad",
+        "name": "Sõnade treenija",
+        "short_name": "Sõnad",
         "start_url": "./",
         "display": "standalone",
         "background_color": "#ffffff",
@@ -209,7 +214,6 @@
     const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
     document.getElementById('dynamic-manifest').href = URL.createObjectURL(manifestBlob);
 
-    // Service Worker registreerimine
     if ('serviceWorker' in navigator) {
         const swCode = `
             self.addEventListener('install', e => self.skipWaiting());
@@ -220,90 +224,121 @@
         navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(err => console.log('SW error:', err));
     }
 
-    // PAROOL LOOJA VAATE JAOKS
     const ADMIN_PASSWORD = "1234";
 
-    // Inglise keele uued sõnad
-    let words = JSON.parse(localStorage.getItem('sonaraamat_eng_words')) || [
-        { eng: "apple", est: "õun" },
-        { eng: "school", est: "kool" },
-        { eng: "book", est: "raamat" },
-        { eng: "computer", est: "arvuti" },
-        { eng: "them", est: "neid" },
-        { eng: "all", est: "kõik" },
-        { eng: "bad", est: "halb" },
-        { eng: "especially", est: "eriti" },
-        { eng: "test", est: "kontrolltöö" },
-        { eng: "lucky", est: "õnnelik,õnnetoov" },
-        { eng: "tell", est: "ütlema,siin" },
-        { eng: "secret", est: "saladus,salajane" },
-        { eng: "why", est: "miks" },
-        { eng: "may", est: "võima,tohtima" },
-        { eng: "lose", est: "kaotama" },
-        { eng: "its", est: "selle oma(eluta olendi puhul)" },
-        { eng: "magic", est: "nõidus,maagia" },
-        { eng: "guess", est: "ära arvama" },
-        { eng: "thirty", est: "kolmkümmend" },
-        { eng: "forty", est: "nelikümmend" },
-        { eng: "fifty", est: "viiskümmend" },
-        { eng: "sixty", est: "kuuskümmend" },
-        { eng: "seventy", est: "seitsekümmend" },
-        { eng: "eighty", est: "kaheksakümmend" },
-        { eng: "ninety", est: "üheksakümmend" },
-        { eng: "hundred", est: "sada" },
-        { eng: "afternoon", est: "pärastlõuna" },
-        { eng: "in the afternoon", est: "pärastlõunal" },
-        { eng: "hold", est: "hoidma,pidama" },
-        { eng: "Hold on!", est: "Oota!" },
-        { eng: "post", est: "postitama" },
-        { eng: "address", est: "aadress" },
-        { eng: "laptop", est: "sülearvuti" },
-        { eng: "love", est: "armastama" },
-        { eng: "paper", est: "paber" },
-        { eng: "remember", est: "mäletama" },
-        { eng: "swan", est: "luik" },
-        { eng: "station", est: "jaam" },
-        { eng: "road", est: "tee,maantee" },
-        { eng: "helpful", est: "abivalmis" },
-        { eng: "same", est: "sama" },
-        { eng: "bigger", est: "suurem" },
-        { eng: "smaller", est: "väiksem" },
-        { eng: "than", est: "kui(võrdluses)" },
-        { eng: "circle", est: "ring" },
-        { eng: "make up", est: "moodustama" }
-    ];
+    // KÕIK SÕNAD JAOTATUD UNITITE KAUPA
+    const DEFAULT_UNITS = {
+        "Unit 1": [
+            { eng: "hello", est: "tere" },
+            { eng: "goodbye", est: "nägemist" }
+        ],
+        "Unit 2": [
+            { eng: "apple", est: "õun" },
+            { eng: "school", est: "kool" },
+            { eng: "book", est: "raamat" },
+            { eng: "computer", est: "arvuti" },
+            { eng: "them", est: "neid" },
+            { eng: "all", est: "kõik" },
+            { eng: "bad", est: "halb" },
+            { eng: "especially", est: "eriti" },
+            { eng: "test", est: "kontrolltöö" },
+            { eng: "lucky", est: "õnnelik,õnnetoov" },
+            { eng: "tell", est: "ütlema,siin" },
+            { eng: "secret", est: "saladus,salajane" },
+            { eng: "why", est: "miks" },
+            { eng: "may", est: "võima,tohtima" },
+            { eng: "lose", est: "kaotama" },
+            { eng: "its", est: "selle oma(eluta olendi puhul)" },
+            { eng: "magic", est: "nõidus,maagia" },
+            { eng: "guess", est: "ära arvama" },
+            { eng: "thirty", est: "kolmkümmend" },
+            { eng: "forty", est: "nelikümmend" },
+            { eng: "fifty", est: "viiskümmend" },
+            { eng: "sixty", est: "kuuskümmend" },
+            { eng: "seventy", est: "seitsekümmend" },
+            { eng: "eighty", est: "kaheksakümmend" },
+            { eng: "ninety", est: "üheksakümmend" },
+            { eng: "hundred", est: "sada" },
+            { eng: "afternoon", est: "pärastlõuna" },
+            { eng: "in the afternoon", est: "pärastlõunal" },
+            { eng: "hold", est: "hoidma,pidama" },
+            { eng: "Hold on!", est: "Oota!" },
+            { eng: "post", est: "postitama" },
+            { eng: "address", est: "aadress" },
+            { eng: "laptop", est: "sülearvuti" },
+            { eng: "love", est: "armastama" },
+            { eng: "paper", est: "paber" },
+            { eng: "remember", est: "mäletama" },
+            { eng: "swan", est: "luik" },
+            { eng: "station", est: "jaam" },
+            { eng: "road", est: "tee,maantee" },
+            { eng: "helpful", est: "abivalmis" },
+            { eng: "same", est: "sama" },
+            { eng: "bigger", est: "suurem" },
+            { eng: "smaller", est: "väiksem" },
+            { eng: "than", est: "kui(võrdluses)" },
+            { eng: "circle", est: "ring" },
+            { eng: "make up", est: "moodustama" }
+        ]
+    };
 
-    let currentMode = '';
-    let currentDirection = 'eng-est';
+    // Laeme mälust või kasutame vaikimisi väärtusi
+    let units = JSON.parse(localStorage.getItem('sonaraamat_units')) || DEFAULT_UNITS;
+
+    let activeModeType = ''; // 'choice' või 'write'
+    let selectedUnitKey = ''; // Valitud unit või 'ALL'
+    let quizDirection = 'est'; // 'est' (Inglise->Eesti) või 'eng' (Eesti->Inglise)
     let currentIndex = 0;
     let currentQuizList = [];
     let score = 0;
     let activeQuestion = null;
 
-    function saveWordsToStorage() {
-        localStorage.setItem('sonaraamat_eng_words', JSON.stringify(words));
+    function saveUnitsToStorage() {
+        localStorage.setItem('sonaraamat_units', JSON.stringify(units));
     }
 
     function showSection(sectionId) {
-        document.getElementById('main-menu').classList.add('hidden');
-        document.getElementById('choice-menu-section').classList.add('hidden');
-        document.getElementById('write-menu-section').classList.add('hidden');
-        document.getElementById('add-section').classList.add('hidden');
-        document.getElementById('quiz-section').classList.add('hidden');
-        
+        ['main-menu', 'unit-selection-section', 'direction-section', 'add-section', 'quiz-section'].forEach(id => {
+            document.getElementById(id).classList.add('hidden');
+        });
         document.getElementById(sectionId).classList.remove('hidden');
         
         if (sectionId === 'add-section') {
+            populateAdminUnitSelect();
             updateWordListUI();
         }
     }
 
-    function showChoiceMenu() {
-        showSection('choice-menu-section');
+    function showUnitSelection(modeType) {
+        activeModeType = modeType;
+        const container = document.getElementById('unit-buttons-container');
+        container.innerHTML = '';
+        
+        document.getElementById('unit-selection-title').innerText = modeType === 'choice' ? 'Vali teema (Ristküsitlus)' : 'Vali teema (Kirjutamine)';
+
+        // Nupp "Kõik teemad kokku"
+        const allBtn = document.createElement('button');
+        allBtn.innerText = "⭐ Kõik teemad kokku";
+        allBtn.className = "success";
+        allBtn.onclick = () => selectUnit('ALL');
+        container.appendChild(allBtn);
+
+        // Nupud iga Unit-i jaoks
+        Object.keys(units).forEach(unitName => {
+            const btn = document.createElement('button');
+            btn.innerText = `📁 ${unitName} (${units[unitName].length} sõna)`;
+            btn.onclick = () => selectUnit(unitName);
+            container.appendChild(btn);
+        });
+
+        showSection('unit-selection-section');
     }
 
-    function showWriteMenu() {
-        showSection('write-menu-section');
+    function selectUnit(unitKey) {
+        selectedUnitKey = unitKey;
+        let label = unitKey === 'ALL' ? 'Kõik teemad kokku' : `Valitud teema: ${unitKey}`;
+        document.getElementById('selected-unit-label').innerText = label;
+        showSection('direction-section');
     }
 
     function requestAdminAccess() {
@@ -315,15 +350,28 @@
         }
     }
 
+    function populateAdminUnitSelect() {
+        const select = document.getElementById('admin-unit-select');
+        select.innerHTML = '';
+        Object.keys(units).forEach(unitName => {
+            const opt = document.createElement('option');
+            opt.value = unitName;
+            opt.innerText = unitName;
+            select.appendChild(opt);
+        });
+    }
+
     function addWord() {
+        const currentUnit = document.getElementById('admin-unit-select').value;
         const eng = document.getElementById('eng-word').value.trim();
         const est = document.getElementById('est-word').value.trim();
         
         if (eng && est) {
-            words.push({ eng, est });
+            if (!units[currentUnit]) units[currentUnit] = [];
+            units[currentUnit].push({ eng, est });
             document.getElementById('eng-word').value = '';
             document.getElementById('est-word').value = '';
-            saveWordsToStorage();
+            saveUnitsToStorage();
             updateWordListUI();
         } else {
             alert("Palun täida mõlemad väljad!");
@@ -331,11 +379,14 @@
     }
 
     function addBulkWords() {
+        const currentUnit = document.getElementById('admin-unit-select').value;
         const text = document.getElementById('bulk-text').value.trim();
         if (!text) return;
 
         const lines = text.split('\n');
         let addedCount = 0;
+
+        if (!units[currentUnit]) units[currentUnit] = [];
 
         lines.forEach(line => {
             let parts = line.split(/[-–:]/);
@@ -344,36 +395,40 @@
                 let est = parts[1].trim();
                 eng = eng.replace(/^\d+[\.\)]\s*/, '');
                 if (eng && est) {
-                    words.push({ eng, est });
+                    units[currentUnit].push({ eng, est });
                     addedCount++;
                 }
             }
         });
 
         if (addedCount > 0) {
-            saveWordsToStorage();
+            saveUnitsToStorage();
             updateWordListUI();
             document.getElementById('bulk-text').value = '';
-            alert(`Lisati edukalt ${addedCount} sõnapaari!`);
+            alert(`Lisati edukalt ${addedCount} sõnapaari teemasse ${currentUnit}!`);
         } else {
-            alert("Ei suutnud tekstist sõnapaare tuvastada. Veendu, et vorming on stiilis: inglise - eesti");
+            alert("Ei suutnud tekstist sõnapaare tuvastada.");
         }
     }
 
     function updateWordListUI() {
+        const currentUnit = document.getElementById('admin-unit-select').value;
         const listEl = document.getElementById('word-list');
-        document.getElementById('word-count').innerText = words.length;
+        const wordArr = units[currentUnit] || [];
+        
+        document.getElementById('word-count').innerText = wordArr.length;
         listEl.innerHTML = '';
-        words.forEach((item, index) => {
+        
+        wordArr.forEach((item, index) => {
             const li = document.createElement('li');
-            li.innerHTML = `<span><strong>${item.eng}</strong> – ${item.est}</span> <button style="width: auto; padding: 4px 8px; font-size: 12px; background-color: #e74c3c; margin:0;" onclick="removeWord(${index})">Kustuta</button>`;
+            li.innerHTML = `<span><strong>${item.eng}</strong> – ${item.est}</span> <button style="width: auto; padding: 4px 8px; font-size: 12px; background-color: #e74c3c; margin:0;" onclick="removeWord('${currentUnit}', ${index})">Kustuta</button>`;
             listEl.appendChild(li);
         });
     }
 
-    function removeWord(index) {
-        words.splice(index, 1);
-        saveWordsToStorage();
+    function removeWord(unitName, index) {
+        units[unitName].splice(index, 1);
+        saveUnitsToStorage();
         updateWordListUI();
     }
 
@@ -399,31 +454,37 @@
             document.getElementById('bulk-text').value = text;
         }).catch(err => {
             console.error(err);
-            statusEl.innerText = "❌ Viga pildist teksti lugemisel. Proovi uuesti selgemat pilti.";
+            statusEl.innerText = "❌ Viga pildist teksti lugemisel.";
         });
     }
 
-    function startQuiz(mode, direction) {
-        if (words.length === 0) {
-            alert("Enne harjutamist pead vähemalt ühe sõna lisama!");
+    function startQuiz(direction) {
+        quizDirection = direction; // 'est' (Inglise->Eesti) või 'eng' (Eesti->Inglise)
+        
+        let pool = [];
+        if (selectedUnitKey === 'ALL') {
+            Object.keys(units).forEach(u => {
+                pool = pool.concat(units[u]);
+            });
+        } else {
+            pool = units[selectedUnitKey] || [];
+        }
+
+        if (pool.length === 0) {
+            alert("Valitud teemas ei ole ühtegi sõna!");
             return;
         }
-        currentMode = mode;
-        currentDirection = direction;
-        currentQuizList = [...words].sort(() => Math.random() - 0.5);
+
+        currentQuizList = [...pool].sort(() => Math.random() - 0.5);
         currentIndex = 0;
         score = 0;
         
         showSection('quiz-section');
         
-        let title = 'Harjutamine';
-        if (mode === 'choice') {
-            title = direction === 'eng-est' ? 'Ristküsitlus: Inglise ➔ Eesti' : 'Ristküsitlus: Eesti ➔ Inglise';
-        } else {
-            title = direction === 'eng-est' ? 'Kirjutamine: Inglise ➔ Eesti' : 'Kirjutamine: Eesti ➔ Inglise';
-        }
-
-        document.getElementById('quiz-title').innerText = title;
+        let titleMode = activeModeType === 'choice' ? 'Ristküsitlus' : 'Kirjutamine';
+        let titleDir = direction === 'est' ? 'Inglise ➔ Eesti' : 'Eesti ➔ Inglise';
+        document.getElementById('quiz-title').innerText = `${titleMode} (${selectedUnitKey}): ${titleDir}`;
+        
         loadNextQuestion();
     }
 
@@ -442,13 +503,13 @@
         document.getElementById('quiz-stats').innerText = `Küsimus ${currentIndex + 1} / ${currentQuizList.length}`;
         activeQuestion = currentQuizList[currentIndex];
         
-        if (currentDirection === 'eng-est') {
+        if (quizDirection === 'est') {
             document.getElementById('question-text').innerText = `Mis on sõna "${activeQuestion.eng}" tähendus eesti keeles?`;
         } else {
             document.getElementById('question-text').innerText = `Kuidas on inglise keeles "${activeQuestion.est}"?`;
         }
 
-        if (currentMode === 'choice') {
+        if (activeModeType === 'choice') {
             document.getElementById('choices-container').classList.remove('hidden');
             document.getElementById('write-container').classList.add('hidden');
             setupChoices();
@@ -463,13 +524,14 @@
         const container = document.getElementById('choices-container');
         container.innerHTML = '';
 
-        let targetProp = currentDirection === 'eng-est' ? 'est' : 'eng';
+        let targetProp = quizDirection === 'est' ? 'est' : 'eng';
         let options = [activeQuestion[targetProp]];
-        let wrongOptions = words.filter(w => w[targetProp] !== activeQuestion[targetProp]).map(w => w[targetProp]);
-        wrongOptions.sort(() => Math.random() - 0.5);
         
-        for (let i = 0; i < Math.min(3, wrongOptions.length); i++) {
-            options.push(wrongOptions[i]);
+        let wrongPool = currentQuizList.filter(w => w[targetProp] !== activeQuestion[targetProp]).map(w => w[targetProp]);
+        wrongPool.sort(() => Math.random() - 0.5);
+        
+        for (let i = 0; i < Math.min(3, wrongPool.length); i++) {
+            options.push(wrongPool[i]);
         }
         options.sort(() => Math.random() - 0.5);
 
@@ -484,7 +546,7 @@
 
     function checkChoiceAnswer(selectedOpt) {
         const feedbackEl = document.getElementById('feedback');
-        let targetVal = currentDirection === 'eng-est' ? activeQuestion.est : activeQuestion.eng;
+        let targetVal = quizDirection === 'est' ? activeQuestion.est : activeQuestion.eng;
 
         if (selectedOpt === targetVal) {
             feedbackEl.innerText = "Õige!";
@@ -500,7 +562,7 @@
 
     function checkWrittenAnswer() {
         const userAns = document.getElementById('user-answer').value.trim().toLowerCase();
-        let targetVal = currentDirection === 'eng-est' ? activeQuestion.est : activeQuestion.eng;
+        let targetVal = quizDirection === 'est' ? activeQuestion.est : activeQuestion.eng;
         const correctAns = targetVal.toLowerCase();
         const feedbackEl = document.getElementById('feedback');
 
