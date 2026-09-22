@@ -1210,8 +1210,8 @@
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel(); // Peata eelnev heli
             const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'en-US'; // Ameerika inglise keel (või 'en-GB' Briti jaoks)
-            utterance.rate = 0.85;    // Veidi aeglasem tempo lastele
+            utterance.lang = 'en-US'; // Ameerika inglise keel
+            utterance.rate = 0.85;    // Veidi aeglasem tempo selgemaks kuulamiseks
             window.speechSynthesis.speak(utterance);
         }
     }
@@ -1321,7 +1321,7 @@
         const feedbackEl = document.getElementById('feedback');
         let targetVal = quizDirection === 'est' ? activeQuestion.est : activeQuestion.eng;
 
-        // Kui vastatiesti -> Inglise suunal, loeme pärast vastust õige ingliskeelse sõna ette, et laps kuuleks
+        // Kui vastati Eesti -> Inglise suunal, loeme pärast vastust õige ingliskeelse sõna ette
         if (quizDirection === 'eng') {
             speakWord(activeQuestion.eng);
         }
