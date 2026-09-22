@@ -32,8 +32,8 @@
             background-color: #2980b9;
             color: white;
             border: none;
-            padding: 10px 15px;
-            margin: 5px 0;
+            padding: 12px 15px;
+            margin: 6px 0;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
@@ -57,7 +57,7 @@
             font-size: 16px;
             box-sizing: border-box;
         }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
         .word-list {
             list-style: none;
             padding: 0;
@@ -122,7 +122,7 @@
     <div id="unit-selection-section" class="section hidden">
         <h2 id="unit-selection-title">Vali teema</h2>
         <div class="mode-select-box" id="unit-buttons-container">
-            <!-- Siia genereeritakse dünaamiliselt nupud teemade kaupa -->
+            <!-- Siia genereeritakse nupud -->
         </div>
         <button class="secondary" onclick="showSection('main-menu')" style="margin-top: 15px;">Tagasi menüüsse</button>
     </div>
@@ -226,7 +226,7 @@
 
     const ADMIN_PASSWORD = "1234";
 
-    // KÕIK SÕNAD JAOTATUD UNITITE KAUPA
+    // Vaikimisi üksused
     const DEFAULT_UNITS = {
         "Unit 1": [
             { eng: "hello", est: "tere" },
@@ -282,12 +282,13 @@
         ]
     };
 
-    // Laeme mälust või kasutame vaikimisi väärtusi
-    let units = JSON.parse(localStorage.getItem('sonaraamat_units')) || DEFAULT_UNITS;
+    // Sunnime uuenduse sisse, kui mälus on vana struktuur
+    let savedUnits = JSON.parse(localStorage.getItem('sonaraamat_units'));
+    let units = savedUnits && typeof savedUnits === 'object' && !Array.isArray(savedUnits) ? savedUnits : DEFAULT_UNITS;
 
-    let activeModeType = ''; // 'choice' või 'write'
-    let selectedUnitKey = ''; // Valitud unit või 'ALL'
-    let quizDirection = 'est'; // 'est' (Inglise->Eesti) või 'eng' (Eesti->Inglise)
+    let activeModeType = ''; 
+    let selectedUnitKey = ''; 
+    let quizDirection = 'est'; 
     let currentIndex = 0;
     let currentQuizList = [];
     let score = 0;
@@ -459,7 +460,7 @@
     }
 
     function startQuiz(direction) {
-        quizDirection = direction; // 'est' (Inglise->Eesti) või 'eng' (Eesti->Inglise)
+        quizDirection = direction; 
         
         let pool = [];
         if (selectedUnitKey === 'ALL') {
