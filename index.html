@@ -62,16 +62,6 @@
         .btn-secondary:hover {
             background-color: #7f8c8d;
         }
-        .btn-danger {
-            background-color: #e74c3c;
-            width: auto;
-            padding: 5px 10px;
-            margin: 0;
-            font-size: 0.85rem;
-        }
-        .btn-danger:hover {
-            background-color: #c0392b;
-        }
         .option-btn {
             background-color: #ecf0f1;
             color: #2c3e50;
@@ -103,23 +93,6 @@
             color: #7f8c8d;
             margin-bottom: 15px;
         }
-        .word-list-box {
-            max-height: 250px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            margin: 15px 0;
-            text-align: left;
-            padding: 10px;
-            background: #fafafa;
-        }
-        .word-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 0;
-            border-bottom: 1px solid #eee;
-        }
     </style>
 </head>
 <body>
@@ -147,30 +120,6 @@
         </select>
 
         <button onclick="startQuiz()">Alusta testi</button>
-        <button class="btn-secondary" onclick="openEditor()">✏️ Muuda sõnu / Lisa uusi</button>
-    </div>
-
-    <!-- SÕNADE HALDAMISE / MUUTMISE VAADE -->
-    <div id="editor-screen" class="hidden">
-        <h2>Sõnade haldamine</h2>
-        <label for="editor-unit-select">Vali Unit mida muuta:</label>
-        <select id="editor-unit-select" onchange="loadEditorWords()">
-            <!-- Valikud lisatakse JS-iga -->
-        </select>
-
-        <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 15px 0; text-align: left;">
-            <h4>Lisa uus sõna sellesse unitti:</h4>
-            <input type="text" id="new-eng" placeholder="Inglise keel (nt. cat)">
-            <input type="text" id="new-est" placeholder="Eesti keel (nt. kass)">
-            <button onclick="addNewWord()">Lisa sõna</button>
-        </div>
-
-        <h4>Olemasolevad sõnad:</h4>
-        <div id="editor-word-list" class="word-list-box">
-            <!-- Sõnad kuvatakse siin -->
-        </div>
-
-        <button class="btn-secondary" onclick="closeEditor()">Tagasi algusesse</button>
     </div>
 
     <!-- KÜSIMUSTE VAADE -->
@@ -196,6 +145,9 @@
         </div>
         
         <div id="feedback-box" class="hidden"></div>
+
+        <!-- Nupp testi katkestamiseks ja algusesse naasmiseks -->
+        <button class="btn-secondary" style="margin-top: 25px;" onclick="resetToSetup()">🏠 Katkesta ja tagasi algusesse</button>
     </div>
 
     <!-- TULEMUSTE VAADE -->
@@ -208,7 +160,13 @@
 </div>
 
 <script>
-    const defaultVocabulary = {
+    // ==========================================
+    // SÕNASTIKU MUUTMINE KOODIS:
+    // Sa saad siin otse inglise keele sõnu ja 
+    // eesti keele tähendusi lisada, muuta või kustutada.
+    // Formaat on: "inglise keel": "eesti keel",
+    // ==========================================
+    const vocabulary = {
         "Unit 1 School": {
             "dear": "kallis, armas", "lovely": "armas", "mate": "kaaslane", "over": "läbi, möödas", "again": "jälle",
             "What's the English (word) for ...?": "Kuidas on inglise keeles ...?", "Swedish": "rootsi keel; rootslane",
@@ -432,11 +390,9 @@
         }
     };
 
-    let vocabulary = {};
     let currentQuestions = [];
     let currentIndex = 0;
     let score = 0;
-    let totalQuestionsCount = 0;
     let mistakes = [];
     let direction = "en-et";
     let testMode = "input";
@@ -446,8 +402,8 @@
     let allAvailableAnswers = [];
 
     window.onload = function() {
-        loadVocabularyData();
         initUnitSelectors();
+        rebuildAllAnswersPool();
 
         document.getElementById("user-answer").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
@@ -456,40 +412,15 @@
         });
     };
 
-    function loadVocabularyData() {
-        let saved = localStorage.getItem("vocab_data");
-        if (saved) {
-            try {
-                vocabulary = JSON.parse(saved);
-            } catch (e) {
-                vocabulary = JSON.parse(JSON.stringify(defaultVocabulary));
-            }
-        } else {
-            vocabulary = JSON.parse(JSON.stringify(defaultVocabulary));
-        }
-    }
-
-    function saveVocabularyData() {
-        localStorage.setItem("vocab_data", JSON.stringify(vocabulary));
-    }
-
     function initUnitSelectors() {
         const select = document.getElementById("unit-select");
-        const editorSelect = document.getElementById("editor-unit-select");
-        
         select.innerHTML = '<option value="all">⭐ Kõik unitid korraga (1-20)</option>';
-        editorSelect.innerHTML = "";
 
         for (let unitName in vocabulary) {
-            let option1 = document.createElement("option");
-            option1.value = unitName;
-            option1.textContent = unitName;
-            select.appendChild(option1);
-
-            let option2 = document.createElement("option");
-            option2.value = unitName;
-            option2.textContent = unitName;
-            editorSelect.appendChild(option2);
+            let option = document.createElement("option");
+            option.value = unitName;
+            option.textContent = unitName;
+            select.appendChild(option);
         }
     }
 
@@ -502,72 +433,7 @@
         }
     }
 
-    function openEditor() {
-        document.getElementById("setup-screen").classList.add("hidden");
-        document.getElementById("editor-screen").classList.remove("hidden");
-        loadEditorWords();
-    }
-
-    function closeEditor() {
-        document.getElementById("editor-screen").classList.add("hidden");
-        document.getElementById("setup-screen").classList.remove("hidden");
-        initUnitSelectors();
-    }
-
-    function loadEditorWords() {
-        const unitName = document.getElementById("editor-unit-select").value;
-        const listContainer = document.getElementById("editor-word-list");
-        listContainer.innerHTML = "";
-
-        if (!vocabulary[unitName]) return;
-
-        let words = vocabulary[unitName];
-        for (let eng in words) {
-            let est = words[eng];
-            let itemDiv = document.createElement("div");
-            itemDiv.className = "word-item";
-            itemDiv.innerHTML = `<span><strong>${eng}</strong> - ${est}</span> <button class="btn-danger" onclick="deleteWord('${unitName}', '${escapeQuotes(eng)}')">Kustuta</button>`;
-            listContainer.appendChild(itemDiv);
-        }
-    }
-
-    function escapeQuotes(str) {
-        return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    }
-
-    function addNewWord() {
-        const unitName = document.getElementById("editor-unit-select").value;
-        const engInput = document.getElementById("new-eng");
-        const estInput = document.getElementById("new-est");
-
-        let eng = engInput.value.trim();
-        let est = estInput.value.trim();
-
-        if (!eng || !est) {
-            alert("Palun sisesta nii inglise- kui ka eestikeelne sõna!");
-            return;
-        }
-
-        vocabulary[unitName][eng] = est;
-        saveVocabularyData();
-
-        engInput.value = "";
-        estInput.value = "";
-        loadEditorWords();
-    }
-
-    function deleteWord(unitName, eng) {
-        if (confirm(`Kas oled kindel, et soovid kustutada sõna "${eng}"?`)) {
-            delete vocabulary[unitName][eng];
-            saveVocabularyData();
-            loadEditorWords();
-        }
-    }
-
     function startQuiz() {
-        loadVocabularyData();
-        rebuildAllAnswersPool();
-
         const selectedUnit = document.getElementById("unit-select").value;
         testMode = document.getElementById("mode-select").value;
         direction = document.getElementById("direction-select").value;
@@ -591,10 +457,10 @@
 
         currentIndex = 0;
         score = 0;
-        totalQuestionsCount = currentQuestions.length;
         mistakes = [];
 
         document.getElementById("setup-screen").classList.add("hidden");
+        document.getElementById("result-screen").classList.add("hidden");
         document.getElementById("quiz-screen").classList.remove("hidden");
 
         const inputContainer = document.getElementById("input-mode-container");
@@ -670,8 +536,9 @@
         currentChoices = choices;
 
         for (let i = 0; i < 4; i++) {
-            document.getElementById(`choice-${i}`).textContent = choices[i] || "";
-            document.getElementById(`choice-${i}`).disabled = false;
+            let btn = document.getElementById(`choice-${i}`);
+            btn.textContent = choices[i] || "";
+            btn.disabled = false;
         }
     }
 
@@ -693,11 +560,9 @@
             showFeedback(true, "Õige!");
             currentIndex++;
         } else {
-            // Lisame vea nimekirja ainult siis, kui seda seal veel pole (või hoiame arvestust)
             if (!mistakes.some(m => m[0] === currentPair[0])) {
                 mistakes.push(currentPair);
             }
-            // Lükkame küsimuse ringiga uuesti massiivi lõppu, et see tuleks hiljem uuesti ette
             currentQuestions.push(currentPair);
             
             showFeedback(false, `Vale! Õige vastus oli: ${currentCorrectAnswer}`);
@@ -759,6 +624,8 @@
     }
 
     function resetToSetup() {
+        window.speechSynthesis.cancel();
+        document.getElementById("quiz-screen").classList.add("hidden");
         document.getElementById("result-screen").classList.add("hidden");
         document.getElementById("setup-screen").classList.remove("hidden");
     }
