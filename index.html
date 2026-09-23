@@ -73,6 +73,22 @@
             color: #2c3e50;
             border: 1px solid #bdc3c7;
             margin: 8px 0;
+            position: relative; /* Vajalik väikese numbri positsioneerimiseks kasti nurka */
+            text-align: left;
+            padding-right: 40px;
+        }
+        .option-btn::after {
+            content: attr(data-length);
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #bdc3c7;
+            color: #2c3e50;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: normal;
         }
         .option-btn:hover {
             background-color: #dcdde1;
@@ -500,7 +516,6 @@
         }
     }
 
-    // Abifunktsioon tähtede asendamiseks alakriipsudega (arvestades ka tühikuid)
     function getUnderscores(str) {
         return str.split('').map(char => char === ' ' ? ' &nbsp; ' : '_').join(' ');
     }
@@ -525,7 +540,6 @@
             return;
         }
 
-        // PRINTIMISE REŽIIM
         if (testMode === "print") {
             document.getElementById("setup-screen").classList.add("hidden");
             document.getElementById("quiz-screen").classList.add("hidden");
@@ -548,7 +562,6 @@
             return;
         }
 
-        // TAVALINE TESTI REŽIIM
         shuffle(currentQuestions);
 
         currentIndex = 0;
@@ -599,7 +612,6 @@
         currentEnglishWord = eng;
         currentCorrectAnswer = (direction === "en-et") ? est : eng;
 
-        // Näita vastuse pikkust alakriipsudena
         const letterCountInfo = document.getElementById("letter-count-info");
         letterCountInfo.innerHTML = getUnderscores(currentCorrectAnswer);
 
@@ -640,6 +652,8 @@
         for (let i = 0; i < 4; i++) {
             let btn = document.getElementById(`choice-${i}`);
             btn.textContent = choices[i] || "";
+            // Määrame nupu atribuudiks vastuse pikkuse (loendab ka tühikud/märgid)
+            btn.setAttribute('data-length', choices[i] ? choices[i].length : 0);
             btn.disabled = false;
         }
     }
