@@ -99,12 +99,55 @@
             color: #7f8c8d;
             margin-bottom: 15px;
         }
+        .letter-count {
+            font-size: 0.95rem;
+            color: #e67e22;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* PRINTIMISE STIILID */
+        #print-screen {
+            text-align: left;
+        }
+        .print-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+        .print-table th, .print-table td {
+            border: 1px solid #bdc3c7;
+            padding: 8px 12px;
+        }
+        .print-table th {
+            background-color: #f8f9fa;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+                display: block;
+            }
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+                padding: 0;
+            }
+            #setup-screen, .no-print {
+                display: none !important;
+            }
+            #print-screen {
+                display: block !important;
+            }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Sõnavaratester</h1>
+    <h1 class="no-print">Sõnavaratester</h1>
 
     <!-- SEADISTUSE VAADE -->
     <div id="setup-screen">
@@ -113,19 +156,20 @@
             <option value="all">⭐ Kõik unitid korraga (1-20)</option>
         </select>
 
-        <label for="mode-select">Vali testiliik:</label>
+        <label for="mode-select">Vali režiim:</label>
         <select id="mode-select">
-            <option value="input">Kirjuta vastus ise</option>
+            <option value="input">Kirjuta vastus ise (arvutis)</option>
             <option value="choices">Vali 4 variandi seast</option>
+            <option value="print">🖨️ Prinditav tööleht (käsitsi harjutamiseks)</option>
         </select>
 
-        <label for="direction-select">Vali suund:</label>
+        <label for="direction-select">Vali suund (testi jaoks):</label>
         <select id="direction-select">
             <option value="en-et">Inglise -> Eesti</option>
             <option value="et-en">Eesti -> Inglise</option>
         </select>
 
-        <button onclick="startQuiz()">Alusta testi</button>
+        <button onclick="startQuiz()">Alusta / Loo leht</button>
     </div>
 
     <!-- KÜSIMUSTE VAADE -->
@@ -135,6 +179,7 @@
         <button id="audio-btn" class="btn-audio hidden" onclick="playAudio()">🔊 Kuula hääldust</button>
         
         <h3 id="question-prompt">Küsimus siia</h3>
+        <div id="letter-count-info" class="letter-count"></div>
         
         <!-- Režiim 1: Kirjutamine -->
         <div id="input-mode-container">
@@ -154,7 +199,26 @@
         <div id="feedback-box" class="hidden"></div>
 
         <!-- Nupp testi katkestamiseks ja algusesse naasmiseks -->
-        <button class="btn-secondary" style="margin-top: 25px;" onclick="resetToSetup()">🏠 Katkesta ja tagasi algusesse</button>
+        <button class="btn-secondary no-print" style="margin-top: 25px;" onclick="resetToSetup()">🏠 Katkesta ja tagasi algusesse</button>
+    </div>
+
+    <!-- PRINTIMISE VAADE -->
+    <div id="print-screen" class="hidden">
+        <h2 id="print-title">Sõnavara tööleht</h2>
+        <p class="no-print" style="font-size: 0.9rem; color: #666;">Võid printida lehe välja või salvestada PDF-ina, et sõnu paberil harjutada.</p>
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th>Inglise keel</th>
+                    <th>Eesti keel</th>
+                </tr>
+            </thead>
+            <tbody id="print-table-body">
+                <!-- Sõnad genereeritakse siia -->
+            </tbody>
+        </table>
+        <button class="no-print" style="margin-top: 20px;" onclick="window.print()">🖨️ Prindi tööleht</button>
+        <button class="no-print btn-secondary" onclick="resetToSetup()">Tagasi algusesse</button>
     </div>
 
     <!-- TULEMUSTE VAADE -->
@@ -167,12 +231,6 @@
 </div>
 
 <script>
-    // ==========================================
-    // SÕNASTIKU MUUTMINE KOODIS:
-    // Sa saad siin otse inglise keele sõnu ja 
-    // eesti keele tähendusi lisada, muuta või kustutada.
-    // Formaat on: "inglise keel": "eesti keel",
-    // ==========================================
     const vocabulary = {
         "Unit 1 School": {
             "dear": "kallis, armas", "lovely": "armas", "mate": "kaaslane", "over": "läbi, möödas", "again": "jälle",
@@ -461,6 +519,31 @@
             return;
         }
 
+        // PRINTIMISE REŽIIM
+        if (testMode === "print") {
+            document.getElementById("setup-screen").classList.add("hidden");
+            document.getElementById("quiz-screen").classList.add("hidden");
+            document.getElementById("result-screen").classList.add("hidden");
+            document.getElementById("print-screen").classList.remove("hidden");
+
+            document.getElementById("print-title").textContent = `Sõnavara: ${selectedUnit === "all" ? "Kõik unitid (1-20)" : selectedUnit}`;
+            
+            const tbody = document.getElementById("print-table-body");
+            tbody.innerHTML = "";
+
+            currentQuestions.forEach(([eng, est]) => {
+                let row = document.createElement("tr");
+                // Lisame sulgudesse tähtede arvu (näiteks õige sõna pikkuse)
+                let engLength = eng.length;
+                let estLength = est.length;
+                
+                row.innerHTML = `<td><strong>${eng}</strong> (${engLength} tähte)</td><td>${est} (${estLength} tähte)</td>`;
+                tbody.appendChild(row);
+            });
+            return;
+        }
+
+        // TAVALINE TESTI REŽIIM
         shuffle(currentQuestions);
 
         currentIndex = 0;
@@ -469,6 +552,7 @@
         skippedOnce = new Set();
 
         document.getElementById("setup-screen").classList.add("hidden");
+        document.getElementById("print-screen").classList.add("hidden");
         document.getElementById("result-screen").classList.add("hidden");
         document.getElementById("quiz-screen").classList.remove("hidden");
 
@@ -509,6 +593,10 @@
         let [eng, est] = currentQuestions[currentIndex];
         currentEnglishWord = eng;
         currentCorrectAnswer = (direction === "en-et") ? est : eng;
+
+        // Näita vastuse pikkust (tähtede arvu) vihjena
+        const letterCountInfo = document.getElementById("letter-count-info");
+        letterCountInfo.textContent = `Vastusel on ${currentCorrectAnswer.length} tähte`;
 
         const audioBtn = document.getElementById("audio-btn");
         const promptEl = document.getElementById("question-prompt");
@@ -660,6 +748,7 @@
         window.speechSynthesis.cancel();
         document.getElementById("quiz-screen").classList.add("hidden");
         document.getElementById("result-screen").classList.add("hidden");
+        document.getElementById("print-screen").classList.add("hidden");
         document.getElementById("setup-screen").classList.remove("hidden");
     }
 </script>
