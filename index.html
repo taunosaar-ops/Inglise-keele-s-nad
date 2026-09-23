@@ -184,7 +184,14 @@
         </select>
 
         <button onclick="startQuiz()">Alusta testi</button>
-        <button class="btn-print" onclick="openPrintView()">🖨️ Prindi täidetavad testilehed (Mõlemat pidi)</button>
+        
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
+        
+        <label for="print-unit-select"><strong>Prindi lehed (vali Unit):</strong></label>
+        <select id="print-unit-select">
+            <option value="all">⭐ Kõik unitid korraga (1-20)</option>
+        </select>
+        <button class="btn-print" onclick="openPrintView()">🖨️ Valmistage prindilehed ette</button>
     </div>
 
     <!-- KÜSIMUSTE VAADE -->
@@ -483,13 +490,21 @@
 
     function initUnitSelectors() {
         const select = document.getElementById("unit-select");
+        const printSelect = document.getElementById("print-unit-select");
+        
         select.innerHTML = '<option value="all">⭐ Kõik unitid korraga (1-20)</option>';
+        printSelect.innerHTML = '<option value="all">⭐ Kõik unitid korraga (1-20)</option>';
 
         for (let unitName in vocabulary) {
-            let option = document.createElement("option");
-            option.value = unitName;
-            option.textContent = unitName;
-            select.appendChild(option);
+            let option1 = document.createElement("option");
+            option1.value = unitName;
+            option1.textContent = unitName;
+            select.appendChild(option1);
+
+            let option2 = document.createElement("option");
+            option2.value = unitName;
+            option2.textContent = unitName;
+            printSelect.appendChild(option2);
         }
     }
 
@@ -549,25 +564,33 @@
     }
 
     function openPrintView() {
+        const selectedPrintUnit = document.getElementById("print-unit-select").value;
         document.getElementById("setup-screen").classList.add("hidden");
         document.getElementById("print-screen").classList.remove("hidden");
 
         const container = document.getElementById("print-content");
         container.innerHTML = "";
 
-        // 1. OSA: Inglise -> Eesti testileht (Paremas tulbas tyhi lahter vastamiseks)
+        let unitsToPrint = {};
+        if (selectedPrintUnit === "all") {
+            unitsToPrint = vocabulary;
+        } else {
+            unitsToPrint[selectedPrintUnit] = vocabulary[selectedPrintUnit];
+        }
+
+        // 1. OSA: Inglise -> Eesti testileht
         let title1 = document.createElement("h2");
         title1.textContent = "Sõnavaratest: Inglise -> Eesti (Kirjuta eesti keeles)";
         container.appendChild(title1);
 
-        for (let unitName in vocabulary) {
+        for (let unitName in unitsToPrint) {
             let unitDiv = document.createElement("div");
             unitDiv.className = "print-unit";
             
             let html = `<h4>${unitName}</h4>`;
             html += `<table class="print-table"><thead><tr><th>Inglise keel</th><th>Eesti keel (kirjuta siia)</th></tr></thead><tbody>`;
             
-            for (let eng in vocabulary[unitName]) {
+            for (let eng in unitsToPrint[unitName]) {
                 html += `<tr><td><strong>${eng}</strong></td><td>&nbsp;</td></tr>`;
             }
             html += `</tbody></table>`;
@@ -580,20 +603,20 @@
         breakDiv.className = "page-break";
         container.appendChild(breakDiv);
 
-        // 2. OSA: Eesti -> Inglise testileht (Paremas tulbas tühi lahter vastamiseks)
+        // 2. OSA: Eesti -> Inglise testileht
         let title2 = document.createElement("h2");
         title2.textContent = "Sõnavaratest: Eesti -> Inglise (Kirjuta inglise keeles)";
         container.appendChild(title2);
 
-        for (let unitName in vocabulary) {
+        for (let unitName in unitsToPrint) {
             let unitDiv = document.createElement("div");
             unitDiv.className = "print-unit";
             
             let html = `<h4>${unitName}</h4>`;
             html += `<table class="print-table"><thead><tr><th>Eesti keel</th><th>Inglise keel (kirjuta siia)</th></tr></thead><tbody>`;
             
-            for (let eng in vocabulary[unitName]) {
-                html += `<tr><td><strong>${vocabulary[unitName][eng]}</strong></td><td>&nbsp;</td></tr>`;
+            for (let eng in unitsToPrint[unitName]) {
+                html += `<tr><td><strong>${unitsToPrint[unitName][eng]}</strong></td><td>&nbsp;</td></tr>`;
             }
             html += `</tbody></table>`;
             unitDiv.innerHTML = html;
