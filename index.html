@@ -73,22 +73,6 @@
             color: #2c3e50;
             border: 1px solid #bdc3c7;
             margin: 8px 0;
-            position: relative;
-            text-align: left;
-            padding-right: 50px;
-        }
-        .option-btn::after {
-            content: attr(data-length);
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: #bdc3c7;
-            color: #2c3e50;
-            font-size: 0.75rem;
-            padding: 3px 7px;
-            border-radius: 4px;
-            font-weight: bold;
         }
         .option-btn:hover {
             background-color: #dcdde1;
@@ -115,65 +99,12 @@
             color: #7f8c8d;
             margin-bottom: 15px;
         }
-
-        /* PRINTIMISE STIILID */
-        #print-screen {
-            text-align: left;
-        }
-        .print-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 0.95rem;
-        }
-        .print-table th, .print-table td {
-            border: 1px solid #bdc3c7;
-            padding: 10px 12px;
-            vertical-align: middle;
-        }
-        .print-table th {
-            background-color: #f8f9fa;
-        }
-        .print-item-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .length-badge {
-            font-size: 0.75rem;
-            background-color: #ecf0f1;
-            border: 1px solid #bdc3c7;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #7f8c8d;
-            font-family: sans-serif;
-            font-weight: bold;
-        }
-
-        @media print {
-            body {
-                background-color: white;
-                padding: 0;
-                display: block;
-            }
-            .container {
-                box-shadow: none;
-                max-width: 100%;
-                padding: 0;
-            }
-            #setup-screen, .no-print {
-                display: none !important;
-            }
-            #print-screen {
-                display: block !important;
-            }
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 class="no-print">Sõnavaratester</h1>
+    <h1>Sõnavaratester</h1>
 
     <!-- SEADISTUSE VAADE -->
     <div id="setup-screen">
@@ -182,20 +113,19 @@
             <option value="all">⭐ Kõik unitid korraga (1-20)</option>
         </select>
 
-        <label for="mode-select">Vali režiim:</label>
+        <label for="mode-select">Vali testiliik:</label>
         <select id="mode-select">
-            <option value="input">Kirjuta vastus ise (arvutis)</option>
+            <option value="input">Kirjuta vastus ise</option>
             <option value="choices">Vali 4 variandi seast</option>
-            <option value="print">🖨️ Prinditav tööleht (käsitsi harjutamiseks)</option>
         </select>
 
-        <label for="direction-select">Vali suund (testi jaoks):</label>
+        <label for="direction-select">Vali suund:</label>
         <select id="direction-select">
             <option value="en-et">Inglise -> Eesti</option>
             <option value="et-en">Eesti -> Inglise</option>
         </select>
 
-        <button onclick="startQuiz()">Alusta / Loo leht</button>
+        <button onclick="startQuiz()">Alusta testi</button>
     </div>
 
     <!-- KÜSIMUSTE VAADE -->
@@ -223,26 +153,8 @@
         
         <div id="feedback-box" class="hidden"></div>
 
-        <button class="btn-secondary no-print" style="margin-top: 25px;" onclick="resetToSetup()">🏠 Katkesta ja tagasi algusesse</button>
-    </div>
-
-    <!-- PRINTIMISE VAADE -->
-    <div id="print-screen" class="hidden">
-        <h2 id="print-title">Sõnavara tööleht</h2>
-        <p class="no-print" style="font-size: 0.9rem; color: #666;">Võid printida lehe välja või salvestada PDF-ina, et sõnu paberil harjutada.</p>
-        <table class="print-table">
-            <thead>
-                <tr>
-                    <th>Inglise keel</th>
-                    <th>Eesti keel</th>
-                </tr>
-            </thead>
-            <tbody id="print-table-body">
-                <!-- Sõnad genereeritakse siia -->
-            </tbody>
-        </table>
-        <button class="no-print" style="margin-top: 20px;" onclick="window.print()">🖨️ Prindi tööleht</button>
-        <button class="no-print btn-secondary" onclick="resetToSetup()">Tagasi algusesse</button>
+        <!-- Nupp testi katkestamiseks ja algusesse naasmiseks -->
+        <button class="btn-secondary" style="margin-top: 25px;" onclick="resetToSetup()">🏠 Katkesta ja tagasi algusesse</button>
     </div>
 
     <!-- TULEMUSTE VAADE -->
@@ -255,6 +167,12 @@
 </div>
 
 <script>
+    // ==========================================
+    // SÕNASTIKU MUUTMINE KOODIS:
+    // Sa saad siin otse inglise keele sõnu ja 
+    // eesti keele tähendusi lisada, muuta või kustutada.
+    // Formaat on: "inglise keel": "eesti keel",
+    // ==========================================
     const vocabulary = {
         "Unit 1 School": {
             "dear": "kallis, armas", "lovely": "armas", "mate": "kaaslane", "over": "läbi, möödas", "again": "jälle",
@@ -366,7 +284,7 @@
             "if": "kui, kas", "dragon": "draakon", "caterpillar": "röövik, tõuk", "hole": "auk"
         },
         "Unit 11 Picnic": {
-            "picnic": "piknik, eine vabas õhus", "pack": "pakkima", "woods": "mets", "in the woods": "metsa al, metsas",
+            "picnic": "piknik, eine vabas õhus", "pack": "pakkima", "woods": "mets", "in the woods": "metsa all, metsas",
             "snack": "suupiste; näksima", "juice": "mahl", "juicy": "mahlane", "forget": "unustama", "bread": "leib",
             "egg": "muna", "cheese": "juust", "butter": "või", "cucumber": "kurk", "carrot": "porgand", "cake": "kook",
             "radish": "redis", "shall": "abitegusõna tegevusse kaasamisel", "What shall we eat?": "Mida me sööme?",
@@ -483,7 +401,7 @@
     let currentIndex = 0;
     let score = 0;
     let mistakes = [];
-    let skippedOnce = new Set();
+    let skippedOnce = new Set5 = new Set(); // Jätab meelde sõnad, mis on korra vahele jäetud
     let direction = "en-et";
     let testMode = "input";
     let currentEnglishWord = "";
@@ -543,40 +461,6 @@
             return;
         }
 
-        if (testMode === "print") {
-            document.getElementById("setup-screen").classList.add("hidden");
-            document.getElementById("quiz-screen").classList.add("hidden");
-            document.getElementById("result-screen").classList.add("hidden");
-            document.getElementById("print-screen").classList.remove("hidden");
-
-            document.getElementById("print-title").textContent = `Sõnavara: ${selectedUnit === "all" ? "Kõik unitid (1-20)" : selectedUnit}`;
-            
-            const tbody = document.getElementById("print-table-body");
-            tbody.innerHTML = "";
-
-            currentQuestions.forEach(([eng, est]) => {
-                let row = document.createElement("tr");
-                
-                // Mõlemale poolele lisame sõna ja tähtede arvu väikese märgi nurka/kõrvale ilma alakriipsudeta
-                row.innerHTML = `
-                    <td>
-                        <div class="print-item-container">
-                            <strong>${eng}</strong>
-                            <span class="length-badge">[${eng.length}]</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="print-item-container">
-                            <span style="color: transparent; user-select: none;">${est}</span>
-                            <span class="length-badge">[${est.length}]</span>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-            return;
-        }
-
         shuffle(currentQuestions);
 
         currentIndex = 0;
@@ -585,7 +469,6 @@
         skippedOnce = new Set();
 
         document.getElementById("setup-screen").classList.add("hidden");
-        document.getElementById("print-screen").classList.add("hidden");
         document.getElementById("result-screen").classList.add("hidden");
         document.getElementById("quiz-screen").classList.remove("hidden");
 
@@ -664,7 +547,6 @@
         for (let i = 0; i < 4; i++) {
             let btn = document.getElementById(`choice-${i}`);
             btn.textContent = choices[i] || "";
-            btn.setAttribute('data-length', choices[i] ? `[${choices[i].length}]` : '');
             btn.disabled = false;
         }
     }
@@ -687,12 +569,14 @@
             showFeedback(true, "Õige!");
             currentIndex++;
         } else {
+            // Kontrollime, kas see sõna on juba varem vahele jäetud (ehk teist korda ei tea)
             if (skippedOnce.has(currentPair[0])) {
                 if (!mistakes.some(m => m[0] === currentPair[0])) {
                     mistakes.push(currentPair);
                 }
                 showFeedback(false, `Vale! Õige vastus oli: ${currentCorrectAnswer}`);
             } else {
+                // Esimesel korral vale vastus -> viskame järjekorra lõppu ja märgime vahelejäetuks
                 skippedOnce.add(currentPair[0]);
                 currentQuestions.push(currentPair);
                 showFeedback(false, `Vale! Sõna läks kordamisele ja tuleb hiljem uuesti.`);
@@ -705,11 +589,13 @@
         let currentPair = currentQuestions[currentIndex];
 
         if (skippedOnce.has(currentPair[0])) {
+            // Kui oli juba varem vahele jäetud ja nüüd jälle ei tea -> loeme lõplikult valeks
             if (!mistakes.some(m => m[0] === currentPair[0])) {
                 mistakes.push(currentPair);
             }
             showFeedback(false, `Vahele jäetud! Õige vastus oli: ${currentCorrectAnswer}`);
         } else {
+            // Esimene kord vahele jätta -> liigutame lihtsalt nimekirja lõppu
             skippedOnce.add(currentPair[0]);
             currentQuestions.push(currentPair);
             showFeedback(false, `Jäetud vahele, sõna tuleb hiljem uuesti.`);
@@ -778,7 +664,6 @@
         window.speechSynthesis.cancel();
         document.getElementById("quiz-screen").classList.add("hidden");
         document.getElementById("result-screen").classList.add("hidden");
-        document.getElementById("print-screen").classList.add("hidden");
         document.getElementById("setup-screen").classList.remove("hidden");
     }
 </script>
