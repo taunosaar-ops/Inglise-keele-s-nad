@@ -129,7 +129,7 @@
             border: 1px solid #bdc3c7;
             padding: 10px 12px;
             text-align: left;
-            height: 24px; /* Annab tühjadele lahtritele kirjutamiseks kõrgust */
+            height: 28px; /* Piisav kõrgus käsitsi kirjutamiseks */
         }
         .print-table th {
             background-color: #ecf0f1;
@@ -226,7 +226,7 @@
     <!-- PRINDITAV VAADE -->
     <div id="print-screen" class="hidden">
         <div class="no-print" style="margin-bottom: 20px;">
-            <button onclick="window.print()" style="background-color: #27ae60; margin-bottom: 10px;">Trüki lehed välja</button>
+            <button onclick="window.openPrintWindow()" style="background-color: #27ae60; margin-bottom: 10px;">📄 Ava eraldi aknas / Prindi</button>
             <button class="btn-secondary" onclick="resetToSetup()">Tagasi algusesse</button>
         </div>
         <div id="print-content"></div>
@@ -555,7 +555,7 @@
         const container = document.getElementById("print-content");
         container.innerHTML = "";
 
-        // 1. OSA: Inglise -> Eesti testileht
+        // 1. OSA: Inglise -> Eesti testileht (Paremas tulbas tyhi lahter vastamiseks)
         let title1 = document.createElement("h2");
         title1.textContent = "Sõnavaratest: Inglise -> Eesti (Kirjuta eesti keeles)";
         container.appendChild(title1);
@@ -575,12 +575,12 @@
             container.appendChild(unitDiv);
         }
 
-        // Lehevahetus kahe testi vahel printimisel
+        // Lehevahetus kahe testi vahel
         let breakDiv = document.createElement("div");
         breakDiv.className = "page-break";
         container.appendChild(breakDiv);
 
-        // 2. OSA: Eesti -> Inglise testileht
+        // 2. OSA: Eesti -> Inglise testileht (Paremas tulbas tühi lahter vastamiseks)
         let title2 = document.createElement("h2");
         title2.textContent = "Sõnavaratest: Eesti -> Inglise (Kirjuta inglise keeles)";
         container.appendChild(title2);
@@ -599,6 +599,37 @@
             unitDiv.innerHTML = html;
             container.appendChild(unitDiv);
         }
+    }
+
+    window.openPrintWindow = function() {
+        const printContent = document.getElementById("print-content").innerHTML;
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html lang="et">
+            <head>
+                <meta charset="UTF-8">
+                <title>Prindi testilehed</title>
+                <style>
+                    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; color: #333; }
+                    h2 { color: #2c3e50; margin-top: 30px; }
+                    .print-unit { margin-bottom: 30px; page-break-inside: avoid; }
+                    .print-unit h4 { border-bottom: 2px solid #2c3e50; padding-bottom: 5px; margin-bottom: 10px; color: #2c3e50; }
+                    .print-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                    .print-table th, .print-table td { border: 1px solid #bdc3c7; padding: 10px 12px; text-align: left; height: 28px; }
+                    .print-table th { background-color: #ecf0f1; width: 50%; }
+                    .page-break { page-break-before: always; }
+                </style>
+            </head>
+            <body>
+                ${printContent}
+                <script>
+                    window.onload = function() { window.print(); };
+                <\/script>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
     }
 
     function shuffle(array) {
