@@ -100,10 +100,11 @@
             margin-bottom: 15px;
         }
         .letter-count {
-            font-size: 0.95rem;
+            font-size: 1.1rem;
             color: #e67e22;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
         }
 
         /* PRINTIMISE STIILID */
@@ -499,6 +500,11 @@
         }
     }
 
+    // Abifunktsioon tähtede asendamiseks alakriipsudega (arvestades ka tühikuid)
+    function getUnderscores(str) {
+        return str.split('').map(char => char === ' ' ? ' &nbsp; ' : '_').join(' ');
+    }
+
     function startQuiz() {
         const selectedUnit = document.getElementById("unit-select").value;
         testMode = document.getElementById("mode-select").value;
@@ -533,11 +539,10 @@
 
             currentQuestions.forEach(([eng, est]) => {
                 let row = document.createElement("tr");
-                // Lisame sulgudesse tähtede arvu (näiteks õige sõna pikkuse)
-                let engLength = eng.length;
-                let estLength = est.length;
+                let engUnderscores = getUnderscores(eng);
+                let estUnderscores = getUnderscores(est);
                 
-                row.innerHTML = `<td><strong>${eng}</strong> (${engLength} tähte)</td><td>${est} (${estLength} tähte)</td>`;
+                row.innerHTML = `<td><strong>${eng}</strong><br><span style="letter-spacing: 2px; color: #666;">${engUnderscores}</span></td><td><span style="letter-spacing: 2px; color: #666;">${estUnderscores}</span></td>`;
                 tbody.appendChild(row);
             });
             return;
@@ -594,9 +599,9 @@
         currentEnglishWord = eng;
         currentCorrectAnswer = (direction === "en-et") ? est : eng;
 
-        // Näita vastuse pikkust (tähtede arvu) vihjena
+        // Näita vastuse pikkust alakriipsudena
         const letterCountInfo = document.getElementById("letter-count-info");
-        letterCountInfo.textContent = `Vastusel on ${currentCorrectAnswer.length} tähte`;
+        letterCountInfo.innerHTML = getUnderscores(currentCorrectAnswer);
 
         const audioBtn = document.getElementById("audio-btn");
         const promptEl = document.getElementById("question-prompt");
