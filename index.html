@@ -25,7 +25,7 @@
             width: 100%;
             text-align: center;
         }
-        h1, h2 {
+        h1, h2, h3 {
             color: #2c3e50;
             margin-bottom: 20px;
         }
@@ -111,25 +111,32 @@
             text-align: left;
         }
         .print-unit {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             page-break-inside: avoid;
         }
-        .print-unit h3 {
+        .print-unit h4 {
             border-bottom: 2px solid #2c3e50;
             padding-bottom: 5px;
             margin-bottom: 10px;
+            color: #2c3e50;
         }
         .print-table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
         .print-table th, .print-table td {
             border: 1px solid #bdc3c7;
-            padding: 8px 12px;
+            padding: 10px 12px;
             text-align: left;
+            height: 24px; /* Annab tühjadele lahtritele kirjutamiseks kõrgust */
         }
         .print-table th {
             background-color: #ecf0f1;
+            width: 50%;
+        }
+        .page-break {
+            page-break-before: always;
         }
 
         @media print {
@@ -177,7 +184,7 @@
         </select>
 
         <button onclick="startQuiz()">Alusta testi</button>
-        <button class="btn-print" onclick="openPrintView()">🖨️ Prindi sõnade leht / Väljatrükk</button>
+        <button class="btn-print" onclick="openPrintView()">🖨️ Prindi täidetavad testilehed (Mõlemat pidi)</button>
     </div>
 
     <!-- KÜSIMUSTE VAADE -->
@@ -205,7 +212,6 @@
         
         <div id="feedback-box" class="hidden"></div>
 
-        <!-- Nupp testi katkestamiseks ja algusesse naasmiseks -->
         <button class="btn-secondary" style="margin-top: 25px;" onclick="resetToSetup()">🏠 Katkesta ja tagasi algusesse</button>
     </div>
 
@@ -219,9 +225,10 @@
 
     <!-- PRINDITAV VAADE -->
     <div id="print-screen" class="hidden">
-        <h2>Inglise keele sõnavara (Unit 1 - 20)</h2>
-        <button class="no-print" onclick="window.print()" style="margin-bottom: 20px; background-color: #27ae60;">Trki leht välja</button>
-        <button class="no-print btn-secondary" onclick="resetToSetup()" style="margin-bottom: 20px;">Tagasi algusesse</button>
+        <div class="no-print" style="margin-bottom: 20px;">
+            <button onclick="window.print()" style="background-color: #27ae60; margin-bottom: 10px;">Trüki lehed välja</button>
+            <button class="btn-secondary" onclick="resetToSetup()">Tagasi algusesse</button>
+        </div>
         <div id="print-content"></div>
     </div>
 </div>
@@ -548,15 +555,45 @@
         const container = document.getElementById("print-content");
         container.innerHTML = "";
 
+        // 1. OSA: Inglise -> Eesti testileht
+        let title1 = document.createElement("h2");
+        title1.textContent = "Sõnavaratest: Inglise -> Eesti (Kirjuta eesti keeles)";
+        container.appendChild(title1);
+
         for (let unitName in vocabulary) {
             let unitDiv = document.createElement("div");
             unitDiv.className = "print-unit";
             
-            let html = `<h3>${unitName}</h3>`;
-            html += `<table class="print-table"><thead><tr><th>Inglise keel</th><th>Eesti keel</th></tr></thead><tbody>`;
+            let html = `<h4>${unitName}</h4>`;
+            html += `<table class="print-table"><thead><tr><th>Inglise keel</th><th>Eesti keel (kirjuta siia)</th></tr></thead><tbody>`;
             
             for (let eng in vocabulary[unitName]) {
-                html += `<tr><td>${eng}</td><td>${vocabulary[unitName][eng]}</td></tr>`;
+                html += `<tr><td><strong>${eng}</strong></td><td>&nbsp;</td></tr>`;
+            }
+            html += `</tbody></table>`;
+            unitDiv.innerHTML = html;
+            container.appendChild(unitDiv);
+        }
+
+        // Lehevahetus kahe testi vahel printimisel
+        let breakDiv = document.createElement("div");
+        breakDiv.className = "page-break";
+        container.appendChild(breakDiv);
+
+        // 2. OSA: Eesti -> Inglise testileht
+        let title2 = document.createElement("h2");
+        title2.textContent = "Sõnavaratest: Eesti -> Inglise (Kirjuta inglise keeles)";
+        container.appendChild(title2);
+
+        for (let unitName in vocabulary) {
+            let unitDiv = document.createElement("div");
+            unitDiv.className = "print-unit";
+            
+            let html = `<h4>${unitName}</h4>`;
+            html += `<table class="print-table"><thead><tr><th>Eesti keel</th><th>Inglise keel (kirjuta siia)</th></tr></thead><tbody>`;
+            
+            for (let eng in vocabulary[unitName]) {
+                html += `<tr><td><strong>${vocabulary[unitName][eng]}</strong></td><td>&nbsp;</td></tr>`;
             }
             html += `</tbody></table>`;
             unitDiv.innerHTML = html;
@@ -578,7 +615,7 @@
         }
 
         document.getElementById("progress-stats").textContent = `Küsimus ${currentIndex + 1} / ${currentQuestions.length}`;
-        document.getElementById("user-answer").value = ""; // Tühjendab vastuse lahtri uue küsimuse alguses
+        document.getElementById("user-answer").value = "";
         
         const feedbackBox = document.getElementById("feedback-box");
         feedbackBox.classList.add("hidden");
