@@ -73,22 +73,22 @@
             color: #2c3e50;
             border: 1px solid #bdc3c7;
             margin: 8px 0;
-            position: relative; /* Vajalik väikese numbri positsioneerimiseks kasti nurka */
+            position: relative;
             text-align: left;
-            padding-right: 40px;
+            padding-right: 50px;
         }
         .option-btn::after {
             content: attr(data-length);
             position: absolute;
-            right: 10px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
             background-color: #bdc3c7;
             color: #2c3e50;
             font-size: 0.75rem;
-            padding: 2px 6px;
+            padding: 3px 7px;
             border-radius: 4px;
-            font-weight: normal;
+            font-weight: bold;
         }
         .option-btn:hover {
             background-color: #dcdde1;
@@ -115,13 +115,6 @@
             color: #7f8c8d;
             margin-bottom: 15px;
         }
-        .letter-count {
-            font-size: 1.1rem;
-            color: #e67e22;
-            font-weight: bold;
-            margin-bottom: 10px;
-            letter-spacing: 3px;
-        }
 
         /* PRINTIMISE STIILID */
         #print-screen {
@@ -135,10 +128,26 @@
         }
         .print-table th, .print-table td {
             border: 1px solid #bdc3c7;
-            padding: 8px 12px;
+            padding: 10px 12px;
+            vertical-align: middle;
         }
         .print-table th {
             background-color: #f8f9fa;
+        }
+        .print-item-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .length-badge {
+            font-size: 0.75rem;
+            background-color: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #7f8c8d;
+            font-family: sans-serif;
+            font-weight: bold;
         }
 
         @media print {
@@ -196,7 +205,6 @@
         <button id="audio-btn" class="btn-audio hidden" onclick="playAudio()">🔊 Kuula hääldust</button>
         
         <h3 id="question-prompt">Küsimus siia</h3>
-        <div id="letter-count-info" class="letter-count"></div>
         
         <!-- Režiim 1: Kirjutamine -->
         <div id="input-mode-container">
@@ -215,7 +223,6 @@
         
         <div id="feedback-box" class="hidden"></div>
 
-        <!-- Nupp testi katkestamiseks ja algusesse naasmiseks -->
         <button class="btn-secondary no-print" style="margin-top: 25px;" onclick="resetToSetup()">🏠 Katkesta ja tagasi algusesse</button>
     </div>
 
@@ -359,7 +366,7 @@
             "if": "kui, kas", "dragon": "draakon", "caterpillar": "röövik, tõuk", "hole": "auk"
         },
         "Unit 11 Picnic": {
-            "picnic": "piknik, eine vabas õhus", "pack": "pakkima", "woods": "mets", "in the woods": "metsa all, metsas",
+            "picnic": "piknik, eine vabas õhus", "pack": "pakkima", "woods": "mets", "in the woods": "metsa al, metsas",
             "snack": "suupiste; näksima", "juice": "mahl", "juicy": "mahlane", "forget": "unustama", "bread": "leib",
             "egg": "muna", "cheese": "juust", "butter": "või", "cucumber": "kurk", "carrot": "porgand", "cake": "kook",
             "radish": "redis", "shall": "abitegusõna tegevusse kaasamisel", "What shall we eat?": "Mida me sööme?",
@@ -516,10 +523,6 @@
         }
     }
 
-    function getUnderscores(str) {
-        return str.split('').map(char => char === ' ' ? ' &nbsp; ' : '_').join(' ');
-    }
-
     function startQuiz() {
         const selectedUnit = document.getElementById("unit-select").value;
         testMode = document.getElementById("mode-select").value;
@@ -553,10 +556,22 @@
 
             currentQuestions.forEach(([eng, est]) => {
                 let row = document.createElement("tr");
-                let engUnderscores = getUnderscores(eng);
-                let estUnderscores = getUnderscores(est);
                 
-                row.innerHTML = `<td><strong>${eng}</strong><br><span style="letter-spacing: 2px; color: #666;">${engUnderscores}</span></td><td><span style="letter-spacing: 2px; color: #666;">${estUnderscores}</span></td>`;
+                // Mõlemale poolele lisame sõna ja tähtede arvu väikese märgi nurka/kõrvale ilma alakriipsudeta
+                row.innerHTML = `
+                    <td>
+                        <div class="print-item-container">
+                            <strong>${eng}</strong>
+                            <span class="length-badge">[${eng.length}]</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="print-item-container">
+                            <span style="color: transparent; user-select: none;">${est}</span>
+                            <span class="length-badge">[${est.length}]</span>
+                        </div>
+                    </td>
+                `;
                 tbody.appendChild(row);
             });
             return;
@@ -612,9 +627,6 @@
         currentEnglishWord = eng;
         currentCorrectAnswer = (direction === "en-et") ? est : eng;
 
-        const letterCountInfo = document.getElementById("letter-count-info");
-        letterCountInfo.innerHTML = getUnderscores(currentCorrectAnswer);
-
         const audioBtn = document.getElementById("audio-btn");
         const promptEl = document.getElementById("question-prompt");
 
@@ -652,8 +664,7 @@
         for (let i = 0; i < 4; i++) {
             let btn = document.getElementById(`choice-${i}`);
             btn.textContent = choices[i] || "";
-            // Määrame nupu atribuudiks vastuse pikkuse (loendab ka tühikud/märgid)
-            btn.setAttribute('data-length', choices[i] ? choices[i].length : 0);
+            btn.setAttribute('data-length', choices[i] ? `[${choices[i].length}]` : '');
             btn.disabled = false;
         }
     }
