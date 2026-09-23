@@ -62,6 +62,12 @@
         .btn-secondary:hover {
             background-color: #7f8c8d;
         }
+        .btn-warning {
+            background-color: #e67e22;
+        }
+        .btn-warning:hover {
+            background-color: #d35400;
+        }
         .option-btn {
             background-color: #ecf0f1;
             color: #2c3e50;
@@ -134,6 +140,7 @@
         <div id="input-mode-container">
             <input type="text" id="user-answer" placeholder="Sisesta vastus..." autocomplete="off">
             <button onclick="checkInputAnswer()">Vasta</button>
+            <button class="btn-warning" onclick="skipInputAnswer()">🤷‍♂️ Ma ei tea / Jäta vahele</button>
         </div>
 
         <!-- Režiim 2: 4 valikuvõimalust -->
@@ -394,6 +401,7 @@
     let currentIndex = 0;
     let score = 0;
     let mistakes = [];
+    let skippedOnce = new Set5 = new Set(); // Jätab meelde sõnad, mis on korra vahele jäetud
     let direction = "en-et";
     let testMode = "input";
     let currentEnglishWord = "";
@@ -458,6 +466,7 @@
         currentIndex = 0;
         score = 0;
         mistakes = [];
+        skippedOnce = new Set();
 
         document.getElementById("setup-screen").classList.add("hidden");
         document.getElementById("result-screen").classList.add("hidden");
@@ -560,14 +569,38 @@
             showFeedback(true, "Õige!");
             currentIndex++;
         } else {
+            // Kontrollime, kas see sõna on juba varem vahele jäetud (ehk teist korda ei tea)
+            if (skippedOnce.has(currentPair[0])) {
+                if (!mistakes.some(m => m[0] === currentPair[0])) {
+                    mistakes.push(currentPair);
+                }
+                showFeedback(false, `Vale! Õige vastus oli: ${currentCorrectAnswer}`);
+            } else {
+                // Esimesel korral vale vastus -> viskame järjekorra lõppu ja märgime vahelejäetuks
+                skippedOnce.add(currentPair[0]);
+                currentQuestions.push(currentPair);
+                showFeedback(false, `Vale! Sõna läks kordamisele ja tuleb hiljem uuesti.`);
+            }
+            currentIndex++;
+        }
+    }
+
+    function skipInputAnswer() {
+        let currentPair = currentQuestions[currentIndex];
+
+        if (skippedOnce.has(currentPair[0])) {
+            // Kui oli juba varem vahele jäetud ja nüüd jälle ei tea -> loeme lõplikult valeks
             if (!mistakes.some(m => m[0] === currentPair[0])) {
                 mistakes.push(currentPair);
             }
+            showFeedback(false, `Vahele jäetud! Õige vastus oli: ${currentCorrectAnswer}`);
+        } else {
+            // Esimene kord vahele jätta -> liigutame lihtsalt nimekirja lõppu
+            skippedOnce.add(currentPair[0]);
             currentQuestions.push(currentPair);
-            
-            showFeedback(false, `Vale! Õige vastus oli: ${currentCorrectAnswer}`);
-            currentIndex++;
+            showFeedback(false, `Jäetud vahele, sõna tuleb hiljem uuesti.`);
         }
+        currentIndex++;
     }
 
     function checkChoiceAnswer(index) {
@@ -583,12 +616,16 @@
             showFeedback(true, "Õige!");
             currentIndex++;
         } else {
-            if (!mistakes.some(m => m[0] === currentPair[0])) {
-                mistakes.push(currentPair);
+            if (skippedOnce.has(currentPair[0])) {
+                if (!mistakes.some(m => m[0] === currentPair[0])) {
+                    mistakes.push(currentPair);
+                }
+                showFeedback(false, `Vale! Õige vastus oli: ${currentCorrectAnswer}`);
+            } else {
+                skippedOnce.add(currentPair[0]);
+                currentQuestions.push(currentPair);
+                showFeedback(false, `Vale! Sõna läks kordamisele ja tuleb hiljem uuesti.`);
             }
-            currentQuestions.push(currentPair);
-
-            showFeedback(false, `Vale! Õige vastus oli: ${currentCorrectAnswer}`);
             currentIndex++;
         }
     }
@@ -606,7 +643,7 @@
         document.getElementById("quiz-screen").classList.add("hidden");
         document.getElementById("result-screen").classList.remove("hidden");
 
-        document.getElementById("final-score").textContent = `Esialgne põhivoor läbitud! Kokku esines raskusi ${mistakes.length} sõnaga.`;
+        document.getElementById("final-score").textContent = `Test läbi! Kokku esines raskusi ${mistakes.length} sõnaga.`;
 
         const container = document.getElementById("mistakes-container");
         container.innerHTML = "";
@@ -619,7 +656,7 @@
             html += "</ul>";
             container.innerHTML = html;
         } else {
-            container.innerHTML = "<p>Suurepärane! Vastasid esimese korraga kõigile õigesti!</p>";
+            container.innerHTML = "<p>Suurepärane! Vastasid kõigile õigesti!</p>";
         }
     }
 
