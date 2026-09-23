@@ -401,7 +401,7 @@
     let currentIndex = 0;
     let score = 0;
     let mistakes = [];
-    let skippedOnce = new Set5 = new Set(); // Jätab meelde sõnad, mis on korra vahele jäetud
+    let skippedOnce = new Set();
     let direction = "en-et";
     let testMode = "input";
     let currentEnglishWord = "";
@@ -569,14 +569,12 @@
             showFeedback(true, "Õige!");
             currentIndex++;
         } else {
-            // Kontrollime, kas see sõna on juba varem vahele jäetud (ehk teist korda ei tea)
             if (skippedOnce.has(currentPair[0])) {
                 if (!mistakes.some(m => m[0] === currentPair[0])) {
                     mistakes.push(currentPair);
                 }
                 showFeedback(false, `Vale! Õige vastus oli: ${currentCorrectAnswer}`);
             } else {
-                // Esimesel korral vale vastus -> viskame järjekorra lõppu ja märgime vahelejäetuks
                 skippedOnce.add(currentPair[0]);
                 currentQuestions.push(currentPair);
                 showFeedback(false, `Vale! Sõna läks kordamisele ja tuleb hiljem uuesti.`);
@@ -589,13 +587,11 @@
         let currentPair = currentQuestions[currentIndex];
 
         if (skippedOnce.has(currentPair[0])) {
-            // Kui oli juba varem vahele jäetud ja nüüd jälle ei tea -> loeme lõplikult valeks
             if (!mistakes.some(m => m[0] === currentPair[0])) {
                 mistakes.push(currentPair);
             }
             showFeedback(false, `Vahele jäetud! Õige vastus oli: ${currentCorrectAnswer}`);
         } else {
-            // Esimene kord vahele jätta -> liigutame lihtsalt nimekirja lõppu
             skippedOnce.add(currentPair[0]);
             currentQuestions.push(currentPair);
             showFeedback(false, `Jäetud vahele, sõna tuleb hiljem uuesti.`);
