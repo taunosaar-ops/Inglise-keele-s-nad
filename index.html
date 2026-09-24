@@ -45,6 +45,12 @@
         button:hover {
             background-color: #2980b9;
         }
+        .btn-secondary {
+            background-color: #7f8c8d;
+        }
+        .btn-secondary:hover {
+            background-color: #6c7a89;
+        }
         .question-box {
             margin-top: 20px;
             padding: 20px;
@@ -72,17 +78,66 @@
         .hidden {
             display: none;
         }
+        .audio-btn {
+            background: #2ecc71;
+            margin-left: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+            flex: unset;
+        }
+        .audio-btn:hover {
+            background: #27ae60;
+        }
+
+        /* Printimisstiilid */
+        @media print {
+            body {
+                background-color: #fff;
+                color: #000;
+                max-width: 100%;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+            }
+            .controls, button, #testArea, #resultArea, .print-hide {
+                display: none !important;
+            }
+            #printArea {
+                display: block !important;
+            }
+        }
+        #printArea {
+            display: none;
+        }
+        .print-unit-title {
+            margin-top: 15px;
+            font-size: 18px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+        .print-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .print-table th, .print-table td {
+            border: 1px solid #ddd;
+            padding: 6px 10px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Sõnavaratester</h1>
+    <h1 class="print-hide">Sõnavaratester</h1>
 
-    <div class="controls">
+    <div class="controls print-hide">
         <select id="bookSelect">
-            <option value="book1">Book 1</option>
-            <option value="book2">Book 2</option>
+            <option value="book1">Book 1 (15 unitit)</option>
+            <option value="book2">Book 2 (20 unitit)</option>
         </select>
 
         <select id="unitSelect">
@@ -100,11 +155,19 @@
         </select>
     </div>
 
-    <button id="startBtn">Alusta testi</button>
+    <div class="controls print-hide">
+        <button id="startBtn">Alusta testi</button>
+        <button id="printViewBtn" class="btn-secondary">Prindi sõnad (Leht)</button>
+    </div>
 
+    <!-- Testiala -->
     <div id="testArea" class="hidden">
         <div id="progressText" style="font-weight: bold; margin-bottom: 10px;">Küsimus 1 / 10</div>
-        <h3 id="questionText">Küsimus siia</h3>
+        
+        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+            <h3 id="questionText" style="margin: 0;">Küsimus siia</h3>
+            <button id="speakBtn" class="audio-btn" title="Kuula hääldust">🔊 Kuula</button>
+        </div>
 
         <div id="inputModeDiv">
             <input type="text" id="userAnswer" placeholder="Kirjuta vastus siia...">
@@ -117,10 +180,17 @@
         <p id="feedbackText" style="font-weight: bold; margin-top: 15px;"></p>
     </div>
 
+    <!-- Tulemuste ala -->
     <div id="resultArea" class="hidden" style="text-align: center;">
         <h2>Test läbi!</h2>
         <p id="finalScoreText" style="font-size: 18px; margin: 15px 0;">Sinu tulemus: 0/0</p>
         <button id="restartBtn">Proovi uuesti</button>
+    </div>
+
+    <!-- Prinditav ala -->
+    <div id="printArea">
+        <h2>Inglise keele sõnavara nimekiri</h2>
+        <div id="printContent"></div>
     </div>
 </div>
 
@@ -426,11 +496,13 @@
     const modeSelect = document.getElementById('modeSelect');
     const directionSelect = document.getElementById('directionSelect');
     const startBtn = document.getElementById('startBtn');
+    const printViewBtn = document.getElementById('printViewBtn');
     
     const testArea = document.getElementById('testArea');
     const resultArea = document.getElementById('resultArea');
     const progressText = document.getElementById('progressText');
     const questionText = document.getElementById('questionText');
+    const speakBtn = document.getElementById('speakBtn');
     const inputModeDiv = document.getElementById('inputModeDiv');
     const choicesModeDiv = document.getElementById('choicesModeDiv');
     const userAnswer = document.getElementById('userAnswer');
@@ -438,10 +510,12 @@
     const feedbackText = document.getElementById('feedbackText');
     const finalScoreText = document.getElementById('finalScoreText');
     const restartBtn = document.getElementById('restartBtn');
+    const printContent = document.getElementById('printContent');
 
     let currentQuestions = [];
     let currentIndex = 0;
     let score = 0;
+    let currentEnglishWord = "";
 
     function updateUnits() {
         const selectedBook = bookSelect.value;
@@ -457,6 +531,23 @@
 
     bookSelect.addEventListener('change', updateUnits);
     updateUnits();
+
+    // Kõnesüntees inglise keele hääldamiseks
+    function speakWord(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // Peata eelmine heli
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9; // Natuke aeglasem selguse huvides
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    speakBtn.onclick = () => {
+        if (currentEnglishWord) {
+            speakWord(currentEnglishWord);
+        }
+    };
 
     function startTest() {
         const book = bookSelect.value;
@@ -502,9 +593,14 @@
         const direction = directionSelect.value;
         
         if (direction === 'en-et') {
+            currentEnglishWord = q.en;
             questionText.textContent = `Mis on eesti keeles: "${q.en}"?`;
+            speakWord(q.en); // Loeb automaatselt ette
+            speakBtn.style.display = 'inline-block';
         } else {
+            currentEnglishWord = q.en;
             questionText.textContent = `Mis on inglise keeles: "${q.et}"?`;
+            speakBtn.style.display = 'none'; // Eesti -> Inglise suunal ei hakka ette lugema vastust
         }
 
         const mode = modeSelect.value;
@@ -596,6 +692,25 @@
         startBtn.classList.remove('hidden');
         finalScoreText.textContent = `Sinu tulemus: ${score} / ${currentQuestions.length}`;
     }
+
+    // Printimisvaate genereerimine
+    printViewBtn.onclick = () => {
+        const book = bookSelect.value;
+        const units = wordData[book];
+        let html = `<h3>Valitud raamat: ${book === 'book1' ? 'Book 1' : 'Book 2'}</h3>`;
+
+        for (let unitName in units) {
+            html += `<div class="print-unit-title"><strong>${unitName}</strong></div>`;
+            html += `<table class="print-table"><thead><tr><th>Inglise keel</th><th>Eesti keel</th></tr></thead><tbody>`;
+            units[unitName].forEach(word => {
+                html += `<tr><td>${word.en}</td><td>${word.et}</td></tr>`;
+            });
+            html += `</tbody></table>`;
+        }
+
+        printContent.innerHTML = html;
+        window.print();
+    };
 
     startBtn.onclick = startTest;
     restartBtn.onclick = startTest;
