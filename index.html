@@ -62,6 +62,9 @@
             background-color: #fff;
             color: #333;
             border: 1px solid #bdc3c7;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 4px;
         }
         .option-btn:hover {
             background-color: #dfe6e9;
@@ -100,169 +103,346 @@
     <button id="startBtn">Alusta testi</button>
 
     <div id="testArea" class="hidden">
-        <div id="progressText">Küsimus 1 / 10</div>
+        <div id="progressText" style="font-weight: bold; margin-bottom: 10px;">Küsimus 1 / 10</div>
         <h3 id="questionText">Küsimus siia</h3>
 
         <div id="inputModeDiv">
             <input type="text" id="userAnswer" placeholder="Kirjuta vastus siia...">
-            <button id="submitAnswerBtn" style="margin-top: 10px;">Vasta</button>
+            <br>
+            <button id="submitAnswerBtn" style="margin-top: 10px; width: 100%;">Vasta</button>
         </div>
 
-        <div id="choicesModeDiv" class="options hidden">
-            <!-- Valikud lisatakse skriptiga -->
-        </div>
+        <div id="choicesModeDiv" class="options hidden"></div>
 
         <p id="feedbackText" style="font-weight: bold; margin-top: 15px;"></p>
     </div>
 
     <div id="resultArea" class="hidden" style="text-align: center;">
         <h2>Test läbi!</h2>
-        <p id="finalScoreText">Sinu tulemus: 0/0</p>
+        <p id="finalScoreText" style="font-size: 18px; margin: 15px 0;">Sinu tulemus: 0/0</p>
         <button id="restartBtn">Proovi uuesti</button>
     </div>
 </div>
 
 <script>
-    // Sõnade andmebaas (Book 1 ja Book 2)
     const wordData = {
         "book1": {
             "Unit 1: Hello": [
-                { en: "unit", et: "õppetükk" },
-                { en: "Hello", et: "Tere!" },
-                { en: "Hi", et: "Tere!" },
-                { en: "I", et: "mina, ma" },
-                { en: "am", et: "olen" },
-                { en: "I = I am", et: "ma olen" },
-                { en: "I'm from", et: "Ma olen pärit" },
-                { en: "Britain", et: "Britannia" },
-                { en: "America", et: "Ameerika" },
-                { en: "Finland", et: "Soome" },
-                { en: "Estonia", et: "Eesti" },
-                { en: "and", et: "ja, ning" },
-                { en: "you", et: "sina, teie" },
-                { en: "he", et: "tema (meessoost)" },
-                { en: "she", et: "tema (naissoost)" },
-                { en: "this", et: "see" },
-                { en: "is", et: "on (olema 3. pööre ainsuses)" },
-                { en: "He's / She's from", et: "Ta on pärit" },
-                { en: "good", et: "hea" },
-                { en: "morning", et: "hommik" },
-                { en: "Good morning!", et: "Tere hommikust!" },
-                { en: "Miss", et: "preili" },
-                { en: "what", et: "mis (küsisõna)" },
-                { en: "what's = what is", et: "mis on" },
-                { en: "your", et: "sinu; teie" },
-                { en: "name", et: "nimi" },
-                { en: "Sorry.", et: "Vabandust." },
-                { en: "late", et: "hilja" },
-                { en: "Sorry, I'm late.", et: "Vabandust, et ma hilinesin." },
-                { en: "that", et: "see (seal)" },
-                { en: "that's = that is", et: "see on" },
-                { en: "OK", et: "okei, korras, hästi" },
-                { en: "That's OK.", et: "Siin: Sellest pole midagi." },
-                { en: "Goodbye!", et: "Head päeva! Head aega!" },
-                { en: "Bye-bye!", et: "Head päeva! Head aega!" }
+                { en: "unit", et: "õppetükk" }, { en: "Hello", et: "Tere!" }, { en: "Hi", et: "Tere!" },
+                { en: "I", et: "mina, ma" }, { en: "am", et: "olen" }, { en: "I = I am", et: "ma olen" },
+                { en: "I'm from", et: "Ma olen pärit" }, { en: "Britain", et: "Britannia" }, { en: "America", et: "Ameerika" },
+                { en: "Finland", et: "Soome" }, { en: "Estonia", et: "Eesti" }, { en: "and", et: "ja, ning" },
+                { en: "you", et: "sina, teie" }, { en: "he", et: "tema (meessoost)" }, { en: "she", et: "tema (naissoost)" },
+                { en: "this", et: "see" }, { en: "is", et: "on" }, { en: "He's / She's from", et: "Ta on pärit" },
+                { en: "good", et: "hea" }, { en: "morning", et: "hommik" }, { en: "Good morning!", et: "Tere hommikust!" },
+                { en: "Miss", et: "preili" }, { en: "what", et: "mis" }, { en: "what's = what is", et: "mis on" },
+                { en: "your", et: "sinu; teie" }, { en: "name", et: "nimi" }, { en: "Sorry.", et: "Vabandust." },
+                { en: "late", et: "hilja" }, { en: "Sorry, I'm late.", et: "Vabandust, et ma hilinesin." }, { en: "that", et: "see" },
+                { en: "that's = that is", et: "see on" }, { en: "OK", et: "okei, korras" }, { en: "That's OK.", et: "Sellest pole midagi." },
+                { en: "Goodbye!", et: "Head aega!" }, { en: "Bye-bye!", et: "Head aega!" }
             ],
             "Unit 2: Family": [
-                { en: "family", et: "perekond" },
-                { en: "dad", et: "isa" },
-                { en: "my", et: "minu (oma)" },
-                { en: "friend", et: "sõber" },
-                { en: "Mr", et: "härra" },
-                { en: "dog", et: "koer" },
-                { en: "mum", et: "ema" },
-                { en: "granny", et: "vanaema" },
-                { en: "grandad", et: "vanaisa" },
-                { en: "brother", et: "vend" },
-                { en: "sister", et: "õde" },
-                { en: "cat", et: "kass" },
-                { en: "his", et: "tema (oma) (meessoost)" },
-                { en: "her", et: "tema (oma) (naissoost)" },
-                { en: "these", et: "need (siin)" },
-                { en: "are", et: "oled, oleme, olete, on (mitmuses)" },
-                { en: "big", et: "suur" },
-                { en: "small", et: "väike" },
-                { en: "girl; girls", et: "tüdruk; tüdrukud" },
-                { en: "boy; boys", et: "poiss; poisid" },
-                { en: "book", et: "raamat" },
-                { en: "ball", et: "pall" },
-                { en: "pencil", et: "pliiats" },
-                { en: "horse; horses", et: "hobune; hobused" },
-                { en: "new", et: "uus" },
-                { en: "bike", et: "jalgratas" },
-                { en: "cool", et: "äge, vinge" },
-                { en: "police", et: "politsei" },
-                { en: "in", et: "sees; sisse (eessõna)" },
-                { en: "come", et: "tulema" },
-                { en: "say", et: "ütlema" },
-                { en: "the", et: "artikkel" },
-                { en: "the ABC", et: "tähestik" },
-                { en: "shoe, shoes", et: "king, kingad" },
-                { en: "so", et: "nii" },
-                { en: "beautiful", et: "ilus" },
-                { en: "Thanks.", et: "Tänan." },
-                { en: "ladybird", et: "lepatriinu" },
-                { en: "tooth; teeth", et: "hammas; hambad" },
-                { en: "fairy", et: "haldjas" },
-                { en: "tooth fairy", et: "hambahaldjas" },
-                { en: "lamb", et: "(lamba)tall" }
+                { en: "family", et: "perekond" }, { en: "dad", et: "isa" }, { en: "my", et: "minu" },
+                { en: "friend", et: "sõber" }, { en: "Mr", et: "härra" }, { en: "dog", et: "koer" },
+                { en: "mum", et: "ema" }, { en: "granny", et: "vanaema" }, { en: "grandad", et: "vanaisa" },
+                { en: "brother", et: "vend" }, { en: "sister", et: "õde" }, { en: "cat", et: "kass" },
+                { en: "his", et: "tema (meessoost)" }, { en: "her", et: "tema (naissoost)" }, { en: "these", et: "need" },
+                { en: "are", et: "on (mitmuses)" }, { en: "big", et: "suur" }, { en: "small", et: "väike" },
+                { en: "girl", et: "tüdruk" }, { en: "boy", et: "poiss" }, { en: "book", et: "raamat" },
+                { en: "ball", et: "pall" }, { en: "pencil", et: "pliiats" }, { en: "horse", et: "hobune" },
+                { en: "new", et: "uus" }, { en: "bike", et: "jalgratas" }, { en: "cool", et: "äge" },
+                { en: "police", et: "politsei" }, { en: "in", et: "sees" }, { en: "come", et: "tulema" },
+                { en: "say", et: "ütlema" }, { en: "the ABC", et: "tähestik" }, { en: "shoe", et: "king" },
+                { en: "so", et: "nii" }, { en: "beautiful", et: "ilus" }, { en: "Thanks.", et: "Tänan." },
+                { en: "ladybird", et: "lepatriinu" }, { en: "tooth", et: "hammas" }, { en: "teeth", et: "hambad" },
+                { en: "fairy", et: "haldjas" }, { en: "tooth fairy", et: "hambahaldjas" }, { en: "lamb", et: "tall" }
             ],
             "Unit 3: Numbers": [
-                { en: "number", et: "number" },
-                { en: "one", et: "üks" },
-                { en: "two", et: "kaks" },
-                { en: "three", et: "kolm" },
-                { en: "four", et: "neli" },
-                { en: "five", et: "viis" },
-                { en: "six", et: "kuus" },
-                { en: "tree", et: "puu" },
-                { en: "in the tree", et: "puu otsas" },
-                { en: "good", et: "hea" },
-                { en: "is good at", et: "oskab hästi" },
-                { en: "play", et: "mängima" },
-                { en: "trick", et: "vemp, vingerpuss" },
-                { en: "play tricks", et: "vingerpussi mängima" },
-                { en: "playing tricks", et: "vingerpussi mängimine" },
-                { en: "it", et: "see" },
-                { en: "yes", et: "jah" },
-                { en: "Yes, it is.", et: "Jah, see on." },
-                { en: "no", et: "ei" },
-                { en: "No, it isn't.", et: "Ei, see ei ole." },
-                { en: "English", et: "inglise keel" },
-                { en: "music", et: "muusika" },
-                { en: "sport", et: "sport" },
-                { en: "football", et: "jalgpall" },
-                { en: "puzzle", et: "mõistatus; pusle" },
-                { en: "year", et: "aasta" },
-                { en: "I'm in year three.", et: "Ma olen kolmandas klassis." },
-                { en: "a", et: "artikkel" },
-                { en: "student", et: "õpilane" },
-                { en: "I'm a year-three student.", et: "Ma olen kolmanda klassi õpilane." },
-                { en: "class", et: "klass; tund" },
-                { en: "teacher", et: "õpetaja" },
-                { en: "class teacher", et: "klassijuhataja" },
-                { en: "Mrs", et: "proua" },
-                { en: "now", et: "nüüd" },
-                { en: "you", et: "sina, sa; teie, te" },
-                { en: "see", et: "nägema" },
-                { en: "how", et: "kuidas; kui" },
-                { en: "well", et: "hästi" },
-                { en: "we", et: "meie, me" },
-                { en: "know", et: "teadma" },
-                { en: "spell", et: "tähthaaval ütlema" },
-                { en: "be", et: "olema" },
-                { en: "an", et: "artikkel" }
+                { en: "number", et: "number" }, { en: "one", et: "üks" }, { en: "two", et: "kaks" },
+                { en: "three", et: "kolm" }, { en: "four", et: "neli" }, { en: "five", et: "viis" },
+                { en: "six", et: "kuus" }, { en: "tree", et: "puu" }, { en: "play", et: "mängima" },
+                { en: "trick", et: "vemp" }, { en: "it", et: "see" }, { en: "yes", et: "jah" },
+                { en: "no", et: "ei" }, { en: "English", et: "inglise keel" }, { en: "music", et: "muusika" },
+                { en: "sport", et: "sport" }, { en: "football", et: "jalgpall" }, { en: "puzzle", et: "pusle" },
+                { en: "year", et: "aasta" }, { en: "student", et: "õpilane" }, { en: "class", et: "klass" },
+                { en: "teacher", et: "õpetaja" }, { en: "now", et: "nüüd" }, { en: "see", et: "nägema" },
+                { en: "how", et: "kuidas" }, { en: "well", et: "hästi" }, { en: "we", et: "meie" },
+                { en: "know", et: "teadma" }, { en: "spell", et: "tähthaaval ütlema" }, { en: "be", et: "olema" }
             ],
-            // Siia saab vajadusel lisada Unit 4 kuni Unit 15 täpselt samal kujul
+            "Unit 4: School": [
+                { en: "school", et: "kool" }, { en: "think", et: "mõtlema" }, { en: "bright", et: "terane" },
+                { en: "can", et: "oskama, saama" }, { en: "read", et: "lugema" }, { en: "write", et: "kirjutama" },
+                { en: "really", et: "tõeliselt" }, { en: "they", et: "nemad" }, { en: "pen", et: "pastapliiats" },
+                { en: "pencil case", et: "pinal" }, { en: "ruler", et: "joonlaud" }, { en: "rubber", et: "kustukumm" },
+                { en: "workbook", et: "töövihik" }, { en: "diary", et: "õpilaspäevik" }, { en: "bag", et: "kott" },
+                { en: "apple", et: "õun" }, { en: "seven", et: "seitse" }, { en: "eight", et: "kaheksa" },
+                { en: "nine", et: "üheksa" }, { en: "ten", et: "kümme" }, { en: "red", et: "punane" },
+                { en: "phone", et: "telefon" }, { en: "best", et: "parim" }, { en: "lesson", et: "tund" },
+                { en: "room", et: "ruum" }, { en: "art", et: "kunst" }, { en: "help", et: "aitama" },
+                { en: "where", et: "kus" }, { en: "under", et: "all" }, { en: "please", et: "palun" },
+                { en: "of course", et: "muidugi" }
+            ],
+            "Unit 5: Blackbirds": [
+                { en: "black", et: "must" }, { en: "bird", et: "lind" }, { en: "blackbird", et: "musträstas" },
+                { en: "little", et: "väike" }, { en: "sit", et: "istuma" }, { en: "on", et: "peal" },
+                { en: "hill", et: "küngas" }, { en: "fly", et: "lendama" }, { en: "away", et: "ära" },
+                { en: "back", et: "tagasi" }, { en: "white", et: "valge" }, { en: "wall", et: "müür" },
+                { en: "green", et: "roheline" }, { en: "frog", et: "konn" }, { en: "pool", et: "lomp" },
+                { en: "jump", et: "hüppama" }, { en: "long", et: "pikk" }, { en: "word", et: "sõna" },
+                { en: "short", et: "lühike" }, { en: "verb", et: "tegusõna" }, { en: "colour", et: "värv" },
+                { en: "letter", et: "täht; kiri" }, { en: "show", et: "näitama" }, { en: "start", et: "algama" },
+                { en: "finish", et: "lõpetama" }, { en: "hit", et: "tabama" }, { en: "miss", et: "mööda laskma" }
+            ],
+            "Unit 6: Clothes": [
+                { en: "clothes", et: "riided" }, { en: "yellow", et: "kollane" }, { en: "pink", et: "roosa" },
+                { en: "orange", et: "oranž" }, { en: "purple", et: "lilla" }, { en: "brown", et: "pruun" },
+                { en: "blue", et: "sinine" }, { en: "grey", et: "hall" }, { en: "shirt", et: "särk" },
+                { en: "T-shirt", et: "T-särk" }, { en: "trousers", et: "püksid" }, { en: "dress", et: "kleit" },
+                { en: "skirt", et: "seelik" }, { en: "jacket", et: "jakk" }, { en: "jumper", et: "džemper" },
+                { en: "coat", et: "jope, mantel" }, { en: "scarf", et: "sall" }, { en: "hat", et: "müts" },
+                { en: "present", et: "kingitus" }, { en: "favourite", et: "lemmik" }, { en: "nice", et: "kena" },
+                { en: "soft", et: "pehme" }, { en: "boot", et: "saabas" }, { en: "sock", et: "sokk" },
+                { en: "happy", et: "õnnelik" }, { en: "birthday", et: "sünnipäev" }, { en: "old", et: "vana" }
+            ],
+            "Unit 7: Time": [
+                { en: "time", et: "aeg" }, { en: "clock", et: "kell" }, { en: "eleven", et: "üksteist" },
+                { en: "twelve", et: "kaksteist" }, { en: "almost", et: "peaaegu" }, { en: "run", et: "jooksma" },
+                { en: "dark", et: "pime" }, { en: "park", et: "park" }, { en: "scared", et: "hirmunud" },
+                { en: "bus", et: "buss" }, { en: "bored", et: "tüdinud" }, { en: "go", et: "minema" },
+                { en: "out", et: "välja" }, { en: "then", et: "siis" }, { en: "work", et: "töö" },
+                { en: "home", et: "kodu" }, { en: "sad", et: "kurb" }, { en: "tired", et: "väsinud" },
+                { en: "classroom", et: "klassiruum" }, { en: "gym", et: "võimla" }
+            ],
+            "Unit 8: After school": [
+                { en: "after", et: "pärast" }, { en: "sky", et: "taevas" }, { en: "speak", et: "rääkima" },
+                { en: "draw", et: "joonistama" }, { en: "clown", et: "kloun" }, { en: "climb", et: "ronima" },
+                { en: "left", et: "vasak" }, { en: "hand", et: "käsi" }, { en: "skateboard", et: "rula" },
+                { en: "do", et: "tegema" }, { en: "dance", et: "tantsima" }, { en: "song", et: "laul" },
+                { en: "ride", et: "sõitma" }, { en: "monster", et: "koletis" }, { en: "monkey", et: "ahv" },
+                { en: "spider", et: "ämblik" }, { en: "sing", et: "laulma" }, { en: "swim", et: "ujuma" },
+                { en: "free", et: "vaba" }, { en: "outside", et: "väljas" }, { en: "watch", et: "vaatama" },
+                { en: "film", et: "film" }, { en: "game", et: "mäng" }, { en: "guitar", et: "kitarr" }
+            ],
+            "Unit 9: Body": [
+                { en: "body", et: "keha" }, { en: "head", et: "pea" }, { en: "eye", et: "silm" },
+                { en: "nose", et: "nina" }, { en: "neck", et: "kael" }, { en: "arm", et: "käsivars" },
+                { en: "finger", et: "sõrm" }, { en: "foot", et: "jalg" }, { en: "feet", et: "jalad" },
+                { en: "hair", et: "juuksed" }, { en: "ear", et: "kõrv" }, { en: "mouth", et: "suu" },
+                { en: "shoulder", et: "õlg" }, { en: "knee", et: "põlv" }, { en: "leg", et: "jalg" },
+                { en: "toe", et: "varvas" }, { en: "touch", et: "puudutama" }, { en: "hurt", et: "valutama" },
+                { en: "plaster", et: "plaaster" }, { en: "here", et: "siin" }, { en: "mouse", et: "hiir" },
+                { en: "mice", et: "hiired" }, { en: "tail", et: "saba" }, { en: "strong", et: "tugev" }
+            ],
+            "Unit 10: Toys": [
+                { en: "toy", et: "mänguasi" }, { en: "train", et: "rong" }, { en: "doll", et: "nukk" },
+                { en: "house", et: "maja" }, { en: "pirate", et: "piraat" }, { en: "ship", et: "laev" },
+                { en: "robot", et: "robot" }, { en: "animal", et: "loom" }, { en: "mask", et: "mask" },
+                { en: "rope", et: "köis" }, { en: "model", et: "mudel" }, { en: "car", et: "auto" },
+                { en: "face", et: "nägu" }, { en: "paint", et: "värvima" }, { en: "kite", et: "tuulelohe" },
+                { en: "thirteen", et: "kolmteist" }, { en: "fourteen", et: "neliteist" }, { en: "fifteen", et: "viisteist" },
+                { en: "sixteen", et: "kuusteist" }, { en: "seventeen", et: "seitseteist" }, { en: "eighteen", et: "kaheksateist" },
+                { en: "nineteen", et: "üheksateist" }, { en: "twenty", et: "kakskümmend" }, { en: "like", et: "meeldima" }
+            ],
+            "Unit 11: Days": [
+                { en: "Sunday", et: "pühapäev" }, { en: "Monday", et: "esmaspäev" }, { en: "Tuesday", et: "teisipäev" },
+                { en: "Wednesday", et: "kolmapäev" }, { en: "Thursday", et: "neljapäev" }, { en: "Friday", et: "reede" },
+                { en: "Saturday", et: "laupäev" }, { en: "busy", et: "hõivatud" }, { en: "weekend", et: "nädalavahetus" },
+                { en: "place", et: "koht" }, { en: "homework", et: "kodutöö" }, { en: "eat", et: "sööma" },
+                { en: "ice cream", et: "jäätis" }, { en: "drum", et: "trumm" }, { en: "call", et: "helistama" },
+                { en: "maths", et: "matemaatika" }, { en: "window", et: "aken" }, { en: "map", et: "kaart" },
+                { en: "door", et: "uks" }, { en: "photo", et: "foto" }, { en: "board", et: "tahvel" },
+                { en: "desk", et: "kirjutuslaud" }, { en: "sleep", et: "magama" }, { en: "break", et: "vahetund" }
+            ],
+            "Unit 12: Home": [
+                { en: "study", et: "õppima" }, { en: "German", et: "saksa keel" }, { en: "aunt", et: "tädi" },
+                { en: "fine", et: "hästi" }, { en: "exercise", et: "harjutus" }, { en: "cook", et: "kokkama" },
+                { en: "cartoon", et: "multikas" }, { en: "computer", et: "arvuti" }, { en: "sofa", et: "diivan" },
+                { en: "kitchen", et: "köök" }, { en: "living room", et: "elutuba" }, { en: "breakfast", et: "hommikusöök" },
+                { en: "shower", et: "dušš" }, { en: "bathroom", et: "vannituba" }, { en: "toilet", et: "tualett" },
+                { en: "garden", et: "aed" }, { en: "bedroom", et: "magamistuba" }, { en: "pancake", et: "pannkook" },
+                { en: "tidy", et: "korras" }, { en: "wash", et: "pesema" }, { en: "cut", et: "lõikama" },
+                { en: "clean", et: "puhas" }, { en: "TV", et: "televiisor" }, { en: "use", et: "kasutama" }
+            ],
+            "Unit 13: Town": [
+                { en: "town", et: "linn" }, { en: "country", et: "riik, maa" }, { en: "flag", et: "lipp" },
+                { en: "feel", et: "tundma" }, { en: "capital", et: "pealinn" }, { en: "city", et: "suurlinn" },
+                { en: "river", et: "jõgi" }, { en: "live", et: "elama" }, { en: "star", et: "täht" },
+                { en: "president", et: "president" }, { en: "flat", et: "korter" }, { en: "cottage", et: "suvila, maamaja" },
+                { en: "village", et: "küla" }, { en: "lake", et: "järv" }, { en: "sea", et: "meri" },
+                { en: "far", et: "kaugel" }, { en: "near", et: "lähedal" }, { en: "playground", et: "mänguväljak" },
+                { en: "supermarket", et: "supermarket" }, { en: "post office", et: "postkontor" }, { en: "pool", et: "bassein" },
+                { en: "stop", et: "peatus" }
+            ],
+            "Unit 14: Seasons": [
+                { en: "season", et: "aastaaeg" }, { en: "January", et: "jaanuar" }, { en: "February", et: "veebruar" },
+                { en: "March", et: "märts" }, { en: "April", et: "aprill" }, { en: "May", et: "mai" },
+                { en: "June", et: "juuni" }, { en: "July", et: "juuli" }, { en: "August", et: "august" },
+                { en: "September", et: "september" }, { en: "October", et: "oktoober" }, { en: "November", et: "november" },
+                { en: "December", et: "detsember" }, { en: "holidays", et: "puhkus, vaheaeg" }, { en: "Easter", et: "lihavõtted" },
+                { en: "Christmas", et: "jõulud" }, { en: "month", et: "kuu" }, { en: "spring", et: "kevad" },
+                { en: "summer", et: "suvi" }, { en: "autumn", et: "sügis" }, { en: "winter", et: "talv" },
+                { en: "sunny", et: "päikeseline" }, { en: "windy", et: "tuuline" }, { en: "hot", et: "kuum" },
+                { en: "warm", et: "soe" }, { en: "rain", et: "vihm" }, { en: "cold", et: "külm" },
+                { en: "snow", et: "lumi" }, { en: "beach", et: "rand" }, { en: "snowman", et: "lumememm" }
+            ],
+            "Unit 15: Shopping": [
+                { en: "shopping", et: "ostlemine" }, { en: "food", et: "toit" }, { en: "chocolate", et: "šokolaad" },
+                { en: "orange", et: "apelsin" }, { en: "yogurt", et: "jogurt" }, { en: "fruit", et: "puuvili" },
+                { en: "salad", et: "salat" }, { en: "pear", et: "pirn" }, { en: "much", et: "palju" },
+                { en: "cent", et: "sent" }, { en: "euro", et: "euro" }, { en: "postcard", et: "postkaart" },
+                { en: "buy", et: "ostma" }, { en: "ticket", et: "pilet" }, { en: "centre", et: "keskus" },
+                { en: "only", et: "ainult" }, { en: "broken", et: "katki" }, { en: "hungry", et: "näljane" },
+                { en: "dirty", et: "must" }
+            ]
         },
         "book2": {
-            // Sinu eelneva Book 2 andmed jäävad siia
+            "Unit 1: Back to school": [
+                { en: "back", et: "tagasi" }, { en: "holiday", et: "puhkus" }, { en: "summer holiday", et: "suvepuhkus" },
+                { en: "meet", et: "kohtuma" }, { en: "classmate", et: "klassikaaslane" }, { en: "timetable", et: "tunniplaan" },
+                { en: "subject", et: "õppeaine" }, { en: "history", et: "ajalugu" }, { en: "geography", et: "geograafia" },
+                { en: "science", et: "loodusteadus" }, { en: "ICT", et: "arvutiõpetus" }, { en: "break time", et: "vahetund" }
+            ],
+            "Unit 2: Daily routine": [
+                { en: "daily", et: "igapäevane" }, { en: "routine", et: "rutiin" }, { en: "get up", et: "ärkama, üles tõusma" },
+                { en: "wake up", et: "ärkama" }, { en: "have breakfast", et: "hommikusööki sööma" }, { en: "brush teeth", et: "hambaid pesema" },
+                { en: "get dressed", et: "riietuma" }, { en: "go to school", et: "kooli minema" }, { en: "have lunch", et: "lõunat sööma" },
+                { en: "come home", et: "koju tulema" }, { en: "do homework", et: "kodutööd tegema" }, { en: "go to bed", et: "magama minema" }
+            ],
+            "Unit 3: Free time": [
+                { en: "free time", et: "vaba aeg" }, { en: "hobby", et: "hobi" }, { en: "collect", et: "koguma" },
+                { en: "stamp", et: "postmark" }, { en: "coin", et: "münt" }, { en: "board game", et: "lauamäng" },
+                { en: "puzzle", et: "mõistatus" }, { en: "read books", et: "raamatuid lugema" }, { en: "listen to music", et: "muusikat kuulama" },
+                { en: "paint pictures", et: "pilte maalima" }, { en: "take photos", et: "pildistama" }, { en: "ride a bike", et: "jalgrattaga sõitma" }
+            ],
+            "Unit 4: Food and drink": [
+                { en: "food and drink", et: "söök ja jook" }, { en: "bread", et: "leib, sai" }, { en: "butter", et: "või" },
+                { en: "cheese", et: "juust" }, { en: "meat", et: "liha" }, { en: "fish", et: "kala" },
+                { en: "chicken", et: "kana" }, { en: "egg", et: "muna" }, { en: "soup", et: "supp" },
+                { en: "potato", et: "kartul" }, { en: "tomato", et: "tomat" }, { en: "water", et: "vesi" },
+                { en: "juice", et: "mahl" }, { en: "tea", et: "tee" }, { en: "coffee", et: "kohv" }
+            ],
+            "Unit 5: Animals": [
+                { en: "animal", et: "loom" }, { en: "wild animal", et: "metsloom" }, { en: "farm animal", et: "koduloom" },
+                { en: "lion", et: "lõvi" }, { en: "tiger", et: "tiiger" }, { en: "elephant", et: "elevant" },
+                { en: "bear", et: "karu" }, { en: "wolf", et: "hunt" }, { en: "fox", et: "rebane" },
+                { en: "cow", et: "lehm" }, { en: "pig", et: "siga" }, { en: "sheep", et: "lammas" },
+                { en: "duck", et: "part" }, { en: "goat", et: "kits" }
+            ],
+            "Unit 6: Weather": [
+                { en: "weather", et: "ilm" }, { en: "sun", et: "päike" }, { en: "sunny", et: "päikeseline" },
+                { en: "rain", et: "vihm" }, { en: "rainy", et: "vihmane" }, { en: "wind", et: "tuul" },
+                { en: "windy", et: "tuuline" }, { en: "snow", et: "lumi" }, { en: "snowy", et: "lumine" },
+                { en: "cloud", et: "pilv" }, { en: "cloudy", et: "pilvine" }, { en: "storm", et: "torm" }
+            ],
+            "Unit 7: Professions": [
+                { en: "profession", et: "amet" }, { en: "job", et: "töökoht, amet" }, { en: "doctor", et: "arst" },
+                { en: "nurse", et: "medõde" }, { en: "teacher", et: "õpetaja" }, { en: "police officer", et: "politseinik" },
+                { en: "firefighter", et: "tuletõrjuja" }, { en: "chef", et: "kokk" }, { en: "driver", et: "juht" },
+                { en: "pilot", et: "piloot" }, { en: "actor", et: "näitleja" }, { en: "singer", et: "laulja" }
+            ],
+            "Unit 8: Sports": [
+                { en: "sport", et: "sport" }, { en: "football", et: "jalgpall" }, { en: "basketball", et: "korvpall" },
+                { en: "volleyball", et: "võrkpall" }, { en: "tennis", et: "tennis" }, { en: "badminton", et: "sulgpall" },
+                { en: "swimming", et: "ujumine" }, { en: "running", et: "jooksmine" }, { en: "jumping", et: "hüppamine" },
+                { en: "cycling", et: "jalgrattasõit" }, { en: "skiing", et: "suusatamine" }, { en: "skating", et: "uisutamine" }
+            ],
+            "Unit 9: Health and feelings": [
+                { en: "health", et: "tervis" }, { en: "feeling", et: "tunne" }, { en: "headache", et: "peavalu" },
+                { en: "stomach ache", et: "kõhuvalu" }, { en: "cold", et: "külmetus" }, { en: "cough", et: "köha" },
+                { en: "fever", et: "palavik" }, { en: "happy", et: "õnnelik" }, { en: "sad", et: "kurb" },
+                { en: "angry", et: "vihane" }, { en: "scared", et: "hirmunud" }, { en: "tired", et: "väsinud" }
+            ],
+            "Unit 10: Travel": [
+                { en: "travel", et: "reisima, reisimine" }, { en: "trip", et: "reis" }, { en: "journey", et: "teekond" },
+                { en: "plane", et: "lennuk" }, { en: "train", et: "rong" }, { en: "ship", et: "laev" },
+                { en: "car", et: "auto" }, { en: "bus", et: "buss" }, { en: "ticket", et: "pilet" },
+                { en: "station", et: "jaam" }, { en: "airport", et: "lennujaam" }, { en: "passport", et: "pass" }
+            ],
+            "Unit 11: Nature": [
+                { en: "nature", et: "loodus" }, { en: "tree", et: "puu" }, { en: "flower", et: "lill" },
+                { en: "grass", et: "rohi" }, { en: "forest", et: "mets" }, { en: "mountain", et: "mägi" },
+                { en: "river", et: "jõgi" }, { en: "lake", et: "järv" }, { en: "sea", et: "meri" },
+                { en: "island", et: "saar" }, { en: "sky", et: "taevas" }, { en: "star", et: "täht" }
+            ],
+            "Unit 12: Technology": [
+                { en: "technology", et: "tehnoloogia" }, { en: "computer", et: "arvuti" }, { en: "laptop", et: "sülearvuti" },
+                { en: "tablet", et: "tahvelarvuti" }, { en: "smartphone", et: "nutitelefon" }, { en: "screen", et: "ekraan" },
+                { en: "keyboard", et: "klaviatuur" }, { en: "mouse", et: "hiir" }, { en: "printer", et: "printer" },
+                { en: "internet", et: "internet" }, { en: "website", et: "veebisait" }, { en: "password", et: "parool" }
+            ],
+            "Unit 13: Holidays and celebrations": [
+                { en: "celebration", et: "pidustus" }, { en: "party", et: "pidu" }, { en: "birthday", et: "sünnipäev" },
+                { en: "Christmas", et: "jõulud" }, { en: "New Year", et: "uus aasta" }, { en: "Easter", et: "lihavõtted" },
+                { en: "present", et: "kingitus" }, { en: "card", et: "kaart" }, { en: "cake", et: "kook" },
+                { en: "candle", et: "küünal" }, { en: "balloon", et: "õhupall" }, { en: "fireworks", et: "ilutulestik" }
+            ],
+            "Unit 14: Environment": [
+                { en: "environment", et: "keskkond" }, { en: "recycle", et: "taaskasutama" }, { en: "rubbish", et: "prügi" },
+                { en: "plastic", et: "plastik" }, { en: "paper", et: "paber" }, { en: "glass", et: "klaas" },
+                { en: "clean", et: "puhas" }, { en: "dirty", et: "must" }, { en: "save", et: "säästma" },
+                { en: "energy", et: "energia" }, { en: "water", et: "vesi" }
+            ],
+            "Unit 15: In the city": [
+                { en: "city", et: "suurlinn" }, { en: "street", et: "tänav" }, { en: "square", et: "väljak" },
+                { en: "building", et: "hoone" }, { en: "museum", et: "muuseum" }, { en: "theater", et: "teater" },
+                { en: "cinema", et: "kino" }, { en: "hospital", et: "haigla" }, { en: "library", et: "raamatukogu" },
+                { en: "bank", et: "pank" }, { en: "hotel", et: "hotell" }, { en: "restaurant", et: "restoran" }
+            ],
+            "Unit 16: School events": [
+                { en: "school event", et: "koolisündmus" }, { en: "concert", et: "kontsert" }, { en: "play", et: "näidend" },
+                { en: "competition", et: "võistlus" }, { en: "sports day", et: "spordipäev" }, { en: "school trip", et: "kooliekskursioon" },
+                { en: "exhibition", et: "näitus" }, { en: "prize", et: "auhind" }, { en: "winner", et: "võitja" },
+                { en: "medal", et: "medal" }, { en: "trophy", et: "karikas" }, { en: "cheer", et: "kaasa elama" }
+            ],
+            "Unit 17: Shopping and money": [
+                { en: "shopping", et: "ostlemine" }, { en: "money", et: "raha" }, { en: "price", et: "hind" },
+                { en: "cheap", et: "odav" }, { en: "expensive", et: "kallis" }, { en: "pay", et: "maksma" },
+                { en: "cash", et: "sularaha" }, { en: "card", et: "kaart" }, { en: "shop assistant", et: "müüja" },
+                { en: "customer", et: "klient" }, { en: "receipt", et: "tšekk" }, { en: "bag", et: "kott" }
+            ],
+            "Unit 18: Health and doctor": [
+                { en: "doctor", et: "arst" }, { en: "patient", et: "patsient" }, { en: "medicine", et: "ravim" },
+                { en: "pill", et: "pill" }, { en: "syrup", et: "siirup" }, { en: "bandage", et: "sideme" },
+                { en: "thermometer", et: "kraadiklaas" }, { en: "appointment", et: "vastuvõtuaeg" }, { en: "examine", et: "läbi vaatama" },
+                { en: "rest", et: "puhkama" }, { en: "healthy", et: "terve" }, { en: "sick", et: "haige" }
+            ],
+            "Unit 19: Space and universe": [
+                { en: "space", et: "kosmos" }, { en: "universe", et: "universum" }, { en: "planet", et: "planeet" },
+                { en: "earth", et: "Maa" }, { en: "moon", et: "kuu" }, { en: "sun", et: "päike" },
+                { en: "star", et: "täht" }, { en: "astronaut", et: "astronaut" }, { en: "rocket", et: "rakett" },
+                { en: "telescope", et: "teleskoop" }, { en: "galaxy", et: "galaktika" }, { en: "alien", et: "tulnukas" }
+            ],
+            "Unit 20: Future plans": [
+                { en: "future", et: "tulevik" }, { en: "plan", et: "plaan" }, { en: "dream", et: "unistus" },
+                { en: "hope", et: "lootma" }, { en: "grow up", et: "üles kasvama" }, { en: "job", et: "töö" },
+                { en: "university", et: "ülikool" }, { en: "travel", et: "reisima" }, { en: "world", et: "maailm" },
+                { en: "invent", et: "leiutama" }, { en: "success", et: "edu" }, { en: "happy", et: "õnnelik" }
+            ]
         }
     };
 
     const bookSelect = document.getElementById('bookSelect');
     const unitSelect = document.getElementById('unitSelect');
+    const modeSelect = document.getElementById('modeSelect');
+    const directionSelect = document.getElementById('directionSelect');
+    const startBtn = document.getElementById('startBtn');
     
+    const testArea = document.getElementById('testArea');
+    const resultArea = document.getElementById('resultArea');
+    const progressText = document.getElementById('progressText');
+    const questionText = document.getElementById('questionText');
+    const inputModeDiv = document.getElementById('inputModeDiv');
+    const choicesModeDiv = document.getElementById('choicesModeDiv');
+    const userAnswer = document.getElementById('userAnswer');
+    const submitAnswerBtn = document.getElementById('submitAnswerBtn');
+    const feedbackText = document.getElementById('feedbackText');
+    const finalScoreText = document.getElementById('finalScoreText');
+    const restartBtn = document.getElementById('restartBtn');
+
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+
     function updateUnits() {
         const selectedBook = bookSelect.value;
         const units = wordData[selectedBook];
@@ -276,7 +456,149 @@
     }
 
     bookSelect.addEventListener('change', updateUnits);
-    updateUnits(); // Käivita lehe laadimisel
+    updateUnits();
+
+    function startTest() {
+        const book = bookSelect.value;
+        const unit = unitSelect.value;
+        
+        let pool = [];
+        if (unit === 'all') {
+            for (let u in wordData[book]) {
+                pool = pool.concat(wordData[book][u]);
+            }
+        } else {
+            pool = wordData[book][unit];
+        }
+
+        if (!pool || pool.length === 0) {
+            alert('Selles unitis pole sõnu!');
+            return;
+        }
+
+        currentQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, 10);
+        currentIndex = 0;
+        score = 0;
+
+        testArea.classList.remove('hidden');
+        resultArea.classList.add('hidden');
+        startBtn.classList.add('hidden');
+
+        showQuestion();
+    }
+
+    function showQuestion() {
+        feedbackText.textContent = '';
+        userAnswer.value = '';
+        
+        if (currentIndex >= currentQuestions.length) {
+            endTest();
+            return;
+        }
+
+        progressText.textContent = `Küsimus ${currentIndex + 1} / ${currentQuestions.length}`;
+        
+        const q = currentQuestions[currentIndex];
+        const direction = directionSelect.value;
+        
+        if (direction === 'en-et') {
+            questionText.textContent = `Mis on eesti keeles: "${q.en}"?`;
+        } else {
+            questionText.textContent = `Mis on inglise keeles: "${q.et}"?`;
+        }
+
+        const mode = modeSelect.value;
+        if (mode === 'input') {
+            inputModeDiv.classList.remove('hidden');
+            choicesModeDiv.classList.add('hidden');
+            setTimeout(() => userAnswer.focus(), 50);
+        } else {
+            inputModeDiv.classList.add('hidden');
+            choicesModeDiv.classList.remove('hidden');
+            setupChoices(q, direction);
+        }
+    }
+
+    function setupChoices(q, direction) {
+        choicesModeDiv.innerHTML = '';
+        const book = bookSelect.value;
+        const unit = unitSelect.value;
+        
+        let pool = [];
+        if (unit === 'all') {
+            for (let u in wordData[book]) {
+                pool = pool.concat(wordData[book][u]);
+            }
+        } else {
+            pool = wordData[book][unit];
+        }
+
+        const correctAnswer = direction === 'en-et' ? q.et : q.en;
+        
+        let wrongPool = pool.filter(item => {
+            let val = direction === 'en-et' ? item.et : item.en;
+            return val !== correctAnswer;
+        });
+        
+        wrongPool.sort(() => 0.5 - Math.random());
+        let choices = [correctAnswer];
+        for (let i = 0; i < Math.min(3, wrongPool.length); i++) {
+            choices.push(direction === 'en-et' ? wrongPool[i].et : wrongPool[i].en);
+        }
+        
+        choices.sort(() => 0.5 - Math.random());
+
+        choices.forEach(choice => {
+            const btn = document.createElement('button');
+            btn.textContent = choice;
+            btn.className = 'option-btn';
+            btn.onclick = () => checkAnswer(choice, correctAnswer);
+            choicesModeDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(userGiven, correct) {
+        const cleanUser = userGiven.trim().toLowerCase();
+        const cleanCorrect = correct.trim().toLowerCase();
+        const correctOptions = cleanCorrect.split(/[,/;]/).map(s => s.trim());
+
+        let isCorrect = correctOptions.includes(cleanUser) || cleanUser === cleanCorrect;
+
+        if (isCorrect) {
+            score++;
+            feedbackText.style.color = 'green';
+            feedbackText.textContent = 'Õige!';
+        } else {
+            feedbackText.style.color = 'red';
+            feedbackText.textContent = `Vale! Õige vastus oli: ${correct}`;
+        }
+
+        currentIndex++;
+        setTimeout(showQuestion, 1200);
+    }
+
+    submitAnswerBtn.onclick = () => {
+        const q = currentQuestions[currentIndex];
+        const direction = directionSelect.value;
+        const correct = direction === 'en-et' ? q.et : q.en;
+        checkAnswer(userAnswer.value, correct);
+    };
+
+    userAnswer.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            submitAnswerBtn.click();
+        }
+    });
+
+    function endTest() {
+        testArea.classList.add('hidden');
+        resultArea.classList.remove('hidden');
+        startBtn.classList.remove('hidden');
+        finalScoreText.textContent = `Sinu tulemus: ${score} / ${currentQuestions.length}`;
+    }
+
+    startBtn.onclick = startTest;
+    restartBtn.onclick = startTest;
 </script>
 
 </body>
