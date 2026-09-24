@@ -112,20 +112,27 @@
             display: none;
         }
         .print-unit-title {
-            margin-top: 15px;
+            margin-top: 20px;
             font-size: 18px;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 2px solid #333;
             padding-bottom: 5px;
         }
         .print-table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 10px;
             margin-bottom: 15px;
         }
         .print-table th, .print-table td {
-            border: 1px solid #ddd;
-            padding: 6px 10px;
+            border: 1px solid #999;
+            padding: 8px 10px;
             text-align: left;
+        }
+        .print-table th {
+            background-color: #f2f2f2;
+        }
+        .print-answer-cell {
+            width: 50%;
         }
     </style>
 </head>
@@ -157,7 +164,17 @@
 
     <div class="controls print-hide">
         <button id="startBtn">Alusta testi</button>
-        <button id="printViewBtn" class="btn-secondary">Prindi sõnad (Leht)</button>
+    </div>
+
+    <!-- Printimise seadistuse paneel -->
+    <div class="controls print-hide" style="background: #eef2f3; padding: 15px; border-radius: 6px; margin-top: 10px;">
+        <h3 style="margin-top: 0; width: 100%; color: #2c3e50;">Töölehe printimine</h3>
+        <select id="printModeSelect" style="flex: 2;">
+            <option value="dict">Tavaline sõnastik (Vastused näha)</option>
+            <option value="en-et">Tööleht: Inglise -> Eesti (Tühi kast)</option>
+            <option value="et-en">Tööleht: Eesti -> Inglise (Tühi kast)</option>
+        </select>
+        <button id="printViewBtn" class="btn-secondary" style="flex: 1;">Prindi tööleht</button>
     </div>
 
     <!-- Testiala -->
@@ -189,7 +206,7 @@
 
     <!-- Prinditav ala -->
     <div id="printArea">
-        <h2>Inglise keele sõnavara nimekiri</h2>
+        <h2 id="printHeaderTitle">Inglise keele sõnavara nimekiri</h2>
         <div id="printContent"></div>
     </div>
 </div>
@@ -497,6 +514,7 @@
     const directionSelect = document.getElementById('directionSelect');
     const startBtn = document.getElementById('startBtn');
     const printViewBtn = document.getElementById('printViewBtn');
+    const printModeSelect = document.getElementById('printModeSelect');
     
     const testArea = document.getElementById('testArea');
     const resultArea = document.getElementById('resultArea');
@@ -511,6 +529,7 @@
     const finalScoreText = document.getElementById('finalScoreText');
     const restartBtn = document.getElementById('restartBtn');
     const printContent = document.getElementById('printContent');
+    const printHeaderTitle = document.getElementById('printHeaderTitle');
 
     let currentQuestions = [];
     let currentIndex = 0;
@@ -532,13 +551,12 @@
     bookSelect.addEventListener('change', updateUnits);
     updateUnits();
 
-    // Kõnesüntees inglise keele hääldamiseks
     function speakWord(text) {
         if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); // Peata eelmine heli
+            window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'en-US';
-            utterance.rate = 0.9; // Natuke aeglasem selguse huvides
+            utterance.rate = 0.9;
             window.speechSynthesis.speak(utterance);
         }
     }
@@ -595,12 +613,12 @@
         if (direction === 'en-et') {
             currentEnglishWord = q.en;
             questionText.textContent = `Mis on eesti keeles: "${q.en}"?`;
-            speakWord(q.en); // Loeb automaatselt ette
+            speakWord(q.en);
             speakBtn.style.display = 'inline-block';
         } else {
             currentEnglishWord = q.en;
             questionText.textContent = `Mis on inglise keeles: "${q.et}"?`;
-            speakBtn.style.display = 'none'; // Eesti -> Inglise suunal ei hakka ette lugema vastust
+            speakBtn.style.display = 'none';
         }
 
         const mode = modeSelect.value;
@@ -693,18 +711,47 @@
         finalScoreText.textContent = `Sinu tulemus: ${score} / ${currentQuestions.length}`;
     }
 
-    // Printimisvaate genereerimine
     printViewBtn.onclick = () => {
         const book = bookSelect.value;
+        const printMode = printModeSelect.value;
         const units = wordData[book];
-        let html = `<h3>Valitud raamat: ${book === 'book1' ? 'Book 1' : 'Book 2'}</h3>`;
+        
+        let bookTitle = book === 'book1' ? 'Book 1' : 'Book 1';
+        if(book === 'book2') bookTitle = 'Book 2';
 
+        if (printMode === 'dict') {
+            printHeaderTitle.textContent = `${bookTitle} – Sõnade nimekiri`;
+        } else if (printMode === 'en-et') {
+            printHeaderTitle.textContent = `${bookTitle} – Tööleht (Inglise -> Eesti)`;
+        } else {
+            printHeaderTitle.textContent = `${bookTitle} – Tööleht (Eesti -> Inglise)`;
+        }
+
+        let html = '';
         for (let unitName in units) {
             html += `<div class="print-unit-title"><strong>${unitName}</strong></div>`;
-            html += `<table class="print-table"><thead><tr><th>Inglise keel</th><th>Eesti keel</th></tr></thead><tbody>`;
+            html += `<table class="print-table"><thead><tr>`;
+
+            if (printMode === 'en-et') {
+                html += `<th>Inglise keel</th><th class="print-answer-cell">Eesti keel (kirjuta vastus)</th>`;
+            } else if (printMode === 'et-en') {
+                html += `<th>Eesti keel</th><th class="print-answer-cell">Inglise keel (kirjuta vastus)</th>`;
+            } else {
+                html += `<th>Inglise keel</th><th>Eesti keel</th>`;
+            }
+
+            html += `</tr></thead><tbody>`;
+
             units[unitName].forEach(word => {
-                html += `<tr><td>${word.en}</td><td>${word.et}</td></tr>`;
+                if (printMode === 'en-et') {
+                    html += `<tr><td>${word.en}</td><td class="print-answer-cell"></td></tr>`;
+                } else if (printMode === 'et-en') {
+                    html += `<tr><td>${word.et}</td><td class="print-answer-cell"></td></tr>`;
+                } else {
+                    html += `<tr><td>${word.en}</td><td>${word.et}</td></tr>`;
+                }
             });
+
             html += `</tbody></table>`;
         }
 
