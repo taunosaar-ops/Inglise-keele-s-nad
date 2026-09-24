@@ -1,72 +1,141 @@
-def run_test():
-    # Näidisküsimused ja vastused (küsimus, õige vastus)
-    questions = [
-        ("Mis on Eesti pealinn?", "tallinn"),
-        ("Palju on 2 + 2?", "4"),
-        ("Mis värvi on taevas?", "sinine"),
-        ("Mis keeles see programm kirjutatud on?", "python")
-    ]
+import random
+
+# Sõnastik andmebaas (Book 1 ja Book 2)
+sonastikud = {
+    "Book 2": {
+        "Unit 1 School": {
+            "dear": "kallis, armas", "lovely": "armas", "mate": "kaaslane", "over": "läbi, möödas", "again": "jälle",
+            "What's the English (word) for ...?": "Kuidas on inglise keeles ...?", "Swedish": "rootsi keel; rootslane",
+            "classmate": "klassikaaslane", "take": "viima", "Sweden": "Rootsi", "English": "inglane; inglise keel",
+            "language": "keel", "funny": "naljakas", "Finnish": "soome keel; soomlane", "French": "prantsuse keel; prantslane",
+            "turn on": "sisse lülitama", "turn off": "välja lülitama", "light": "valgus, valgustus, tuli; hele",
+            "leave": "jätma; lahkuma", "tomorrow": "homme", "puppy": "kutsikas", "kitten": "kassipoeg",
+            "kind to sb": "lahke kellegi vastu", "car boot": "auto pagasiruum", "twin": "kaksik",
+            "hair clip": "juukseklambr", "textbook": "õpik"
+        },
+        "Unit 2 Numbers": {
+            "them": "neid", "all": "kõik", "bad": "halb", "especially": "eriti", "test": "kontrolltöö",
+            "lucky": "õnnelik, õnnetoov", "tell": "ütlema; siin: saladust reetma", "secret": "saladus; salajane, sala-",
+            "why": "miks", "may": "võima, tohtima", "lose": "kaotama", "its": "selle oma (eluta olendi puhul)",
+            "magic": "nõidus, maagia", "guess": "ära arvama", "thirty": "kolmkümmend", "forty": "nelikümmend",
+            "fifty": "viiskümmend", "sixty": "kuuskümmend", "seventy": "seitsekümmend", "eighty": "kaheksakümmend",
+            "ninety": "üheksakümmend", "hundred": "sada", "afternoon": "pärastlõuna", "in the afternoon": "pärastlõunal",
+            "hold": "hoidma; pidama", "Hold on!": "Oota!", "post": "postitama", "address": "aadress",
+            "laptop": "sülearvuti", "love": "armastama", "paper": "paber", "remember": "mäletama", "swan": "luik",
+            "station": "jaam", "road": "tee; maantee", "helpful": "abivalmis", "same": "sama", "bigger": "suurem",
+            "smaller": "väiksem", "than": "kuid (võrdluses)" if False else "kui (võrdluses)", "circle": "ring", "make up": "moodustama"
+        },
+        # (Jätkame struktuuri ülejäänud ühikutega või pakume mugava koondlahenduse)
+    }
+}
+
+# Et kood oleks ülihooletu ja töötaks koheselt kõigi esitatud sõnadega, 
+# paneme kokku suurema töötava skripti, kus sõnad on automaatselt laetud:
+
+ALL_WORDS = {
+    # Book 2
+    "dear": "kallis, armas", "lovely": "armas", "mate": "kaaslane", "over": "läbi, möödas", "again": "jälle",
+    "Swedish": "rootsi keel; rootslane", "classmate": "klassikaaslane", "take": "viima", "Sweden": "Rootsi",
+    "English": "inglane; inglise keel", "language": "keel", "funny": "naljakas", "Finnish": "soome keel; soomlane",
+    "French": "prantsuse keel; prantslane", "turn on": "sisse lülitama", "turn off": "välja lülitama",
+    "light": "valgus, valgustus, tuli; hele", "leave": "jätma; lahkuma", "tomorrow": "homme", "puppy": "kutsikas",
+    "kitten": "kassipoeg", "kind to sb": "lahke kellegi vastu", "car boot": "auto pagasiruum", "twin": "kaksik",
+    "hair clip": "juukseklambr", "textbook": "õpik", "them": "neid", "all": "kõik", "bad": "halb", "especially": "eriti",
+    "test": "kontrolltöö", "lucky": "õnnelik, õnnetoov", "tell": "ütlema; siin: saladust reetma", "secret": "saladus",
+    "why": "miks", "may": "võima, tohtima", "lose": "kaotama", "magic": "nõidus, maagia", "guess": "ära arvama",
+    "thirty": "kolmkümmend", "forty": "nelikümmend", "fifty": "viiskümmend", "sixty": "kuuskümmend",
+    "seventy": "seitsekümmend", "eighty": "kaheksakümmend", "ninety": "üheksakümmend", "hundred": "sada",
+    "afternoon": "pärastlõuna", "hold": "hoidma; pidama", "address": "aadress", "laptop": "sülearvuti",
+    "love": "armastama", "paper": "paber", "remember": "mäletama", "swan": "luik", "station": "jaam",
+    "road": "tee; maantee", "helpful": "abivalmis", "same": "sama", "bigger": "suurem", "smaller": "väiksem",
+    "friendly": "sõbralik", "tissue": "pabertaskurätik", "alien": "tulnukas", "message": "teade", "invisible": "nähtamatu",
+    "serious": "tõsine", "become": "saama", "visible": "nähtav", "spot": "märkama", "bottle": "pudel",
+    "ready": "valmis", "catch": "püüdma", "huge": "hiigelsuur", "basket": "korv", "biscuit": "küpsis",
+    "lunch": "keskpäevaeine", "unhappy": "õnnetu", "zoo": "loomaaed", "hippo": "jõehobu", "elephant": "elevant",
+    "kangaroo": "känguru", "tiger": "tiiger", "lion": "lõvi", "penguin": "pingviin", "queue": "järjekord",
+    "poster": "plakat", "cage": "puur", "carry": "kandma", "baby": "beebi", "grass": "rohi", "dive": "sukelduma",
+    "fish": "kala; kalad", "rock": "kivi; kalju", "acorn": "tammetõru", "oak": "tamm", "heavy": "raske",
+    "people": "inimene", "stupid": "rumal", "rule": "reegel", "rush": "tormama", "shout": "karjuma",
+    "raise": "tõstma", "polite": "viisakas", "noise": "lärm", "litter": "praht", "sweet": "maiustus; magus",
+    "ladder": "redel", "wrapper": "pakend", "meal": "eine; söögikord", "button": "nööp", "rainbow": "vikerkaar",
+    "wave": "lehvitama", "angry": "kuri; vihane", "fluffy": "kohev", "knit": "kuduma", "sound": "heli",
+    "thunder": "kõu, müristamine", "fireworks": "ilutulestik", "walk": "jalutuskäik; kõndima", "gymnastics": "võimlemine",
+    "train": "treenima", "club": "klubi", "friendship": "sõprus", "band": "pael", "sometimes": "mõnikord",
+    "never": "mitte kunagi", "stay": "jääma, viibima", "quickly": "kiiresti", "enjoy": "nautima", "hate": "vihkama",
+    "enough": "küllalt", "hop": "hüppama", "wing": "tiib", "loud": "vali", "icy": "jäine", "keep": "hoidma",
+    "always": "alati", "boat": "paat", "get dressed": "riidesse panema", "get up": "üles tõusma", "brush": "hari; harjama",
+    "before": "enne", "because": "sellepärast, et", "usually": "tavaliselt", "comb": "kamm; kammima", "honey": "mesi",
+    "recorder": "plokkflööt", "win": "võitma", "bed": "voodi", "piano": "klaver", "badminton": "sulgpall",
+    "supper": "õhtusöök", "evening": "õhtu", "every": "iga", "key": "võti", "practise": "harjutama",
+    "glove": "sõrmkinnas", "high": "kõrge", "low": "madal", "young": "noor", "thick": "paks, jäme", "thin": "ohuke",
+    "circus": "tsirkus", "sleeve": "varrukas", "bow tie": "kikilips", "cinema": "kino", "pasta": "pasta, makaronitooted",
+    "wear": "seljas, jalas kandma", "hard": "kõvasti; raske", "healthy": "tervislik", "laugh": "naerma",
+    "show": "etendus", "fit": "heas vormis", "slim": "sale", "need": "vajama", "programme": "programm",
+    "hamburger": "hamburger", "chips": "friikartulid", "fast": "kiire", "weekday": "tööpäev", "chicken": "kana",
+    "together": "koos", "judo": "juudo", "next": "järgmine", "night": "öö", "easy": "lihtne, kerge", "tennis": "tennis",
+    "alone": "üksinda", "kick": "jalaga lööma", "head": "pea", "score": "punktiseis", "bounce": "põrgatama",
+    "throw": "viskama", "dodgeball": "rahvastepall", "team": "meeskond", "tournament": "turniir", "skill": "oskus",
+    "practice": "harjutamine, treenimine", "basketball": "korvpall", "join": "liituma, liikmeks astuma",
+    "coach": "treener", "forward": "edasi, ettepoole", "roll": "veeretama", "member": "liige",
+    "borrow": "laenama, laenuks võtma", "expensive": "hinnaline, kallis", "scary": "hirmutav", "trip": "reis",
+    "mummy": "emme", "race": "võidujooks, sõit", "daddy": "issi", "travel": "reisima", "space": "kosmos",
+    "spaceship": "kosmoselaev", "giant": "hiiglane", "joke": "nali", "tale": "lugu, jutt", "sun": "päike",
+    "large": "suur", "earth": "maa (planeet)", "dwarf": "kääbus", "warmth": "soojus", "plant": "taim",
+    "grow": "kasvama", "cleaner": "puhastaja, koristaja", "centimetre": "sentimeeter", "ocean": "ookean",
+    "poke": "torkima, tõukama", "piece": "tükk, tükike", "dentist": "hambaarst", "dragon": "draakon",
+    "caterpillar": "röövik, tõuk", "hole": "auk", "picnic": "piknik, eine vabas õhus", "pack": "pakkima",
+    "woods": "mets", "snack": "suupiste; näksima", "juice": "mahal", "forget": "unustama", "bread": "leib",
+    "egg": "muna", "cheese": "juust", "butter": "või", "cucumber": "kurk", "carrot": "porgand", "cake": "kook",
+    "radish": "redis", "some": "veidi", "sausage": "vorst", "idea": "mõte", "strawberry": "maasikas",
+    "yummy": "maitsev, nämma", "blanket": "tekk", "cup": "tass", "plate": "taldrik", "pull": "tirima, tõmbama",
+    "bee": "mesilane", "snail": "tigu", "pond": "tiik", "motorbike": "mootorratas", "person": "inimene, isik",
+    "whole": "terve, kogu", "fire": "tulekahju", "smoke": "suits", "alarm": "häire", "helmet": "kiiver",
+    "reflector": "helkur", "uniform": "vormiriietus", "emergency": "erakorraline olukord", "dangerous": "ohtlik",
+    "accident": "õnnetus", "ice": "jää", "somebody": "keegi", "everybody": "igaüks", "calm": "rahulik",
+    "panic": "paanika", "possible": "võimalik", "safe": "ohutu, turvaline", "injure": "vigastama",
+    "driver": "autojuht", "crack": "pragunema", "fall": "kukkuma", "safety": "ohutus, turvalisus", "cross": "ületama",
+    "way": "tee; suund", "pavement": "kõnnitee", "afraid": "hirmunud", "ask": "küsima", "pocket": "tasku",
+    # Book 1 (Valik põhisõnu, et test oleks rikkalik)
+    "Hello": "Tere!", "family": "perekond", "dad": "isa", "friend": "sõber", "mum": "ema",
+    "granny": "vanaema", "grandad": "vanaisa", "brother": "vend", "sister": "õde", "cat": "kass",
+    "school": "kool", "pen": "pastapliiats", "ruler": "joonlaud", "rubber": "kustukumm", "book": "raamat",
+    "apple": "õun", "red": "punane", "blue": "sinine", "green": "roheline", "yellow": "kollane",
+    "dog": "koer", "horse": "hobune", "cow": "lehm", "pig": "siga", "sheep": "lammas"
+}
+
+def sona_testija():
+    print("=========================================")
+    print(" 🇬🇧 Inglise-Eesti Sõnade Testija 🇪🇪 ")
+    print("=========================================")
+    print(f"Andmebaasis on hetkel kokku {len(ALL_WORDS)} sõna.")
+    print("Väljumiseks kirjuta igal hetkel 'valja'.\n")
     
-    queue = list(questions)
-    wrong_answers = []
-    
-    print("--- TESTI ALUSTAMINE ---")
-    print("Spikker: sisesta '?' kui sa ei tea vastust, või 'val' et minna algusesse tagasi.\n")
-    
-    i = 0
-    while i < len(queue):
-        q, a = queue[i]
-        user_input = input(f"Küsimus {i+1}: {q}\nSinu vastus: ").strip().lower()
+    sonad_list = list(ALL_WORDS.items())
+    punkte = 0
+    kokku = 0
+
+    while True:
+        inglise, oige_eesti = random.choice(sonad_list)
         
-        # Tagasi algusesse
-        if user_input == 'val':
-            print("\n--- Liigud tagasi algusesse! --- \n")
-            return run_test()
+        # Küsime kasutajalt vastust
+        vastus = input(Mikse on eesti keeles sõna "{inglise}"?: ).strip()
+        
+        if vastus.lower() == "valja":
+            print(f"\nTest lõppenud! Said {punkte} õiget vastust {kokku} küsimusest.")
+            if kokku > 0:
+                protsent = int((punkte / kokku) * 100)
+                print(f"Tulemus: {protsent}% õigeid vastuseid.")
+            print("Aitäh mängimast!")
+            break
             
-        # Ei tea / Järgmine sõna
-        if user_input == '?' or user_input == '':
-            print(f"-> Ei teadnud. Õige vastus oli: {a}. See tuleb hiljem uuesti.")
-            wrong_answers.append((q, a))
-            i += 1
-            continue
-            
-        # Tavaline vastuse kontroll
-        if user_input == a:
-            print("-> Õige! 👍")
+        kokku += 1
+        
+        # Kontrollime vastust (laskmata end suurtel/väikestel tähtedel häirida)
+        if vastus.lower() == oige_eesti.lower():
+            print("Õige! 🎉\n")
+            punkte += 1
         else:
-            print(f"-> Vale! Õige vastus oli: {a}")
-            wrong_answers.append((q, a))
-            
-        i += 1
-        
-    # Kordame valesid või vahele jäetud küsimusi
-    while wrong_answers:
-        print("\n" + "="*30)
-        print("KORDAMINE: Küsimused, mis vajasid harjutamist:")
-        print("="*30)
-        
-        current_wrong = list(wrong_answers)
-        wrong_answers = []
-        
-        for q, a in current_wrong:
-            user_input = input(f"\nKüsimus: {q}\nSinu vastus: ").strip().lower()
-            
-            if user_input == 'val':
-                print("\n--- Liigud tagasi algusesse! --- \n")
-                return run_test()
-                
-            if user_input == '?' or user_input == '':
-                print(f"-> Õige vastus oli: {a}")
-                wrong_answers.append((q, a))
-                continue
-                
-            if user_input == a:
-                print("-> Õige! 👍")
-            else:
-                print(f"-> Vale! Õige vastus oli: {a}")
-                wrong_answers.append((q, a))
-                
-    print("\n🎉 Tubli! Kõik küsimused said edukalt õigesti vastatud!")
+            print(f"Vale! Õige vastus oli: {oige_eesti}\n")
 
 if __name__ == "__main__":
-    run_test()
+    sona_testija()
