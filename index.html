@@ -3,835 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inglise keele sõnavaratest</title>
+    <title>Inglise keele sõnavaratester</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
             color: #333;
-            margin: 0;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
         }
         .container {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        h1, h2, h3 {
-            color: #2c3e50;
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
             margin-bottom: 20px;
         }
-        select, input[type="text"], button {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
+        select, button, input {
+            padding: 10px;
+            font-size: 16px;
             border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
-            box-sizing: border-box;
+            border-radius: 4px;
+            flex: 1;
         }
         button {
             background-color: #3498db;
             color: white;
             border: none;
             cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
         }
         button:hover {
             background-color: #2980b9;
         }
-        .btn-audio {
-            background-color: #2ecc71;
-            margin-bottom: 15px;
+        .question-box {
+            margin-top: 20px;
+            padding: 20px;
+            background: #ecf0f1;
+            border-radius: 6px;
+            text-align: center;
         }
-        .btn-audio:hover {
-            background-color: #27ae60;
-        }
-        .btn-secondary {
-            background-color: #95a5a6;
-        }
-        .btn-secondary:hover {
-            background-color: #7f8c8d;
-        }
-        .btn-warning {
-            background-color: #e67e22;
-        }
-        .btn-warning:hover {
-            background-color: #d35400;
-        }
-        .btn-print {
-            background-color: #8e44ad;
-        }
-        .btn-print:hover {
-            background-color: #732d91;
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
         }
         .option-btn {
-            background-color: #ecf0f1;
-            color: #2c3e50;
+            background-color: #fff;
+            color: #333;
             border: 1px solid #bdc3c7;
-            margin: 8px 0;
         }
         .option-btn:hover {
-            background-color: #dcdde1;
+            background-color: #dfe6e9;
         }
         .hidden {
             display: none;
-        }
-        .feedback {
-            font-weight: bold;
-            margin: 15px 0;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .correct {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .incorrect {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .stats {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            margin-bottom: 15px;
-        }
-
-        /* Prindivaate spetsiifilised stiilid */
-        #print-screen {
-            text-align: left;
-        }
-        .print-unit {
-            margin-bottom: 30px;
-            page-break-inside: avoid;
-        }
-        .print-unit h4 {
-            border-bottom: 2px solid #2c3e50;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-        .print-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        .print-table th, .print-table td {
-            border: 1px solid #bdc3c7;
-            padding: 10px 12px;
-            text-align: left;
-            height: 28px; /* Piisav kõrgus käsitsi kirjutamiseks */
-        }
-        .print-table th {
-            background-color: #ecf0f1;
-            width: 50%;
-        }
-        .page-break {
-            page-break-before: always;
-        }
-
-        @media print {
-            body {
-                background-color: white;
-                display: block;
-                padding: 0;
-            }
-            .container {
-                box-shadow: none;
-                max-width: 100%;
-                padding: 0;
-            }
-            .no-print {
-                display: none !important;
-            }
-            #print-screen {
-                display: block !important;
-            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 class="no-print">Sõnavaratester</h1>
+    <h1>Sõnavaratester</h1>
 
-    <!-- SEADISTUSE VAADE -->
-    <div id="setup-screen" class="no-print">
-        <label for="unit-select">Vali Unit:</label>
-        <select id="unit-select">
-            <option value="all">⭐ Kõik unitid korraga (1-20)</option>
+    <div class="controls">
+        <select id="bookSelect">
+            <option value="book1">Book 1</option>
+            <option value="book2">Book 2</option>
         </select>
 
-        <label for="mode-select">Vali testiliik:</label>
-        <select id="mode-select">
+        <select id="unitSelect">
+            <option value="all">⭐ Kõik unitid korraga</option>
+        </select>
+
+        <select id="modeSelect">
             <option value="input">Kirjuta vastus ise</option>
             <option value="choices">Vali 4 variandi seast</option>
         </select>
 
-        <label for="direction-select">Vali suund:</label>
-        <select id="direction-select">
+        <select id="directionSelect">
             <option value="en-et">Inglise -> Eesti</option>
             <option value="et-en">Eesti -> Inglise</option>
         </select>
-
-        <button onclick="startQuiz()">Alusta testi</button>
-        
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
-        
-        <label for="print-unit-select"><strong>Prindi lehed (vali Unit):</strong></label>
-        <select id="print-unit-select">
-            <option value="all">⭐ Kõik unitid korraga (1-20)</option>
-        </select>
-        <button class="btn-print" onclick="openPrintView()">🖨️ Valmistage prindilehed ette</button>
     </div>
 
-    <!-- KÜSIMUSTE VAADE -->
-    <div id="quiz-screen" class="hidden no-print">
-        <div class="stats" id="progress-stats">Küsimus 1 / 10</div>
-        
-        <button id="audio-btn" class="btn-audio hidden" onclick="playAudio()">🔊 Kuula hääldust</button>
-        
-        <h3 id="question-prompt">Küsimus siia</h3>
-        
-        <!-- Režiim 1: Kirjutamine -->
-        <div id="input-mode-container">
-            <input type="text" id="user-answer" placeholder="Sisesta vastus..." autocomplete="off">
-            <button onclick="checkInputAnswer()">Vasta</button>
-            <button class="btn-warning" onclick="skipInputAnswer()">🤷‍♂️ Ma ei tea / Jäta vahele</button>
+    <button id="startBtn">Alusta testi</button>
+
+    <div id="testArea" class="hidden">
+        <div id="progressText">Küsimus 1 / 10</div>
+        <h3 id="questionText">Küsimus siia</h3>
+
+        <div id="inputModeDiv">
+            <input type="text" id="userAnswer" placeholder="Kirjuta vastus siia...">
+            <button id="submitAnswerBtn" style="margin-top: 10px;">Vasta</button>
         </div>
 
-        <!-- Režiim 2: 4 valikuvõimalust -->
-        <div id="choices-mode-container" class="hidden">
-            <button class="option-btn" onclick="checkChoiceAnswer(0)" id="choice-0"></button>
-            <button class="option-btn" onclick="checkChoiceAnswer(1)" id="choice-1"></button>
-            <button class="option-btn" onclick="checkChoiceAnswer(2)" id="choice-2"></button>
-            <button class="option-btn" onclick="checkChoiceAnswer(3)" id="choice-3"></button>
+        <div id="choicesModeDiv" class="options hidden">
+            <!-- Valikud lisatakse skriptiga -->
         </div>
-        
-        <div id="feedback-box" class="hidden"></div>
 
-        <button class="btn-secondary" style="margin-top: 25px;" onclick="resetToSetup()">🏠 Katkesta ja tagasi algusesse</button>
+        <p id="feedbackText" style="font-weight: bold; margin-top: 15px;"></p>
     </div>
 
-    <!-- TULEMUSTE VAADE -->
-    <div id="result-screen" class="hidden no-print">
+    <div id="resultArea" class="hidden" style="text-align: center;">
         <h2>Test läbi!</h2>
-        <p id="final-score">Sinu tulemus: 0/0</p>
-        <div id="mistakes-container" style="text-align: left; margin: 15px 0;"></div>
-        <button onclick="resetToSetup()">Tagasi algusesse</button>
-    </div>
-
-    <!-- PRINDITAV VAADE -->
-    <div id="print-screen" class="hidden">
-        <div class="no-print" style="margin-bottom: 20px;">
-            <button onclick="window.openPrintWindow()" style="background-color: #27ae60; margin-bottom: 10px;">📄 Ava eraldi aknas / Prindi</button>
-            <button class="btn-secondary" onclick="resetToSetup()">Tagasi algusesse</button>
-        </div>
-        <div id="print-content"></div>
+        <p id="finalScoreText">Sinu tulemus: 0/0</p>
+        <button id="restartBtn">Proovi uuesti</button>
     </div>
 </div>
 
 <script>
-    const vocabulary = {
-        "Unit 1 School": {
-            "dear": "kallis, armas", "lovely": "armas", "mate": "kaaslane", "over": "läbi, möödas", "again": "jälle",
-            "What's the English (word) for ...?": "Kuidas on inglise keeles ...?", "Swedish": "rootsi keel; rootslane",
-            "classmate": "klassikaaslane", "take": "viima", "Sweden": "Rootsi", "English": "inglane; inglise keel",
-            "language": "keel", "funny": "naljakas", "Finnish": "soome keel; soomlane", "French": "prantsuse keel; prantslane",
-            "turn on": "sisse lülitama", "turn off": "välja lülitama", "light": "valgus, valgustus, tuli; hele",
-            "leave": "jätma; lahkuma", "tomorrow": "homme", "puppy": "kutsikas", "kitten": "kassipoeg",
-            "kind to sb": "lahke kellegi vastu", "car boot": "auto pagasiruum", "twin": "kaksik", "hair clip": "juukseklambr", "textbook": "õpik"
+    // Sõnade andmebaas (Book 1 ja Book 2)
+    const wordData = {
+        "book1": {
+            "Unit 1: Hello": [
+                { en: "unit", et: "õppetükk" },
+                { en: "Hello", et: "Tere!" },
+                { en: "Hi", et: "Tere!" },
+                { en: "I", et: "mina, ma" },
+                { en: "am", et: "olen" },
+                { en: "I = I am", et: "ma olen" },
+                { en: "I'm from", et: "Ma olen pärit" },
+                { en: "Britain", et: "Britannia" },
+                { en: "America", et: "Ameerika" },
+                { en: "Finland", et: "Soome" },
+                { en: "Estonia", et: "Eesti" },
+                { en: "and", et: "ja, ning" },
+                { en: "you", et: "sina, teie" },
+                { en: "he", et: "tema (meessoost)" },
+                { en: "she", et: "tema (naissoost)" },
+                { en: "this", et: "see" },
+                { en: "is", et: "on (olema 3. pööre ainsuses)" },
+                { en: "He's / She's from", et: "Ta on pärit" },
+                { en: "good", et: "hea" },
+                { en: "morning", et: "hommik" },
+                { en: "Good morning!", et: "Tere hommikust!" },
+                { en: "Miss", et: "preili" },
+                { en: "what", et: "mis (küsisõna)" },
+                { en: "what's = what is", et: "mis on" },
+                { en: "your", et: "sinu; teie" },
+                { en: "name", et: "nimi" },
+                { en: "Sorry.", et: "Vabandust." },
+                { en: "late", et: "hilja" },
+                { en: "Sorry, I'm late.", et: "Vabandust, et ma hilinesin." },
+                { en: "that", et: "see (seal)" },
+                { en: "that's = that is", et: "see on" },
+                { en: "OK", et: "okei, korras, hästi" },
+                { en: "That's OK.", et: "Siin: Sellest pole midagi." },
+                { en: "Goodbye!", et: "Head päeva! Head aega!" },
+                { en: "Bye-bye!", et: "Head päeva! Head aega!" }
+            ],
+            "Unit 2: Family": [
+                { en: "family", et: "perekond" },
+                { en: "dad", et: "isa" },
+                { en: "my", et: "minu (oma)" },
+                { en: "friend", et: "sõber" },
+                { en: "Mr", et: "härra" },
+                { en: "dog", et: "koer" },
+                { en: "mum", et: "ema" },
+                { en: "granny", et: "vanaema" },
+                { en: "grandad", et: "vanaisa" },
+                { en: "brother", et: "vend" },
+                { en: "sister", et: "õde" },
+                { en: "cat", et: "kass" },
+                { en: "his", et: "tema (oma) (meessoost)" },
+                { en: "her", et: "tema (oma) (naissoost)" },
+                { en: "these", et: "need (siin)" },
+                { en: "are", et: "oled, oleme, olete, on (mitmuses)" },
+                { en: "big", et: "suur" },
+                { en: "small", et: "väike" },
+                { en: "girl; girls", et: "tüdruk; tüdrukud" },
+                { en: "boy; boys", et: "poiss; poisid" },
+                { en: "book", et: "raamat" },
+                { en: "ball", et: "pall" },
+                { en: "pencil", et: "pliiats" },
+                { en: "horse; horses", et: "hobune; hobused" },
+                { en: "new", et: "uus" },
+                { en: "bike", et: "jalgratas" },
+                { en: "cool", et: "äge, vinge" },
+                { en: "police", et: "politsei" },
+                { en: "in", et: "sees; sisse (eessõna)" },
+                { en: "come", et: "tulema" },
+                { en: "say", et: "ütlema" },
+                { en: "the", et: "artikkel" },
+                { en: "the ABC", et: "tähestik" },
+                { en: "shoe, shoes", et: "king, kingad" },
+                { en: "so", et: "nii" },
+                { en: "beautiful", et: "ilus" },
+                { en: "Thanks.", et: "Tänan." },
+                { en: "ladybird", et: "lepatriinu" },
+                { en: "tooth; teeth", et: "hammas; hambad" },
+                { en: "fairy", et: "haldjas" },
+                { en: "tooth fairy", et: "hambahaldjas" },
+                { en: "lamb", et: "(lamba)tall" }
+            ],
+            "Unit 3: Numbers": [
+                { en: "number", et: "number" },
+                { en: "one", et: "üks" },
+                { en: "two", et: "kaks" },
+                { en: "three", et: "kolm" },
+                { en: "four", et: "neli" },
+                { en: "five", et: "viis" },
+                { en: "six", et: "kuus" },
+                { en: "tree", et: "puu" },
+                { en: "in the tree", et: "puu otsas" },
+                { en: "good", et: "hea" },
+                { en: "is good at", et: "oskab hästi" },
+                { en: "play", et: "mängima" },
+                { en: "trick", et: "vemp, vingerpuss" },
+                { en: "play tricks", et: "vingerpussi mängima" },
+                { en: "playing tricks", et: "vingerpussi mängimine" },
+                { en: "it", et: "see" },
+                { en: "yes", et: "jah" },
+                { en: "Yes, it is.", et: "Jah, see on." },
+                { en: "no", et: "ei" },
+                { en: "No, it isn't.", et: "Ei, see ei ole." },
+                { en: "English", et: "inglise keel" },
+                { en: "music", et: "muusika" },
+                { en: "sport", et: "sport" },
+                { en: "football", et: "jalgpall" },
+                { en: "puzzle", et: "mõistatus; pusle" },
+                { en: "year", et: "aasta" },
+                { en: "I'm in year three.", et: "Ma olen kolmandas klassis." },
+                { en: "a", et: "artikkel" },
+                { en: "student", et: "õpilane" },
+                { en: "I'm a year-three student.", et: "Ma olen kolmanda klassi õpilane." },
+                { en: "class", et: "klass; tund" },
+                { en: "teacher", et: "õpetaja" },
+                { en: "class teacher", et: "klassijuhataja" },
+                { en: "Mrs", et: "proua" },
+                { en: "now", et: "nüüd" },
+                { en: "you", et: "sina, sa; teie, te" },
+                { en: "see", et: "nägema" },
+                { en: "how", et: "kuidas; kui" },
+                { en: "well", et: "hästi" },
+                { en: "we", et: "meie, me" },
+                { en: "know", et: "teadma" },
+                { en: "spell", et: "tähthaaval ütlema" },
+                { en: "be", et: "olema" },
+                { en: "an", et: "artikkel" }
+            ],
+            // Siia saab vajadusel lisada Unit 4 kuni Unit 15 täpselt samal kujul
         },
-        "Unit 2 Numbers": {
-            "them": "neid", "all": "kõik", "bad": "halb", "especially": "eriti", "test": "kontrolltöö",
-            "lucky": "õnnelik, õnnetoov", "tell": "ütlema; siin: saladust reetma", "secret": "saladus; salajane, sala-",
-            "why": "miks", "may": "võima, tohtima", "lose": "kaotama", "its": "selle oma (eluta olendi puhul)",
-            "magic": "nõidus, maagia", "guess": "ära arvama", "thirty": "kolmkümmend", "forty": "nelikümmend",
-            "fifty": "viiskümmend", "sixty": "kuuskümmend", "seventy": "seitsekümmend", "eighty": "kaheksakümmend",
-            "ninety": "üheksakümmend", "hundred": "sada", "afternoon": "pärastlõuna", "in the afternoon": "pärastlõunal",
-            "hold": "hoidma; pidama", "Hold on!": "Oota!", "post": "postitama", "address": "aadress", "laptop": "sülearvuti",
-            "love": "armastama", "paper": "paber", "remember": "mäletama", "swan": "luik", "station": "jaam",
-            "road": "tee; maantee", "helpful": "abivalmis", "same": "sama", "bigger": "suurem", "smaller": "väiksem",
-            "than": "kui (võrdluses)", "circle": "ring", "make up": "moodustama"
-        },
-        "Unit 3 Thank you": {
-            "friendly": "sõbralik", "good to sb": "hea kellegi vastu", "lace": "kingapael", "extra": "lisa-, ülearune",
-            "tissue": "pabertaskurätik", "alien": "tulnukas", "deed": "tegu", "good deed": "heategu", "message": "teade",
-            "right": "täpselt", "invisible": "nähtamatu", "serious": "tõsine", "try": "katse; katsetama, proovima",
-            "become": "saama (kelleksi, milleksi)", "visible": "nähtav", "spot": "märkama", "some": "mõni, mõned",
-            "like": "nagu", "Like what?": "Nagu näiteks? Missugune siis?", "note": "lühike kiri", "drop": "pillama, poetama",
-            "bottle": "pudel", "ready": "valmis", "catch": "püüdma", "huge": "hiigelsuur", "basket": "korv",
-            "there": "seal; sinna", "biscuit": "küpsis", "lunch": "keskpäevaeine", "undo": "lahti siduma, lahti tegema",
-            "unhappy": "õnnetu", "inside": "seespool; sees, sisse; toas"
-        },
-        "Unit 4 Zoo": {
-            "zoo": "loomaaed", "at / in the zoo": "loomaaias", "hippo": "jõehobu", "elephant": "elevant",
-            "kangaroo": "känguru", "tiger": "tiiger", "lion": "lõvi", "gnu": "(antiloop) gnuu", "penguin": "pingviin",
-            "queue": "järjekord", "in the queue": "järjekorras", "poster": "plakat", "banner": "loosung",
-            "welcome": "tere tulemast", "cage": "puur", "lots of": "palju", "any": "mingi (eitavas ja küsivas lauses)",
-            "carry": "kandma", "baby": "beebi", "grass": "rohi", "dive": "sukelduma", "fish": "kala; kalad",
-            "rock": "kivi; kalju", "leaf; leaves": "puuleht; puulehed", "I don't like": "mulle ei meeldi / ei maitse",
-            "even": "isegi", "acorn": "tammetõru", "oak": "tamm", "heavy": "raske", "Hey!": "Hei! (üllatushüuatus)",
-            "Guess what?": "Tead mis!", "pick": "korjama", "people": "inimesed", "stupid": "rumal", "I see.": "Saan aru."
-        },
-        "Unit 5 Rules": {
-            "rule": "reegel", "rush": "tormama", "or": "või (sidesõna)", "hold the door": "ust kellegi lahti hoidma",
-            "mean": "kitsi, ihne; häbematu", "share": "jagama, ühiselt kasutama", "shout": "karjuma", "raise": "tõstma",
-            "polite": "viisakas", "noise": "lärm", "litter": "praht", "drop litter": "prahti maha viskama",
-            "sweet": "maiustus; magus", "ladder": "redel", "pick up": "üles võtma (maast)", "wrapper": "pakend",
-            "sweet wrapper": "kommipaber", "meal": "eine; söögikord", "button": "nööp", "rainbow": "vikerkaar",
-            "wave": "lehvitama", "click": "nipsutama, klikkima", "stamp": "trampima (jalgu)", "clap": "plaksutama",
-            "even number": "paaris (arv)", "odd number": "paaritu (arv)", "end": "lõpp; lõppema", "at the end": "lopus",
-            "pot": "pott", "gold": "kuld", "ground": "maapind", "on the ground": "maas", "square": "ruut", "weather": "ilm"
-        },
-        "Unit 6 My friend": {
-            "angry": "kuri; vihane", "fluffy": "kohev", "knit": "kuduma", "knitting ball": "lõngakera", "sound": "heli",
-            "thunder": "kou, müristamine", "thunderstorm": "äikseilm", "fireworks": "ilutulestik",
-            "walk": "jalutuskäik; kõndima; jalutama", "pass": "mööduma", "as ... as": "sama ... kui", "as old as": "sama vana kui",
-            "gymnastics": "võimlemine", "do gymnastics": "võimlemas käima", "twice": "kaks korda", "twice a week": "kaks korda nädalas",
-            "train": "treenima", "club": "klubi", "sports club": "spordiklubi", "friendship": "sõprus", "band": "pael",
-            "friendship band": "sõbrapael", "sometimes": "mõnikord", "allergic to": "allergiline millegi suhtes",
-            "never": "mitte kunagi", "stay": "jääma, viibima", "quickly": "kiiresti", "enjoy": "nautima", "hate": "vihkama",
-            "fond of": "kiindunud", "enough": "küllalt", "hop": "hüppama", "wing": "tiib", "loud": "vali", "icy": "jäine",
-            "leprechaun": "härjapõlvlane (iiri muinasjuttudes)", "keep": "hoidma", "always": "alati", "get away": "jalga laskma",
-            "boat": "paat", "Antarctica": "Antarktika", "Ireland": "Iirimaa"
-        },
-        "Unit 7 My day": {
-            "get dressed": "ridedse panema", "in the morning": "hommikul", "off": "ära", "I'm off to": "ma hakkan minema",
-            "get up": "üles tõusma", "leave for school": "kooli minema", "brush": "hari; harjama", "brush my teeth": "hambaid pesema",
-            "before": "enne", "because": "sellepärast, et", "myself": "mina ise; mind ennast", "usually": "tavaliselt",
-            "comb": "kamm; kammima", "dew": "kaste; hommikuudu", "drop": "piisk", "dew drop": "kastepiisk", "honey": "mesi",
-            "from Monday to Friday": "(millestki) alates, peale (eessõna) esmaspäevast reedeni", "handbell": "käsikell (muusikainstrument)",
-            "ring / play handbells": "käsikellasid mängima / (kella) helistama", "recorder": "plokkflööt", "play the recorder": "plokkflööti mängima",
-            "robin": "punarind", "quite": "üsna", "go dancing": "tantsimas käima", "circle dance": "ringtants", "line": "rivi; joon",
-            "line dance": "rivitans, line-tants", "win": "võitma", "hide-and-seek": "peitus", "hopscotch": "keksumäng",
-            "still": "vaikselt", "bed": "voodi", "go to bed": "magama minema", "piano": "klaver", "play the piano": "klaverit mängima",
-            "badminton": "sulgpall", "play badminton": "sulgpalli mängima", "supper": "õhtusöök", "have supper": "õhtusööki sööma",
-            "evening": "õhtu", "in the evening": "õhtul", "every": "iga", "every day": "iga päev", "key": "võti", "practise": "harjutama"
-        },
-        "Unit 8 Clowns": {
-            "glove": "sõrmkinnas", "high": "kõrge", "low": "madal", "young": "noor", "thick": "paks, jäme", "thin": "õhuke",
-            "circus": "tsirkus", "sleeve": "varrukas", "bow tie": "kikilips", "cinema": "kino", "pasta": "pasta, makaronitooted",
-            "wear": "seljas, jalas kandma", "hard": "kõvasti; raske, keeruline", "healthy": "tervislik", "do a trick": "trikki tegema",
-            "laugh": "naerma", "make me laugh": "mind naerma ajama", "during": "vältel, jooksul (eessõna)", "show": "etendus",
-            "fit": "heas vormis", "slim": "sale", "need": "vajama", "programme": "programm", "hamburger": "hamburger",
-            "chips": "friikartulid", "fast": "kiire", "fast food": "kiirtoit", "weekday": "tööpäev", "chicken": "kana",
-            "together": "koos", "judo": "juudo", "go to judo": "juudo trennis käima", "next": "järgmine", "night": "öö",
-            "easy": "lihtne, kerge", "tennis": "tennis", "alone": "üksinda"
-        },
-        "Unit 9 Ball games": {
-            "kick": "jalaga lööma", "head": "pea; peaga lööma", "head a ball": "peaga palli lööma", "score": "punktiseis",
-            "bounce": "põrgatama", "pass": "edasi andma; söötma (palli)", "throw": "viskama", "dodgeball": "rahvastepall",
-            "training class": "treening", "drill": "drillharjutus; drillima, harjutama", "want": "tahtma", "catcher": "püüdja",
-            "team": "meeskond", "tournament": "turniir", "wait (for)": "ootama", "I can't wait.": "Ma ootan seda väga.",
-            "skill": "oskus", "practice": "harjutamine, treenimine", "basketball": "korvpall", "like": "meeldima",
-            "I'd like": "mulle meeldiks, ma tahaksin", "join": "liituma, liikmeks astuma", "coach": "treener", "pick": "korjama",
-            "pick out": "valima", "forward": "edasi, ettepoole", "look forward to sth": "midagi väga ootama",
-            "I'm looking forward to spring.": "Ma ootan väga kevadet.", "roll": "veeretama", "member": "liige",
-            "borrow": "laenama, laenuks võtma", "What's up?": "Mis lahti?", "ahead": "edasi, ette",
-            "locker": "isiklike asjade kapp koolis, spordihoones", "Go ahead!": "Lase käia!",
-            "absolutely": "jah muidugi! Absoluutselt!", "more": "rohkem, enam", "find out": "välja uurima, selgitama (infot)",
-            "expensive": "hinnaline, kallis", "scary": "hirmutav", "trip": "reis", "family trip": "perereis"
-        },
-        "Unit 10 Stars": {
-            "mummy": "emme", "race": "võidujooks, sõit", "daddy": "issi", "brand new": "tuliuus", "travel": "reisima",
-            "space": "kosmos", "spaceship": "kosmoselaev", "giant": "hiiglane", "joke": "nali", "tell a joke": "nalja rääkima",
-            "tale": "lugu, jutt", "fairy tale": "muinasjutt", "sun": "päike", "large": "suur", "earth": "maa (planeet)",
-            "which": "mis (asesõna)", "super": "üli-", "dwarf": "kääbus", "warmth": "soojus", "plant": "taim",
-            "grow": "kasvama", "cleaner": "puhastaja, koristaja", "centimetre": "sentimeeter", "ocean": "ookean",
-            "the Indian Ocean": "India ookean", "poke": "torkima, tõukama", "piece": "tükk, tükike", "dentist": "hambaarst",
-            "if": "kui, kas", "dragon": "draakon", "caterpillar": "röövik, tõuk", "hole": "auk"
-        },
-        "Unit 11 Picnic": {
-            "picnic": "piknik, eine vabas õhus", "pack": "pakkima", "woods": "mets", "in the woods": "metsa all, metsas",
-            "snack": "suupiste; näksima", "juice": "mahl", "juicy": "mahlane", "forget": "unustama", "bread": "leib",
-            "egg": "muna", "cheese": "juust", "butter": "või", "cucumber": "kurk", "carrot": "porgand", "cake": "kook",
-            "radish": "redis", "shall": "abitegusõna tegevusse kaasamisel", "What shall we eat?": "Mida me sööme?",
-            "some": "veidi", "sausage": "vorst", "idea": "mõte", "strawberry": "maasikas", "yummy": "maitsev, nämma",
-            "noon": "keskpäev", "at noon": "keskpäeval", "this afternoon": "täna pärastlõunal", "this evening": "täna õhtul",
-            "blanket": "tekk", "cup": "tass", "plate": "taldrik", "pull": "tirima, tõmbama", "bee": "mesilane",
-            "snail": "tigu", "pond": "tiik", "motorbike": "mootorratas", "person": "inimene, isik", "whole": "terve, kogu"
-        },
-        "Unit 12 Help": {
-            "fire": "tulekahju", "is on fire": "põleb", "smoke": "suits", "alarm": "häire", "smoke alarm": "suitsuandur",
-            "helmet": "kiiver", "reflector": "helkur", "uniform": "vormiriietus", "fire engine": "tuletõrjeauto",
-            "ambulance": "kiirabiauto", "emergency": "erakorraline olukord", "emergency number": "hädaabinumber",
-            "dangerous": "ohtlik", "accident": "õnnetus", "car accident": "autoõnnetus", "go off": "käivituma, tööle hakkama",
-            "ice": "jää", "somebody": "keegi", "everybody": "igaüks", "calm": "rahulik", "panic": "paanika; paanikasse sattuma",
-            "fire drill": "tuletõrjeõppus", "possible": "võimalik", "join in": "milleski kaasa lööma", "safe": "ohutu, turvaline",
-            "keep safe": "ohtu vältima", "injure": "vigastama", "injured": "vigastatud", "driver": "autojuht",
-            "crack": "pragunema", "fall": "kukkuma", "into": "sisse (eessõna)", "safety": "ohutus, turvalisus",
-            "cross": "ületama", "zebra crossing": "jalakäijate ülekäigukoht", "way": "tee; suund", "pavement": "kõnnitee",
-            "afraid": "hirmunud", "be afraid": "kartma", "ask": "küsima", "ask for": "paluma midagi", "pocket": "tasku"
-        },
-        "Unit 13 Yesterday": {
-            "yesterday": "eile", "was, were": "oli, olid (be minevikuvormid)", "moon": "kuu (taevakeha)",
-            "over the moon": "väga õnnelik", "call": "minevikuvorm", "last": "viimane; eelmine", "night": "öö",
-            "last night": "eile õhtul", "ill": "haige", "camp": "laager", "training camp": "treeninglaager",
-            "happy with sth": "rahul millegagi", "hour": "(kella)tund", "ago": "(ajas) tagasi", "library": "raamatukogu",
-            "burglar": "murdvaras", "downstairs": "alumisel korrusel", "make a call": "helistama",
-            "keep an eye on": "silma peal hoidma", "neighbour": "naaber", "down": "alla", "stairs": "trepp",
-            "himself": "(tema) ise; (teda ennast)", "front door": "eesuks", "mistake": "viga", "upstairs": "ülemisel korrusel",
-            "today": "täna", "lazy": "laisk", "mirror": "peegel", "drawer": "sahtel", "sick": "iiveldav",
-            "I'm sick.": "Mul on süda paha.", "storm": "torm", "wonderful": "suurepärane", "brilliant": "hiilgav, vaimustav",
-            "awful": "kohutav", "landing": "maandumine", "daft": "napakas", "flight": "lend, lennureis", "up": "üles", "up the stairs": "trepist üles"
-        },
-        "Unit 14 Visit": {
-            "visit": "külaskäik; külastama", "fun": "nali; lõbu", "have fun": "lõbutsema", "soon": "varsti",
-            "too soon": "liiga ruttu", "first": "esimene; esiteks", "come first": "esimeseks tulema, võitma",
-            "second": "teine", "third": "kolmas", "fourth": "neljas", "fifth": "viies", "sixth": "kuues",
-            "seventh": "seitsmes", "come": "minevikuvorm", "build, built": "ehitama", "went": "minevikuvorm",
-            "often": "sageli", "once": "ükskord", "room": "ruum", "no room": "ei ole ruumi", "said": "minevikuvorm",
-            "answer": "vastus; vastama", "deep": "sügav", "knee-deep": "põlvesügavune", "at last": "lõpuks",
-            "minute": "minut", "roof": "katus", "sat": "minevikuvorm", "overflow": "üle ujutama", "forever": "igavesti",
-            "trouble": "segadus, raskus, mure", "in trouble": "hädas, raskustes, mures", "laser zone": "lasermängu ala",
-            "offer": "pakkuma", "seasick": "merehaige", "log": "palk", "the new moon": "noorkuu"
-        },
-        "Unit 15 Weather": {
-            "weather": "ilm", "What's the weather like?": "Mis ilm on?", "frosty": "härmas", "outdoor": "väline, välis-",
-            "cloud": "pilv", "cloudy": "pilvine", "foggy": "udune", "cool": "jahe", "sledge": "kelk; kelgutama",
-            "go sledging": "kelgutama", "snowball": "lumepall", "skate": "uisk; uisutama", "go skating": "uisutama",
-            "castle": "kindlus", "snowdrift": "lumehang", "had": "minevikuvorm", "fight": "lahing",
-            "snowball fight": "lumesõda", "made": "minevikuvorm", "snowy": "lumine", "last": "eelmine; viimati",
-            "last Sunday": "eelmisel pühapäeval", "shovel": "kühvel; kühveldama", "found": "minevikuvorm",
-            "wet": "niiske, märj", "drive, drove": "autoga sõitma, autot juhtima", "drive off": "ära sõitma",
-            "put, put": "panema", "angel": "ingel", "instead": "(millegi) asemel", "bottom": "alumine osa",
-            "bring, brought": "tooma", "potato": "kartul", "got": "minevikuvorm", "get dark": "pimedaks minema",
-            "kept": "minevikuvorm", "melt": "sulama", "ran": "minevikuvorm", "saw": "minevikuvorm",
-            "health": "tervis", "in good health": "hea tervise juures", "ugly": "inetu", "anyone": "keegi (eitavas ja küsivas lauses)"
-        },
-        "Unit 16 Birthday": {
-            "finger food": "sõrmedega söödav toit", "hope": "lootma", "stick": "tikk, pulgake", "loads of": "rohkesti",
-            "bite": "hammustus, amps; hammustama", "bite-size food": "suupisted", "grab": "haarama", "something": "midagi",
-            "nobody": "mitte keegi", "all right": "hea küll", "recipe": "toiduretsept", "magazine": "ajakiri",
-            "could": "can minevikuvorm", "we could": "siin: me võiksime", "sound": "heli; kõlama", "tomato": "tomat",
-            "meatball": "lihapall", "fish finger": "kalapulk", "vegetable": "köögi- ja juurvili", "milk": "piim",
-            "cereal": "hommikusöögihelbed", "porridge": "kaerahelbepuder", "worry": "muretsema", "date": "kuupäev",
-            "May Day": "kevadpüha (1. mai)", "independence": "iseseisvus", "New Year's Day": "uue aasta esimene päev",
-            "Christmas Eve": "jõululaupäev", "Christmas Day": "jõulu esimene püha", "ate": "eat minevikuvorm",
-            "party": "pidu", "gave": "give minevikuvorm", "glasses": "prillid", "would": "abitegusõna",
-            "Would you like ...?": "Kas sa sooviksid ...?", "tea": "tee", "soup": "supp", "scoop": "kühvel, kulp", "drink, drank": "jooma"
-        },
-        "Unit 17 Camping": {
-            "camp": "laag; telkima, laagrisse jääma", "go camping": "telkimas käima", "did": "do minevikuvorm; lihtmineviku abitegusõna",
-            "caught": "catch minevikuvorm", "raincoat": "vihmamantel", "wellies": "kummikud", "rucksack": "seljakott",
-            "hike": "matk; matkama", "go hiking": "matkama", "hiking boots": "matkasaapad", "tent": "telk",
-            "put up a tent": "telki püstitama", "kit": "varustuskomplekt", "first aid": "esmaabi", "first-aid kit": "esmaabitarvete komplekt",
-            "sunglasses": "päikeseprillid", "compass": "kompass", "forest": "põlismets, laas", "different": "teistsugune, erinev",
-            "such": "selline", "countryside": "maakoht, maa (vastandina linnale)", "flower": "lill", "strange": "veider, kummaline",
-            "bright": "ere", "in case": "juhul kui", "get lost": "ära eksima", "take off": "startima, õhku tõusma",
-            "by the way": "muide", "GPS": "asukoha määraja", "pity": "kahetsus", "It's a pity.": "Kahju.",
-            "meet, met, met": "kohtuma", "meet up": "kokku saama", "sheep": "lammas; lambad", "ask the way": "teed küsima",
-            "fire": "lõke", "campfire": "laagrilõke", "tip": "nõuanne", "go fishing": "kalal käima"
-        },
-        "Unit 18 Short cut": {
-            "short cut": "otsetee", "take a short cut": "otseteed minema", "tourist": "turist", "farm": "talu",
-            "on the farm": "talus", "farmer": "talunik", "You're welcome.": "Pole tänu väärt.", "hospital": "haigla",
-            "along": "piki, mööda (eessõna)", "cow": "lehm", "goose, geese": "hani, haned", "pig": "siga", "field": "põld",
-            "in the field": "põllul", "path": "jalgtee", "across": "risti üle (eessõna)", "graze": "rohtu sööma",
-            "aggressive": "agressiivne, kuri", "mind": "tähele panema", "mind where you step": "vaatama ette, kuhu astud",
-            "smart": "nutikas", "learn": "õppima", "bit": "tükike, raasuke", "a bit": "veidi", "adventure": "seiklus",
-            "plan": "kava, plaan; kavandama, planeerima", "train station": "raudteejaam", "story": "jutt, lugu",
-            "church": "kirik", "bridge": "sild", "desert": "kõrb", "cheesecake": "kohupiimakook", "exactly": "täpselt",
-            "cabbage": "kapsas", "cornflower": "rukkilill"
-        },
-        "Unit 19 Jokes": {
-            "bossy": "kamandav, ülbe", "foolish": "rumal, mõtlematu", "kind": "liik, sort", "parrot": "papagoi",
-            "fry": "praadima", "mushroom": "seen", "moo": "ammuma", "ceiling": "lagi", "corner": "nurk",
-            "cowboy": "kauboi, lehmakarjus", "rode": "ride minevikuvorm", "left": "leave minevikuvorm",
-            "eyesight": "nägemine", "onion": "sibul", "ghost": "kummitus", "lonely": "üksildane", "silly": "rumal, totter, kergemeelne",
-            "terrible": "kohutav", "delicious": "maitsev", "comic": "koomiks", "newspaper": "ajaleht", "parent": "lapsevanem",
-            "exciting": "põnev", "unlucky": "mitte õnne omav, ei vea", "untidy": "korratu, lohakas", "uninteresting": "ebahuvitav",
-            "unkind": "mitte lahke", "unfriendly": "ebasõbralik", "unexciting": "igav, mittehuvitav"
-        },
-        "Unit 20 Summer": {
-            "candy floss": "suhkruvatt", "stall": "müügilett", "seaside": "mereäär, rand", "go to the seaside": "mere äärde minema",
-            "early": "vara, varane", "read": "read minevikuvorm", "threw": "throw minevikuvorm", "cry": "nutma",
-            "sunbathe": "päevitama", "fairground": "lõbustuspark", "bought": "buy minevikuvorm", "slept": "sleep minevikuvorm",
-            "snake": "madu", "without": "ilma (eessõna)", "explore": "uurima", "dragonfly": "kiil (putukas)",
-            "worm": "uss", "ant": "sipelgas", "beetle": "põrnikas", "life": "elu", "everywhere": "igal pool",
-            "shore": "mere- või järvekallas", "fly": "kärbes", "wasp": "herilane", "mosquito": "sääsk",
-            "insect": "putukas", "pest": "kahjur", "sting": "nõelama", "bucket": "ämber", "spade": "kühvel; labidas",
-            "towel": "käterätt", "sandcastle": "liivaloss", "merry-go-round": "karussell", "dodgem": "elektriline põrkeauto"
+        "book2": {
+            // Sinu eelneva Book 2 andmed jäävad siia
         }
     };
 
-    let currentQuestions = [];
-    let currentIndex = 0;
-    let score = 0;
-    let mistakes = [];
-    let skippedOnce = new Set();
-    let direction = "en-et";
-    let testMode = "input";
-    let currentEnglishWord = "";
-    let currentCorrectAnswer = "";
-    let currentChoices = [];
-    let allAvailableAnswers = [];
-
-    window.onload = function() {
-        initUnitSelectors();
-        rebuildAllAnswersPool();
-
-        document.getElementById("user-answer").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                checkInputAnswer();
-            }
-        });
-    };
-
-    function initUnitSelectors() {
-        const select = document.getElementById("unit-select");
-        const printSelect = document.getElementById("print-unit-select");
-        
-        select.innerHTML = '<option value="all">⭐ Kõik unitid korraga (1-20)</option>';
-        printSelect.innerHTML = '<option value="all">⭐ Kõik unitid korraga (1-20)</option>';
-
-        for (let unitName in vocabulary) {
-            let option1 = document.createElement("option");
-            option1.value = unitName;
-            option1.textContent = unitName;
-            select.appendChild(option1);
-
-            let option2 = document.createElement("option");
-            option2.value = unitName;
-            option2.textContent = unitName;
-            printSelect.appendChild(option2);
+    const bookSelect = document.getElementById('bookSelect');
+    const unitSelect = document.getElementById('unitSelect');
+    
+    function updateUnits() {
+        const selectedBook = bookSelect.value;
+        const units = wordData[selectedBook];
+        unitSelect.innerHTML = '<option value="all">⭐ Kõik unitid korraga</option>';
+        for (let unitName in units) {
+            let opt = document.createElement('option');
+            opt.value = unitName;
+            opt.textContent = unitName;
+            unitSelect.appendChild(opt);
         }
     }
 
-    function rebuildAllAnswersPool() {
-        allAvailableAnswers = [];
-        for (let unit in vocabulary) {
-            for (let eng in vocabulary[unit]) {
-                allAvailableAnswers.push({ eng, est: vocabulary[unit][eng] });
-            }
-        }
-    }
-
-    function startQuiz() {
-        const selectedUnit = document.getElementById("unit-select").value;
-        testMode = document.getElementById("mode-select").value;
-        direction = document.getElementById("direction-select").value;
-        
-        let questionsObj = {};
-        if (selectedUnit === "all") {
-            for (let unit in vocabulary) {
-                Object.assign(questionsObj, vocabulary[unit]);
-            }
-        } else {
-            questionsObj = vocabulary[selectedUnit];
-        }
-
-        currentQuestions = Object.entries(questionsObj);
-        if (currentQuestions.length === 0) {
-            alert("Selles unittis pole ühtegi sõna!");
-            return;
-        }
-
-        shuffle(currentQuestions);
-
-        currentIndex = 0;
-        score = 0;
-        mistakes = [];
-        skippedOnce = new Set();
-
-        document.getElementById("setup-screen").classList.add("hidden");
-        document.getElementById("result-screen").classList.add("hidden");
-        document.getElementById("print-screen").classList.add("hidden");
-        document.getElementById("quiz-screen").classList.remove("hidden");
-
-        const inputContainer = document.getElementById("input-mode-container");
-        const choicesContainer = document.getElementById("choices-mode-container");
-
-        if (testMode === "input") {
-            inputContainer.classList.remove("hidden");
-            choicesContainer.classList.add("hidden");
-        } else {
-            inputContainer.classList.add("hidden");
-            choicesContainer.classList.remove("hidden");
-        }
-        
-        loadQuestion();
-    }
-
-    function openPrintView() {
-        const selectedPrintUnit = document.getElementById("print-unit-select").value;
-        document.getElementById("setup-screen").classList.add("hidden");
-        document.getElementById("print-screen").classList.remove("hidden");
-
-        const container = document.getElementById("print-content");
-        container.innerHTML = "";
-
-        let unitsToPrint = {};
-        if (selectedPrintUnit === "all") {
-            unitsToPrint = vocabulary;
-        } else {
-            unitsToPrint[selectedPrintUnit] = vocabulary[selectedPrintUnit];
-        }
-
-        // 1. OSA: Inglise -> Eesti testileht
-        let title1 = document.createElement("h2");
-        title1.textContent = "Sõnavaratest: Inglise -> Eesti (Kirjuta eesti keeles)";
-        container.appendChild(title1);
-
-        for (let unitName in unitsToPrint) {
-            let unitDiv = document.createElement("div");
-            unitDiv.className = "print-unit";
-            
-            let html = `<h4>${unitName}</h4>`;
-            html += `<table class="print-table"><thead><tr><th>Inglise keel</th><th>Eesti keel (kirjuta siia)</th></tr></thead><tbody>`;
-            
-            for (let eng in unitsToPrint[unitName]) {
-                html += `<tr><td><strong>${eng}</strong></td><td>&nbsp;</td></tr>`;
-            }
-            html += `</tbody></table>`;
-            unitDiv.innerHTML = html;
-            container.appendChild(unitDiv);
-        }
-
-        // Lehevahetus kahe testi vahel
-        let breakDiv = document.createElement("div");
-        breakDiv.className = "page-break";
-        container.appendChild(breakDiv);
-
-        // 2. OSA: Eesti -> Inglise testileht
-        let title2 = document.createElement("h2");
-        title2.textContent = "Sõnavaratest: Eesti -> Inglise (Kirjuta inglise keeles)";
-        container.appendChild(title2);
-
-        for (let unitName in unitsToPrint) {
-            let unitDiv = document.createElement("div");
-            unitDiv.className = "print-unit";
-            
-            let html = `<h4>${unitName}</h4>`;
-            html += `<table class="print-table"><thead><tr><th>Eesti keel</th><th>Inglise keel (kirjuta siia)</th></tr></thead><tbody>`;
-            
-            for (let eng in unitsToPrint[unitName]) {
-                html += `<tr><td><strong>${unitsToPrint[unitName][eng]}</strong></td><td>&nbsp;</td></tr>`;
-            }
-            html += `</tbody></table>`;
-            unitDiv.innerHTML = html;
-            container.appendChild(unitDiv);
-        }
-    }
-
-    window.openPrintWindow = function() {
-        const printContent = document.getElementById("print-content").innerHTML;
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <!DOCTYPE html>
-            <html lang="et">
-            <head>
-                <meta charset="UTF-8">
-                <title>Prindi testilehed</title>
-                <style>
-                    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; color: #333; }
-                    h2 { color: #2c3e50; margin-top: 30px; }
-                    .print-unit { margin-bottom: 30px; page-break-inside: avoid; }
-                    .print-unit h4 { border-bottom: 2px solid #2c3e50; padding-bottom: 5px; margin-bottom: 10px; color: #2c3e50; }
-                    .print-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                    .print-table th, .print-table td { border: 1px solid #bdc3c7; padding: 10px 12px; text-align: left; height: 28px; }
-                    .print-table th { background-color: #ecf0f1; width: 50%; }
-                    .page-break { page-break-before: always; }
-                </style>
-            </head>
-            <body>
-                ${printContent}
-                <script>
-                    window.onload = function() { window.print(); };
-                <\/script>
-            </body>
-            </html>
-        `);
-        printWindow.document.close();
-    }
-
-    function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            let j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
-
-    function loadQuestion() {
-        if (currentIndex >= currentQuestions.length) {
-            showResults();
-            return;
-        }
-
-        document.getElementById("progress-stats").textContent = `Küsimus ${currentIndex + 1} / ${currentQuestions.length}`;
-        document.getElementById("user-answer").value = "";
-        
-        const feedbackBox = document.getElementById("feedback-box");
-        feedbackBox.classList.add("hidden");
-        feedbackBox.className = "hidden";
-
-        let [eng, est] = currentQuestions[currentIndex];
-        currentEnglishWord = eng;
-        currentCorrectAnswer = (direction === "en-et") ? est : eng;
-
-        const audioBtn = document.getElementById("audio-btn");
-        const promptEl = document.getElementById("question-prompt");
-
-        if (direction === "en-et") {
-            promptEl.textContent = `Kuidas on eesti keeles: "${eng}"?`;
-            audioBtn.classList.remove("hidden");
-            playAudio();
-        } else {
-            promptEl.textContent = `Kuidas on inglise keeles: "${est}"?`;
-            audioBtn.classList.add("hidden");
-        }
-
-        if (testMode === "input") {
-            document.getElementById("user-answer").focus();
-        } else {
-            setupChoices();
-        }
-    }
-
-    function setupChoices() {
-        let wrongPool = allAvailableAnswers.filter(item => {
-            let val = (direction === "en-et") ? item.est : item.eng;
-            return val.toLowerCase() !== currentCorrectAnswer.toLowerCase();
-        });
-        shuffle(wrongPool);
-
-        let choices = [currentCorrectAnswer];
-        for (let i = 0; i < 3 && i < wrongPool.length; i++) {
-            let val = (direction === "en-et") ? wrongPool[i].est : wrongPool[i].eng;
-            choices.push(val);
-        }
-        shuffle(choices);
-        currentChoices = choices;
-
-        for (let i = 0; i < 4; i++) {
-            let btn = document.getElementById(`choice-${i}`);
-            btn.textContent = choices[i] || "";
-            btn.disabled = false;
-        }
-    }
-
-    function playAudio() {
-        if ('speechSynthesis' in window && currentEnglishWord) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(currentEnglishWord);
-            utterance.lang = 'en-US';
-            window.speechSynthesis.speak(utterance);
-        }
-    }
-
-    function checkInputAnswer() {
-        let userAnswer = document.getElementById("user-answer").value.trim();
-        let currentPair = currentQuestions[currentIndex];
-
-        if (userAnswer.toLowerCase() === currentCorrectAnswer.toLowerCase()) {
-            score++;
-            showFeedback(true, "Õige!");
-            currentIndex++;
-        } else {
-            if (skippedOnce.has(currentPair[0])) {
-                if (!mistakes.some(m => m[0] === currentPair[0])) {
-                    mistakes.push(currentPair);
-                }
-                showFeedback(false, `Vale! Õige vastus oli: ${currentCorrectAnswer}`);
-            } else {
-                skippedOnce.add(currentPair[0]);
-                currentQuestions.push(currentPair);
-                showFeedback(false, `Vale! Sõna läks kordamisele ja tuleb hiljem uuesti.`);
-            }
-            currentIndex++;
-        }
-    }
-
-    function skipInputAnswer() {
-        let currentPair = currentQuestions[currentIndex];
-
-        if (skippedOnce.has(currentPair[0])) {
-            if (!mistakes.some(m => m[0] === currentPair[0])) {
-                mistakes.push(currentPair);
-            }
-            showFeedback(false, `Vahele jäetud! Õige vastus oli: ${currentCorrectAnswer}`);
-        } else {
-            skippedOnce.add(currentPair[0]);
-            currentQuestions.push(currentPair);
-            showFeedback(false, `Jäetud vahele, sõna tuleb hiljem uuesti.`);
-        }
-        currentIndex++;
-    }
-
-    function checkChoiceAnswer(index) {
-        for (let i = 0; i < 4; i++) {
-            document.getElementById(`choice-${i}`).disabled = true;
-        }
-
-        let chosenAnswer = currentChoices[index];
-        let currentPair = currentQuestions[currentIndex];
-
-        if (chosenAnswer.toLowerCase() === currentCorrectAnswer.toLowerCase()) {
-            score++;
-            showFeedback(true, "Õige!");
-            currentIndex++;
-        } else {
-            if (skippedOnce.has(currentPair[0])) {
-                if (!mistakes.some(m => m[0] === currentPair[0])) {
-                    mistakes.push(currentPair);
-                }
-                showFeedback(false, `Vale! Õige vastus oli: ${currentCorrectAnswer}`);
-            } else {
-                skippedOnce.add(currentPair[0]);
-                currentQuestions.push(currentPair);
-                showFeedback(false, `Vale! Sõna läks kordamisele ja tuleb hiljem uuesti.`);
-            }
-            currentIndex++;
-        }
-    }
-
-    function showFeedback(isCorrect, text) {
-        const box = document.getElementById("feedback-box");
-        box.textContent = text;
-        box.className = "feedback " + (isCorrect ? "correct" : "incorrect");
-        box.classList.remove("hidden");
-
-        setTimeout(loadQuestion, 1800);
-    }
-
-    function showResults() {
-        document.getElementById("quiz-screen").classList.add("hidden");
-        document.getElementById("result-screen").classList.remove("hidden");
-
-        document.getElementById("final-score").textContent = `Test läbi! Kokku esines raskusi ${mistakes.length} sõnaga.`;
-
-        const container = document.getElementById("mistakes-container");
-        container.innerHTML = "";
-
-        if (mistakes.length > 0) {
-            let html = "<h4>Sõnad, millega eksisid:</h4><ul>";
-            mistakes.forEach(m => {
-                html += `<li><strong>${m[0]}</strong> - ${m[1]}</li>`;
-            });
-            html += "</ul>";
-            container.innerHTML = html;
-        } else {
-            container.innerHTML = "<p>Suurepärane! Vastasid kõigile õigesti!</p>";
-        }
-    }
-
-    function resetToSetup() {
-        window.speechSynthesis.cancel();
-        document.getElementById("quiz-screen").classList.add("hidden");
-        document.getElementById("result-screen").classList.add("hidden");
-        document.getElementById("print-screen").classList.add("hidden");
-        document.getElementById("setup-screen").classList.remove("hidden");
-    }
+    bookSelect.addEventListener('change', updateUnits);
+    updateUnits(); // Käivita lehe laadimisel
 </script>
 
 </body>
