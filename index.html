@@ -73,7 +73,8 @@
         }
         .print-only { display: none; }
         table.print-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        table.print-table th, table.print-table td { border: 1px solid #333; padding: 10px; text-align: left; }
+        table.print-table th, table.print-table td { border: 1px solid #333; padding: 10px; text-align: left; vertical-align: middle; }
+        table.print-table td.write-cell { height: 28px; }
     </style>
 </head>
 <body>
@@ -701,7 +702,7 @@
 
             let html = `<table class="print-table"><thead><tr><th>Eesti keel</th><th>Inglise keel (kirjuta siia)</th></tr></thead><tbody>`;
             for (let [eng, est] of Object.entries(sourceDict)) {
-                html += `<tr><td><strong>${est}</strong></td><td>..................................................</td></tr>`;
+                html += `<tr><td><strong>${est}</strong></td><td class="write-cell"></td></tr>`;
             }
             html += `</tbody></table>`;
 
