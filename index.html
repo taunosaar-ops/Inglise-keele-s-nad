@@ -76,13 +76,12 @@
             width: 100%; 
             border-collapse: collapse; 
             margin-top: 20px; 
-            font-size: 16px; /* Põhikirja suurus printimisel */
+            font-size: 16px;
         }
         table.print-table th, table.print-table td { 
             border: 1px solid #333; 
-            /* 0.5em = pool kirja kõrgust üles ja alla. 8px = vaba ruum vasakul ja paremal */
             padding: 0.5em 8px; 
-            line-height: 1; /* Hoiab teksti vertikaalselt väga tihedalt */
+            line-height: 1; 
             text-align: left; 
             vertical-align: middle; 
         }
@@ -179,7 +178,20 @@
                     "in": "sees; sisse (eessõna)", "come": "tulema", "say": "ütlema", "the": "artikkel", "the ABC": "tähestik", "shoe": "king",
                     "shoes": "kingad", "so": "nii", "beautiful": "ilus", "Thanks.": "Tänan.", "ladybird": "lepatriinu", "tooth": "hammas", "teeth": "hambad",
                     "fairy": "haldjas", "tooth fairy": "hambahaldjas", "lamb": "(lamba)tall"
-                }}
+                }},
+                3: { name: "School things", words: {} },
+                4: { name: "Colors & Toys", words: {} },
+                5: { name: "My room", words: {} },
+                6: { name: "Animals", words: {} },
+                7: { name: "Food", words: {} },
+                8: { name: "Hobby", words: {} },
+                9: { name: "Time", words: {} },
+                10: { name: "Days of the week", words: {} },
+                11: { name: "Weather", words: {} },
+                12: { name: "Clothes", words: {} },
+                13: { name: "House", words: {} },
+                14: { name: "Town", words: {} },
+                15: { name: "Review", words: {} }
             },
             book2: {
                 1: { name: "School", words: {
@@ -199,11 +211,27 @@
                     "Hold on!": "Oota!", "post": "postitama", "address": "aadress", "laptop": "sülearvuti", "love": "armastama", "paper": "paber",
                     "remember": "mäletama", "swan": "luik", "station": "jaam", "road": "tee; maantee", "helpful": "abivalmis", "same": "sama",
                     "bigger": "suurem", "smaller": "väiksem", "than": "kui (võrdluses)", "circle": "ring", "make up": "moodustama"
-                }}
+                }},
+                3: { name: "Unit 3", words: {} },
+                4: { name: "Unit 4", words: {} },
+                5: { name: "Unit 5", words: {} },
+                6: { name: "Unit 6", words: {} },
+                7: { name: "Unit 7", words: {} },
+                8: { name: "Unit 8", words: {} },
+                9: { name: "Unit 9", words: {} },
+                10: { name: "Unit 10", words: {} },
+                11: { name: "Unit 11", words: {} },
+                12: { name: "Unit 12", words: {} },
+                13: { name: "Unit 13", words: {} },
+                14: { name: "Unit 14", words: {} },
+                15: { name: "Unit 15", words: {} },
+                16: { name: "Unit 16", words: {} },
+                17: { name: "Unit 17", words: {} },
+                18: { name: "Unit 18", words: {} },
+                19: { name: "Unit 19", words: {} },
+                20: { name: "Unit 20", words: {} }
             }
         };
-
-        // Ülejäänud javascripti loogika on täpselt sama!
 
         let currentWords = [];
         let remainingWords = [];
