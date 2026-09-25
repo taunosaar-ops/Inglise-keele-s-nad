@@ -1,448 +1,1556 @@
-<!DOCTYPE html>
-<html lang="et">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sõnade Testija</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            max-width: 650px;
-            margin: 30px auto;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            background: #fff;
-        }
-        h1 { text-align: center; color: #2c3e50; font-size: 24px; }
-        .menu, .game { margin-top: 20px; }
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            margin: 5px 0;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-        }
-        button:hover { background-color: #2980b9; }
-        .secondary-btn { background-color: #95a5a6; }
-        .secondary-btn:hover { background-color: #7f8c8d; }
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .option-btn {
-            background-color: #2ecc71;
-            font-size: 16px;
-            padding: 15px;
-        }
-        .option-btn:hover { background-color: #27ae60; }
-        .hidden { display: none; }
-        #stats { font-weight: bold; margin-bottom: 15px; color: #555; }
-        #feedback { font-weight: bold; margin-top: 10px; font-size: 18px; min-height: 24px; }
-        .audio-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 20px;
-            padding: 0 5px;
-            width: auto;
-            display: inline;
-        }
-        /* Printimise stiilid */
-        @media print {
-            body { background: #fff; box-shadow: none; margin: 0; max-width: 100%; }
-            .no-print { display: none !important; }
-            .print-only { display: block !important; }
-        }
-        .print-only { display: none; }
-        table.print-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-top: 20px; 
-            font-size: 16px;
-        }
-        table.print-table th, table.print-table td { 
-            border: 1px solid #333; 
-            padding: 0.5em 8px; 
-            line-height: 1; 
-            text-align: left; 
-            vertical-align: middle; 
-        }
-    </style>
-</head>
-<body>
+Unit 1 School 
 
-    <div class="no-print">
-        <h1>🇬🇧 Sõnade Testija 🇪🇪</h1>
+dear – kallis, armas
 
-        <!-- Peamenüü -->
-        <div id="menu-screen" class="menu">
-            <p><strong>Vali raamat ja unit:</strong></p>
-            <select id="book-select" onchange="updateUnitOptions()" style="width:100%; padding:10px; margin-bottom:10px; font-size:16px;">
-                <option value="book1">Book 1 (Units 1–15)</option>
-                <option value="book2" selected>Book 2 (Units 1–20)</option>
-            </select>
-            
-            <select id="unit-select" style="width:100%; padding:10px; margin-bottom:15px; font-size:16px;">
-                <!-- Täidetakse automaatselt skriptiga -->
-            </select>
+lovely – armas
 
-            <p><strong>Vali testi suund:</strong></p>
-            <select id="direction-select" style="width:100%; padding:10px; margin-bottom:15px; font-size:16px;">
-                <option value="en-et">Inglise ➔ Eesti</option>
-                <option value="et-en">Eesti ➔ Inglise</option>
-            </select>
+mate – kaaslane
 
-            <p><strong>Vali vastamise viis:</strong></p>
-            <button onclick="startTest('write')">Kirjalik vastamine</button>
-            <button onclick="startTest('choice')">4 variandiga valikutest</button>
-            <button class="secondary-btn" onclick="openPrintView()">🖨️ Prindi tööleht (käsitsi täitmiseks)</button>
-        </div>
+over – läbi, möödas
 
-        <!-- Mängu vaade -->
-        <div id="game-screen" class="game hidden">
-            <div id="stats">Punkte: <span id="score">0</span> | Küsimusi: <span id="total">0</span></div>
-            
-            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px;">
-                <p id="question-text" style="font-size: 20px; font-weight: bold; margin: 0;"></p>
-                <button id="audio-button" class="audio-btn" onclick="speakCurrentWord()" title="Kuula hääldust">🔊</button>
-            </div>
+again – jälle
 
-            <!-- Kirjalik sisend -->
-            <div id="write-mode">
-                <input type="text" id="user-answer" placeholder="Kirjuta vastus..." autocomplete="off">
-                <button onclick="checkWrittenAnswer()">Vasta</button>
-            </div>
+What's the English (word) for ...? – Kuidas on inglise keeles ...?
 
-            <!-- 4 variandi ruudustik -->
-            <div id="choice-mode" class="options-grid hidden">
-                <button class="option-btn" onclick="checkChoiceAnswer(0)" id="opt0"></button>
-                <button class="option-btn" onclick="checkChoiceAnswer(1)" id="opt1"></button>
-                <button class="option-btn" onclick="checkChoiceAnswer(2)" id="opt2"></button>
-                <button class="option-btn" onclick="checkChoiceAnswer(3)" id="opt3"></button>
-            </div>
+Swedish – rootsi keel; rootslane
 
-            <p id="feedback"></p>
-            <button class="secondary-btn" onclick="endTest()" style="margin-top: 20px;">Lõpeta / Tagasi menüüsse</button>
-        </div>
+classmate – klassikaaslane
 
-        <!-- Tulemuste vaade -->
-        <div id="result-screen" class="menu hidden">
-            <h2>Test on lõppenud!</h2>
-            <p id="final-stats" style="font-size: 18px;"></p>
-            <button onclick="location.reload()">Tagasi menüüsse</button>
-        </div>
-    </div>
+take – viima
 
-    <!-- Printimise vaade -->
-    <div id="print-screen" class="print-only">
-        <h2 style="text-align:center;" id="print-title">Sõnade Tööleht</h2>
-        <p>Nimi: ___________________________ Kuupäev: _______________</p>
-        <div id="print-content"></div>
-    </div>
+Sweden – Rootsi
 
-    <script>
-        const CURRICULUM = {
-            book1: {
-                1: { name: "Hello", words: {
-                    "unit": "õppetükk", "Hello": "Tere!", "Hi": "Tere!", "I": "mina, ma", "am": "olen", "I am": "ma olen", "I's from": "Ma olen pärit",
-                    "Britain": "Britannia", "America": "Ameerika", "Finland": "Soome", "Estonia": "Eesti", "and": "ja, ning", "you": "sina, teie",
-                    "he": "tema (meessoost)", "she": "tema (naissoost)", "this": "see", "is": "on (olema 3. pööre ainsuses)", "He's / She's from": "Ta on pärit",
-                    "good": "hea", "morning": "hommik", "Good morning!": "Tere hommikust!", "Miss": "preili", "what": "mis (küsisõna)", "what's": "mis on",
-                    "your": "sinu; teie", "name": "nimi", "Sorry.": "Vabandust.", "late": "hilja", "Sorry, I'm late.": "Vabandust, et ma hilinesin.",
-                    "that": "see (seal)", "that's": "see on", "OK": "okei, korras, hästi", "That's OK.": "Siin: Sellest pole madagi.", "Goodbye!": "Head päeva! Head aega!", "Bye-bye!": "Head päeva! Head aega!"
-                }},
-                2: { name: "Family", words: {
-                    "family": "perekond", "dad": "isa", "my": "minu (oma)", "friend": "sõber", "Mr": "härra", "dog": "koer", "mum": "ema",
-                    "granny": "vanaema", "grandad": "vanaisa", "brother": "vend", "sister": "õde", "cat": "kass", "his": "tema (oma) (meessoost)",
-                    "her": "tema (oma) (naissoost)", "these": "need (siin)", "are": "oled, oleme, olete, on (mitmuses)", "big": "suur", "small": "väike",
-                    "girl": "tüdruk", "girls": "tüdrukud", "boy": "poiss", "boys": "poisid", "book": "raamat", "ball": "pall", "pencil": "pliiats",
-                    "horse": "hobune", "horses": "hobused", "new": "uus", "bike": "jalgratas", "cool": "äge, vinge", "police": "politsei",
-                    "in": "sees; sisse (eessõna)", "come": "tulema", "say": "ütlema", "the": "artikkel", "the ABC": "tähestik", "shoe": "king",
-                    "shoes": "kingad", "so": "nii", "beautiful": "ilus", "Thanks.": "Tänan.", "ladybird": "lepatriinu", "tooth": "hammas", "teeth": "hambad",
-                    "fairy": "haldjas", "tooth fairy": "hambahaldjas", "lamb": "(lamba)tall"
-                }},
-                3: { name: "School things", words: {} },
-                4: { name: "Colors & Toys", words: {} },
-                5: { name: "My room", words: {} },
-                6: { name: "Animals", words: {} },
-                7: { name: "Food", words: {} },
-                8: { name: "Hobby", words: {} },
-                9: { name: "Time", words: {} },
-                10: { name: "Days of the week", words: {} },
-                11: { name: "Weather", words: {} },
-                12: { name: "Clothes", words: {} },
-                13: { name: "House", words: {} },
-                14: { name: "Town", words: {} },
-                15: { name: "Review", words: {} }
-            },
-            book2: {
-                1: { name: "School", words: {
-                    "dear": "kallis, armas", "lovely": "armas", "mate": "kaaslane", "over": "läbi, möödas", "again": "jälle",
-                    "What's the English (word) for ...?": "Kuidas on inglise keeles ...?", "Swedish": "rootsi keel; rootslane", "classmate": "klassikaaslane",
-                    "take": "viima", "Sweden": "Rootsi", "English": "inglane; inglise keel", "language": "keel", "funny": "naljakas",
-                    "Finnish": "soome keel; soomlane", "French": "prantsuse keel; prantslane", "turn on": "sisse lülitama", "turn off": "välja lülitama",
-                    "light": "valgus, valgustus, tuli; hele", "leave": "jätma; lahkuma", "tomorrow": "homme", "puppy": "kutsikas", "kitten": "kassipoeg",
-                    "kind to sb": "lahke kellegi vastu", "car boot": "auto pagasiruum", "twin": "kaksik", "hair clip": "juukseklambr", "textbook": "õpik"
-                }},
-                2: { name: "Numbers", words: {
-                    "them": "neid", "all": "kõik", "bad": "halb", "especially": "eriti", "test": "kontrolltöö", "lucky": "õnnelik, õnnetoov",
-                    "tell": "ütlema; siin: saladust reetma", "secret": "saladus; salajane, sala-", "why": "miks", "may": "võima, tohtima",
-                    "lose": "kaotama", "its": "selle oma (eluta olendi puhul)", "magic": "nõidus, maagia", "guess": "ära arvama", "thirty": "kolmkümmend",
-                    "forty": "nelikümmend", "fifty": "viiskümmend", "sixty": "kuuskümmend", "seventy": "seitsekümmend", "eighty": "kaheksakümmend",
-                    "ninety": "üheksakümmend", "hundred": "sada", "afternoon": "pärastlõuna", "in the afternoon": "pärastlõunal", "hold": "hoidma; pidama",
-                    "Hold on!": "Oota!", "post": "postitama", "address": "aadress", "laptop": "sülearvuti", "love": "armastama", "paper": "paber",
-                    "remember": "mäletama", "swan": "luik", "station": "jaam", "road": "tee; maantee", "helpful": "abivalmis", "same": "sama",
-                    "bigger": "suurem", "smaller": "väiksem", "than": "kui (võrdluses)", "circle": "ring", "make up": "moodustama"
-                }},
-                3: { name: "My day", words: {} },
-                4: { name: "Food and drink", words: {} },
-                5: { name: "At home", words: {} },
-                6: { name: "Hobbies", words: {} },
-                7: { name: "Free time", words: {} },
-                8: { name: "Animals", words: {} },
-                9: { name: "Town and country", words: {} },
-                10: { name: "Clothes", words: {} },
-                11: { name: "Weather and seasons", words: {} },
-                12: { name: "Health", words: {} },
-                13: { name: "Travel", words: {} },
-                14: { name: "Holidays", words: {} },
-                15: { name: "Jobs", words: {} },
-                16: { name: "Technology", words: {} },
-                17: { name: "Space", words: {} },
-                18: { name: "Environment", words: {} },
-                19: { name: "Culture", words: {} },
-                20: { name: "Review", words: {} }
-            }
-        };
+English – inglane; inglise keel
 
-        let currentWords = [];
-        let remainingWords = [];
-        let currentPair = {};
-        let score = 0;
-        let total = 0;
-        let mode = 'write';
-        let direction = 'en-et';
-        let currentChoices = [];
+language – keel
 
-        function updateUnitOptions() {
-            let bookKey = document.getElementById('book-select').value;
-            let unitSelect = document.getElementById('unit-select');
-            unitSelect.innerHTML = '<option value="all">Kõik unitid koos</option>';
-            
-            let units = CURRICULUM[bookKey];
-            for (let uNum in units) {
-                let opt = document.createElement('option');
-                opt.value = uNum;
-                opt.innerText = `Unit ${uNum}: ${units[uNum].name}`;
-                unitSelect.appendChild(opt);
-            }
-        }
-        updateUnitOptions();
+funny – naljakas
 
-        function startTest(selectedMode) {
-            mode = selectedMode;
-            direction = document.getElementById('direction-select').value;
-            let bookKey = document.getElementById('book-select').value;
-            let unitVal = document.getElementById('unit-select').value;
-            
-            let sourceDict = {};
-            if (unitVal === 'all') {
-                for (let u in CURRICULUM[bookKey]) {
-                    Object.assign(sourceDict, CURRICULUM[bookKey][u].words);
-                }
-            } else {
-                sourceDict = CURRICULUM[bookKey][unitVal].words || {};
-            }
+Finnish – soome keel; soomlane
 
-            currentWords = Object.entries(sourceDict);
-            if (currentWords.length === 0) {
-                alert("Valitud unitis pole sõnu! (Lisa sõnad CURRICULUM objekti sisse).");
-                return;
-            }
+French – prantsuse keel; prantslane
 
-            remainingWords = [...currentWords];
-            shuffleArray(remainingWords);
+turn on – sisse lülitama
 
-            score = 0;
-            total = 0;
-            document.getElementById('menu-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
+turn off – välja lülitama
 
-            if (mode === 'write') {
-                document.getElementById('write-mode').classList.remove('hidden');
-                document.getElementById('choice-mode').classList.add('hidden');
-                document.getElementById('user-answer').placeholder = direction === 'en-et' ? "Kirjuta eesti keeles..." : "Kirjuta inglise keeles...";
-            } else {
-                document.getElementById('write-mode').classList.add('hidden');
-                document.getElementById('choice-mode').classList.remove('hidden');
-            }
+light – valgus, valgustus, tuli; hele
 
-            document.getElementById('audio-button').style.display = (direction === 'en-et') ? 'inline' : 'none';
+leave – jätma; lahkuma
 
-            nextQuestion();
-        }
+tomorrow – homme
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                let j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
+puppy – kutsikas
 
-        function nextQuestion() {
-            document.getElementById('feedback').innerText = "";
-            document.getElementById('user-answer').value = "";
-            
-            if (remainingWords.length === 0) {
-                remainingWords = [...currentWords];
-                shuffleArray(remainingWords);
-            }
+kitten – kassipoeg
 
-            currentPair = remainingWords.pop();
-            
-            let questionWord = direction === 'en-et' ? currentPair[0] : currentPair[1];
-            let targetLangText = direction === 'en-et' ? "eesti keeles" : "inglise keeles";
-            
-            document.getElementById('question-text').innerText = `Mis on ${targetLangText} sõna: "${questionWord}"?`;
-            document.getElementById('score').innerText = score;
-            document.getElementById('total').innerText = total;
+kind to sb – lahke kellegi vastu
 
-            if (mode === 'choice') {
-                setupChoices();
-            } else {
-                document.getElementById('user-answer').focus();
-            }
-        }
+car boot – auto pagasiruum
 
-        function setupChoices() {
-            let correctAns = direction === 'en-et' ? currentPair[1] : currentPair[0];
-            currentChoices = [correctAns];
+twin – kaksik
 
-            while (currentChoices.length < 4 && currentChoices.length < currentWords.length) {
-                let randomPair = currentWords[Math.floor(Math.random() * currentWords.length)];
-                let wrongAns = direction === 'en-et' ? randomPair[1] : randomPair[0];
-                if (!currentChoices.includes(wrongAns)) {
-                    currentChoices.push(wrongAns);
-                }
-            }
-            currentChoices.sort(() => Math.random() - 0.5);
+hair clip – juukseklambr
 
-            for (let i = 0; i < 4; i++) {
-                let btn = document.getElementById(`opt${i}`);
-                if (currentChoices[i]) {
-                    btn.innerText = currentChoices[i];
-                    btn.style.display = "block";
-                } else {
-                    btn.style.display = "none";
-                }
-            }
-        }
+textbook – õpik
 
-        function checkWrittenAnswer() {
-            let userAns = document.getElementById('user-answer').value.trim().toLowerCase();
-            let correctAns = (direction === 'en-et' ? currentPair[1] : currentPair[0]).toLowerCase();
+Unit 2 Numbers:
 
-            total++;
-            if (userAns === correctAns) {
-                score++;
-                document.getElementById('feedback').style.color = "green";
-                document.getElementById('feedback').innerText = "Õige! 🎉";
-                setTimeout(nextQuestion, 1200);
-            } else {
-                document.getElementById('feedback').style.color = "red";
-                let properCorrect = direction === 'en-et' ? currentPair[1] : currentPair[0];
-                document.getElementById('feedback').innerText = `Vale! Õige vastus oli: ${properCorrect}`;
-                setTimeout(nextQuestion, 2000);
-            }
-        }
+them – neid
 
-        function checkChoiceAnswer(index) {
-            let chosenAns = currentChoices[index];
-            let correctAns = direction === 'en-et' ? currentPair[1] : currentPair[0];
-            total++;
+all – kõik
 
-            if (chosenAns === correctAns) {
-                score++;
-                document.getElementById('feedback').style.color = "green";
-                document.getElementById('feedback').innerText = "Õige! 🎉";
-                setTimeout(nextQuestion, 1200);
-            } else {
-                document.getElementById('feedback').style.color = "red";
-                document.getElementById('feedback').innerText = `Vale! Õige vastus oli: ${correctAns}`;
-                setTimeout(nextQuestion, 2000);
-            }
-        }
+bad – halb
 
-        document.getElementById('user-answer').addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                checkWrittenAnswer();
-            }
-        });
+especially – eriti
 
-        function speakCurrentWord() {
-            if (!currentPair[0]) return;
-            let utterance = new SpeechSynthesisUtterance(currentPair[0]);
-            utterance.lang = 'en-GB';
-            window.speechSynthesis.speak(utterance);
-        }
+test – kontrolltöö
 
-        function endTest() {
-            document.getElementById('game-screen').classList.add('hidden');
-            document.getElementById('result-screen').classList.remove('hidden');
-            let percentage = total > 0 ? Math.round((score / total) * 100) : 0;
-            document.getElementById('final-stats').innerText = `Said ${score} õiget vastust ${total} küsimusest. Tulemus: ${percentage}%`;
-        }
+lucky – õnnelik, õnnetoov
 
-        function openPrintView() {
-            let bookKey = document.getElementById('book-select').value;
-            let unitVal = document.getElementById('unit-select').value;
-            direction = document.getElementById('direction-select').value;
-            
-            let bookName = bookKey === 'book1' ? 'Book 1' : 'Book 2';
-            let unitText = unitVal === 'all' ? 'Kõik unitid' : `Unit ${unitVal}: ${CURRICULUM[bookKey][unitVal].name}`;
-            let dirText = direction === 'en-et' ? 'Inglise ➔ Eesti' : 'Eesti ➔ Inglise';
-            document.getElementById('print-title').innerText = `Sõnade Tööleht (${bookName} - ${unitText} | ${dirText})`;
+tell – ütlema; siin: saladust reetma
 
-            let sourceDict = {};
-            if (unitVal === 'all') {
-                for (let u in CURRICULUM[bookKey]) {
-                    Object.assign(sourceDict, CURRICULUM[bookKey][u].words);
-                }
-            } else {
-                sourceDict = CURRICULUM[bookKey][unitVal].words || {};
-            }
+secret – saladus; salajane, sala-
 
-            let col1Title = direction === 'en-et' ? 'Inglise keel' : 'Eesti keel';
-            let col2Title = direction === 'en-et' ? 'Eesti keel (kirjuta siia)' : 'Inglise keel (kirjuta siia)';
+why – miks
 
-            let html = `<table class="print-table"><thead><tr><th>${col1Title}</th><th>${col2Title}</th></tr></thead><tbody>`;
-            for (let [eng, est] of Object.entries(sourceDict)) {
-                let questionWord = direction === 'en-et' ? eng : est;
-                html += `<tr><td><strong>${questionWord}</strong></td><td class="write-cell"></td></tr>`;
-            }
-            html += `</tbody></table>`;
+may – võima, tohtima
 
-            document.getElementById('print-content').innerHTML = html;
-            window.print();
-        }
-    </script>
-</body>
-</html>
+lose – kaotama
+
+its – selle oma (eluta olendi puhul)
+
+magic – nõidus, maagia
+
+guess – ära arvama
+
+thirty – kolmkümmend
+
+forty – nelikümmend
+
+fifty – viiskümmend
+
+sixty – kuuskümmend
+
+seventy – seitsekümmend
+
+eighty – kaheksakümmend
+
+ninety – üheksakümmend
+
+hundred – sada
+
+afternoon – pärastlõuna
+
+in the afternoon – pärastlõunal
+
+hold – hoidma; pidama
+
+Hold on! – Oota!
+
+post – postitama
+
+address – aadress
+
+laptop – sülearvuti
+
+love – armastama
+
+paper – paber
+
+remember – mäletama
+
+swan – luik
+
+station – jaam
+
+road – tee; maantee
+
+helpful – abivalmis
+
+same – sama
+
+bigger – suurem
+
+smaller – väiksem
+
+than – kui (võrdluses)
+
+circle – ring
+
+make up – moodustama
+
+ Unit 3 Thank you:
+
+friendly – sõbralik
+
+good to sb – hea kellegi vastu
+
+lace – kingapael
+
+extra – lisa-, ülearune
+
+tissue – pabertaskurätik
+
+alien – tulnukas
+
+deed – tegu
+
+good deed – heategu
+
+message – teade
+
+right – täpselt
+
+invisible – nähtamatu
+
+serious – tõsine
+
+try – katse; katsetama, proovima
+
+become – saama (kelleksi, milleksi)
+
+visible – nähtav
+
+spot – märkama
+
+some – mõni, mõned
+
+like – nagu
+
+Like what? – Nagu näiteks? Missugune siis?
+
+note – lühike kiri
+
+drop – pillama, poetama
+
+bottle – pudel
+
+ready – valmis
+
+catch – püüdma
+
+huge – hiigelsuur
+
+basket – korv
+
+there – seal; sinna
+
+biscuit – küpsis
+
+lunch – keskpäevaeine
+
+undo – lahti siduma, lahti tegema
+
+unhappy – õnnetu
+
+inside – seespool; sees, sisse; toas
+
+Unit 4 Zoo:
+
+zoo – loomaaed
+
+at / in the zoo – loomaaias
+
+hippo – jõehobu
+
+elephant – elevant
+
+kangaroo – känguru
+
+tiger – tiiger
+
+lion – lõvi
+
+gnu – (antiloop) gnuu
+
+penguin – pingviin
+
+queue – järjekord
+
+in the queue – järjekorras
+
+poster – plakat
+
+banner – loosung
+
+welcome – tere tulemast
+
+cage – puur
+
+lots of – palju
+
+any – mingi (eitavas ja küsivas lauses)
+
+carry – kandma
+
+baby – beebi
+
+grass – rohi
+
+dive – sukelduma
+
+fish – kala; kalad
+
+rock – kivi; kalju
+
+leaf; leaves – puuleht; puulehed
+
+I don't like – mulle ei meeldi / ei maitse
+
+even – isegi
+
+acorn – tammetõru
+
+oak – tamm
+
+heavy – raske
+
+Hey! – Hei! (üllatushüuatus)
+
+Guess what? – Tead mis!
+
+pick – korjama
+
+people – inimesed
+
+stupid – rumal
+
+I see. – Saan aru.
+
+
+Unit 5 Rules:
+
+rule – reegel
+
+rush – tormama
+
+or – või (sidesõna)
+
+hold the door – ust kellegi lahti hoidma
+
+mean – kitsi, ihne; häbematu
+
+share – jagama, ühiselt kasutama
+
+shout – karjuma
+
+raise – tõstma
+
+polite – viisakas
+
+noise – lärm
+
+litter – praht
+
+drop litter – prahti maha viskama
+
+sweet – maiustus; magus
+
+ladder – redel
+
+pick up – üles võtma (maast)
+
+wrapper – pakend
+
+sweet wrapper – kommipaber
+
+meal – eine; söögikord
+
+button – nööp
+
+rainbow – vikerkaar
+
+wave – lehvitama
+
+click – nipsutama, klikkima
+
+stamp – trampima (jalgu)
+
+clap – plaksutama
+
+even number – paaris (arv)
+
+odd number – paaritu (arv)
+
+end – lõpp; lõppema
+
+at the end – lopus
+
+pot – pott
+
+gold – kuld
+
+ground – maapind
+
+on the ground – maas
+
+square – ruut
+
+weather – ilm
+
+
+Unit 6 My friend:
+
+angry – kuri; vihane
+
+fluffy – kohev
+
+knit – kuduma
+
+knitting ball – lõngakera
+
+sound – heli
+
+thunder – kou, müristamine
+
+thunderstorm – äikseilm
+
+fireworks – ilutulestik
+
+walk – jalutuskäik; kõndima; jalutama
+
+pass – mööduma
+
+as ... as – sama ... kui
+
+as old as – sama vana kui
+
+gymnastics – võimlemine
+
+do gymnastics – võimlemas käima
+
+twice – kaks korda
+
+twice a week – kaks korda nädalas
+
+train – treenima
+
+club – klubi
+
+sports club – spordiklubi
+
+friendship – sõprus
+
+band – pael
+
+friendship band – sõbrapael
+
+sometimes – mõnikord
+
+allergic to – allergiline millegi suhtes
+
+never – mitte kunagi
+
+stay – jääma, viibima
+
+quickly – kiiresti
+
+enjoy – nautima
+
+hate – vihkama
+
+fond of – kiindunud
+
+enough – küllalt
+
+hop – hüppama
+
+wave – lehvitama
+
+wing – tiib
+
+loud – vali
+
+icy – jäine
+
+leprechaun – härjapõlvlane (iiri muinasjuttudes)
+
+keep – hoidma
+
+always – alati
+
+get away – jalga laskma
+
+boat – paat
+
+Antarctica – Antarktika
+
+Ireland – Iirimaa
+
+
+Unit 7 My day:
+
+get dressed – ridedse panema
+
+in the morning – hommikul
+
+off – ära
+
+I'm off to – ma hakkan minema
+
+get up – üles tõusma
+
+leave for school – kooli minema
+
+brush – hari; harjama
+
+brush my teeth – hambaid pesema
+
+before – enne
+
+because – sellepärast, et
+
+myself – mina ise; mind ennast
+
+usually – tavaliselt
+
+comb – kamm; kammima
+
+dew – kaste; hommikuudu
+
+drop – piisk
+
+dew drop – kastepiisk
+
+honey – mesi
+
+from Monday to Friday – (millestki) alates, peale (eessõna) esmaspäevast reedeni
+
+handbell – käsikell (muusikainstrument)
+
+ring / play handbells – käsikellasid mängima / (kella) helistama
+
+ring –
+
+recorder – plokkflööt
+
+play the recorder – plokkflööti mängima
+
+robin – punarind
+
+quite – üsna
+
+go dancing – tantsimas käima
+
+circle dance – ringtants
+
+line – rivi; joon
+
+line dance – rivitans, line-tants
+
+win – võitma
+
+hide-and-seek – peitus
+
+hopscotch – keksumäng
+
+still – vaikselt
+
+bed – voodi
+
+go to bed – magama minema
+
+piano – klaver
+
+play the piano – klaverit mängima
+
+badminton – sulgpall
+
+play badminton – sulgpalli mängima
+
+supper – õhtusöök
+
+have supper – õhtusööki sööma
+
+evening – õhtu
+
+in the evening – õhtul
+
+every – iga
+
+every day – iga päev
+
+key – võti
+
+practise – harjutama
+
+Unit 8 Clowns
+
+glove – sõrmkinnas
+
+high – kõrge
+
+low – madal
+
+young – noor
+
+thick – paks, jäme
+
+thin – õhuke
+
+circus – tsirkus
+
+sleeve – varrukas
+
+bow tie – kikilips
+
+cinema – kino
+
+pasta – pasta, makaronitooted
+
+wear – seljas, jalas kandma
+
+hard – kõvasti; raske, keeruline
+
+healthy – tervislik
+
+do a trick – trikki tegema
+
+laugh – naerma
+
+make me laugh – mind naerma ajama
+
+during – vältel, jooksul (eessõna)
+
+show – etendus
+
+fit – heas vormis
+
+slim – sale
+
+need – vajama
+
+programme – programm
+
+hamburger – hamburger
+
+chips – friikartulid
+
+fast – kiire
+
+fast food – kiirtoit
+
+weekday – tööpäev
+
+chicken – kana
+
+together – koos
+
+judo – juudo
+
+go to judo – juudo trennis käima
+
+next – järgmine
+
+night – öö
+
+easy – lihtne, kerge
+
+tennis – tennis
+
+alone – üksinda
+
+
+Unit 9 Ball games:
+
+
+kick – jalaga lööma
+
+head – pea; peaga lööma
+
+head a ball – peaga palli lööma
+
+score – punktiseis
+
+bounce – põrgatama
+
+pass – edasi andma; söötma (palli)
+
+throw – viskama
+
+dodgeball – rahvastepall
+
+training class – treening
+
+drill – drillharjutus; drillima, harjutama
+
+want – tahtma
+
+catcher – püüdja
+
+team – meeskond
+
+tournament – turniir
+
+wait (for) – ootama
+
+I can't wait. – Ma ootan seda väga.
+
+skill – oskus
+
+practice – harjutamine, treenimine
+
+basketball – korvpall
+
+like – meeldima
+
+I'd like – mulle meeldiks, ma tahaksin
+
+join – liituma, liikmeks astuma
+
+coach – treener
+
+pick – korjama
+
+pick out – valima
+
+forward – edasi, ettepoole
+
+look forward to sth – midagi väga ootama
+
+I'm looking forward to spring. – Ma ootan väga kevadet.
+
+roll – veeretama
+
+member – liige
+
+borrow – laenama, laenuks võtma
+
+What's up? – Mis lahti?
+
+ahead – edasi, ette
+
+locker – isiklike asjade kapp koolis, spordihoones
+
+Go ahead! – Lase käia!
+
+absolutely – jah muidugi! Absoluutselt!
+
+more – rohkem, enam
+
+find out – välja uurima, selgitama (infot)
+
+expensive – hinnaline, kallis
+
+scary – hirmutav
+
+trip – reis
+
+family trip – perereis
+
+
+Unit 10 Stars:
+
+mummy – emme
+
+race – võidujooks, sõit
+
+daddy – issi
+
+brand new – tuliuus
+
+travel – reisima
+
+space – kosmos
+
+spaceship – kosmoselaev
+
+giant – hiiglane
+
+joke – nali
+
+tell a joke – nalja rääkima
+
+tale – lugu, jutt
+
+fairy tale – muinasjutt
+
+sun – päike
+
+large – suur
+
+earth – maa (planeet)
+
+which – mis (asesõna)
+
+super – üli-
+
+dwarf – kääbus
+
+warmth – soojus
+
+plant – taim
+
+grow – kasvama
+
+cleaner – puhastaja, koristaja
+
+centimetre – sentimeeter
+
+ocean – ookean
+
+the Indian Ocean – India ookean
+
+poke – torkima, tõukama
+
+piece – tükk, tükike
+
+dentist – hambaarst
+
+if – kui, kas
+
+dragon – draakon
+
+caterpillar – röövik, tõuk
+
+hole – auk
+
+
+Unit 11 Picnic:
+
+picnic – piknik, eine vabas õhus
+
+pack – pakkima
+
+woods – mets
+
+in the woods – metsa all, metsas
+
+snack – suupiste; näksima
+
+juice – mahl
+
+juicy – mahlane
+
+forget – unustama
+
+bread – leib
+
+egg – muna
+
+cheese – juust
+
+butter – või
+
+cucumber – kurk
+
+carrot – porgand
+
+cake – kook
+
+radish – redis
+
+shall – abitegusõna tegevusse kaasamisel
+
+What shall we eat? – Mida me sööme?
+
+some – veidi
+
+sausage – vorst
+
+idea – mõte
+
+strawberry – maasikas
+
+yummy – maitsev, nämma
+
+noon – keskpäev
+
+at noon – keskpäeval
+
+this afternoon – täna pärastlõunal
+
+this evening – täna õhtul
+
+blanket – tekk
+
+cup – tass
+
+plate – taldrik
+
+pull – tirima, tõmbama
+
+bee – mesilane
+
+snail – tigu
+
+pond – tiik
+
+motorbike – mootorratas
+
+person – inimene, isik
+
+whole – terve, kogu
+
+
+Unit 12 Help:
+
+fire – tulekahju
+
+is on fire – põleb
+
+smoke – suits
+
+alarm – häire
+
+smoke alarm – suitsuandur
+
+helmet – kiiver
+
+reflector – helkur
+
+uniform – vormiriietus
+
+fire engine – tuletõrjeauto
+
+ambulance – kiirabiauto
+
+emergency – erakorraline olukord
+
+emergency number – hädaabinumber
+
+dangerous – ohtlik
+
+accident – õnnetus
+
+car accident – autoõnnetus
+
+go off – käivituma, tööle hakkama
+
+ice – jää
+
+somebody – keegi
+
+everybody – igaüks
+
+calm – rahulik
+
+panic – paanika; paanikasse sattuma
+
+fire drill – tuletõrjeõppus
+
+possible – võimalik
+
+join in – milleski kaasa lööma
+
+safe – ohutu, turvaline
+
+keep safe – ohtu vältima
+
+injure – vigastama
+
+injured – vigastatud
+
+driver – autojuht
+
+crack – pragunema
+
+fall – kukkuma
+
+into – sisse (eessõna)
+
+safety – ohutus, turvalisus
+
+cross – ületama
+
+zebra crossing – jalakäijate ülekäigukoht
+
+way – tee; suund
+
+pavement – kõnnitee
+
+afraid – hirmunud
+
+be afraid – kartma
+
+ask – küsima
+
+ask for – paluma midagi
+
+pocket – tasku
+
+
+Unit 13 Yesterday :
+
+yesterday – eile
+
+was, were – oli, olid (be minevikuvormid)
+
+moon – kuu (taevakeha)
+
+over the moon – väga õnnelik
+
+call – minevikuvorm
+
+last – viimane; eelmine
+
+night – öö
+
+last night – eile õhtul
+
+ill – haige
+
+camp – laager
+
+training camp – treeninglaager
+
+happy with sth – rahul millegagi
+
+hour – (kella)tund
+
+ago – (ajas) tagasi
+
+library – raamatukogu
+
+burglar – murdvaras
+
+downstairs – alumisel korrusel
+
+make a call – helistama
+
+keep an eye on – silma peal hoidma
+
+neighbour – naaber
+
+down – alla
+
+stairs – trepp
+
+himself – (tema) ise; (teda ennast)
+
+front door – eesuks
+
+mistake – viga
+
+upstairs – ülemisel korrusel
+
+today – täna
+
+lazy – laisk
+
+mirror – peegel
+
+drawer – sahtel
+
+sick – iiveldav
+
+I'm sick. – Mul on süda paha.
+
+storm – torm
+
+wonderful – suurepärane
+
+brilliant – hiilgav, vaimustav
+
+awful – kohutav
+
+landing – maandumine
+
+daft – napakas
+
+flight – lend, lennureis
+
+up – üles
+
+up the stairs – trepist üles
+
+
+Unit 14 Visit:
+
+visit – külaskäik; külastama
+
+fun – nali; lõbu
+
+have fun – lõbutsema
+
+soon – varsti
+
+too soon – liiga ruttu
+
+first – esimene; esiteks
+
+come first – esimeseks tulema, võitma
+
+second – teine
+
+third – kolmas
+
+fourth – neljas
+
+fifth – viies
+
+sixth – kuues
+
+seventh – seitsmes
+
+come – minevikuvorm
+
+build, built – ehitama
+
+went – minevikuvorm
+
+often – sageli
+
+once – ükskord
+
+room – ruum
+
+no room – ei ole ruumi
+
+said – minevikuvorm
+
+answer – vastus; vastama
+
+deep – sügav
+
+knee-deep – põlvesügavune
+
+at last – lõpuks
+
+minute – minut
+
+roof – katus
+
+sat – minevikuvorm
+
+overflow – üle ujutama
+
+forever – igavesti
+
+trouble – segadus, raskus, mure
+
+in trouble – hädas, raskustes, mures
+
+laser zone – lasermängu ala
+
+offer – pakkuma
+
+seasick – merehaige
+
+log – palk
+
+the new moon – noorkuu
+
+Unit 15 Weather:
+
+weather – ilm
+
+What's the weather like? – Mis ilm on?
+
+frosty – härmas
+
+outdoor – väline, välis-
+
+cloud – pilv
+
+cloudy – pilvine
+
+foggy – udune
+
+cool – jahe
+
+sledge – kelk; kelgutama
+
+go sledging – kelgutama
+
+snowball – lumepall
+
+skate – uisk; uisutama
+
+go skating – uisutama
+
+castle – kindlus
+
+snowdrift – lumehang
+
+had – minevikuvorm
+
+fight – lahing
+
+snowball fight – lumesõda
+
+made – minevikuvorm
+
+snowy – lumine
+
+last – eelmine; viimati
+
+last Sunday – eelmisel pühapäeval
+
+shovel – kühvel; kühveldama
+
+found – minevikuvorm
+
+wet – niiske, märj
+
+drive, drove – autoga sõitma, autot juhtima
+
+drive off – ära sõitma
+
+put, put – panema
+
+angel – ingel
+
+instead – (millegi) asemel
+
+bottom – alumine osa
+
+bring, brought – tooma
+
+potato – kartul
+
+got – minevikuvorm
+
+get dark – pimedaks minema
+
+kept – minevikuvorm
+
+melt – sulama
+
+ran – minevikuvorm
+
+saw – minevikuvorm
+
+health – tervis
+
+in good health – hea tervise juures
+
+ugly – inetu
+
+anyone – keegi (eitavas ja küsivas lauses)
+
+
+Unit 16 Birthday:
+
+finger food – sõrmedega söödav toit
+
+hope – lootma
+
+stick – tikk, pulgake
+
+loads of – rohkesti
+
+bite – hammustus, amps; hammustama
+
+bite-size food – suupisted
+
+grab – haarama
+
+something – midagi
+
+nobody – mitte keegi
+
+all right – hea küll
+
+recipe – toiduretsept
+
+magazine – ajakiri
+
+could – can minevikuvorm
+
+we could – siin: me võiksime
+
+sound – heli; kõlama
+
+tomato – tomat
+
+meatball – lihapall
+
+fish finger – kalapulk
+
+vegetable – köögi- ja juurvili
+
+milk – piim
+
+cereal – hommikusöögihelbed
+
+porridge – kaerahelbepuder
+
+worry – muretsema
+
+date – kuupäev
+
+May Day – kevadpüha (1. mai)
+
+independence – iseseisvus
+
+New Year's Day – uue aasta esimene päev
+
+Christmas Eve – jõululaupäev
+
+Christmas Day – jõulu esimene püha
+
+ate – eat minevikuvorm
+
+party – pidu
+
+gave – give minevikuvorm
+
+glasses – prillid
+
+would – abitegusõna
+
+Would you like ...? – Kas sa sooviksid ...?
+
+tea – tee
+
+soup – supp
+
+scoop – kühvel, kulp
+
+drink, drank – jooma
+
+
+Unit 17 Camping:
+
+camp – laag; telkima, laagrisse jääma
+
+go camping – telkimas käima
+
+did – do minevikuvorm; lihtmineviku abitegusõna
+
+caught – catch minevikuvorm
+
+raincoat – vihmamantel
+
+wellies – kummikud
+
+rucksack – seljakott
+
+hike – matk; matkama
+
+go hiking – matkama
+
+hiking boots – matkasaapad
+
+tent – telk
+
+put up a tent – telki püstitama
+
+kit – varustuskomplekt
+
+first aid – esmaabi
+
+first-aid kit – esmaabitarvete komplekt
+
+sunglasses – päikeseprillid
+
+compass – kompass
+
+forest – põlismets, laas
+
+different – teistsugune, erinev
+
+such – selline
+
+countryside – maakoht, maa (vastandina linnale)
+
+flower – lill
+
+strange – veider, kummaline
+
+bright – ere
+
+in case – juhul kui
+
+get lost – ära eksima
+
+take off – startima, õhku tõusma
+
+by the way – muide
+
+GPS – asukoha määraja
+
+pity – kahetsus
+
+It's a pity. – Kahju.
+
+meet, met, met – kohtuma
+
+meet up – kokku saama
+
+sheep – lammas; lambad
+
+ask the way – teed küsima
+
+fire – lõke
+
+campfire – laagrilõke
+
+tip – nõuanne
+
+go fishing – kalal käima
+
+Unit 18 Short cut:
+
+short cut – otsetee
+
+take a short cut – otseteed minema
+
+tourist – turist
+
+farm – talu
+
+on the farm – talus
+
+farmer – talunik
+
+You're welcome. – Pole tänu väärt.
+
+hospital – haigla
+
+along – piki, mööda (eessõna)
+
+cow – lehm
+
+goose, geese – hani, haned
+
+pig – siga
+
+field – põld
+
+in the field – põllul
+
+path – jalgtee
+
+across – risti üle (eessõna)
+
+graze – rohtu sööma
+
+aggressive – agressiivne, kuri
+
+mind – tähele panema
+
+mind where you step – vaatama ette, kuhu astud
+
+smart – nutikas
+
+learn – õppima
+
+bit – tükike, raasuke
+
+a bit – veidi
+
+adventure – seiklus
+
+plan – kava, plaan; kavandama, planeerima
+
+train station – raudteejaam
+
+story – jutt, lugu
+
+church – kirik
+
+bridge – sild
+
+desert – kõrb
+
+cheesecake – kohupiimakook
+
+exactly – täpselt
+
+cabbage – kapsas
+
+cornflower – rukkilill
+
+
+Unit 19 Jokes:
+bossy – kamandav, ülbe
+
+foolish – rumal, mõtlematu
+
+kind – liik, sort
+
+parrot – papagoi
+
+fry – praadima
+
+mushroom – seen
+
+moo – ammuma
+
+ceiling – lagi
+
+corner – nurk
+
+cowboy – kauboi, lehmakarjus
+
+rode – ride minevikuvorm
+
+left – leave minevikuvorm
+
+eyesight – nägemine
+
+onion – sibul
+
+ghost – kummitus
+
+lonely – üksildane
+
+silly – rumal, totter, kergemeelne
+
+terrible – kohutav
+
+delicious – maitsev
+
+comic – koomiks
+
+newspaper – ajaleht
+
+parent – lapsevanem
+
+exciting – põnev
+
+unlucky – mitte õnne omav, ei vea
+
+untidy – korratu, lohakas
+
+uninteresting – ebahuvitav
+
+unkind – mitte lahke
+
+unfriendly – ebasõbralik
+
+unexciting – igav, mittehuvitav
+
+
+Unit 20 Summer:
+
+candy floss – suhkruvatt
+
+stall – müügilett
+
+seaside – mereäär, rand
+
+go to the seaside – mere äärde minema
+
+early – vara, varane
+
+read – read minevikuvorm
+
+threw – throw minevikuvorm
+
+cry – nutma
+
+sunbathe – päevitama
+
+fairground – lõbustuspark
+
+bought – buy minevikuvorm
+
+slept – sleep minevikuvorm
+
+snake – madu
+
+without – ilma (eessõna)
+
+explore – uurima
+
+dragonfly – kiil (putukas)
+
+worm – uss
+
+ant – sipelgas
+
+beetle – põrnikas
+
+life – elu
+
+everywhere – igal pool
+
+shore – mere- või järvekallas
+
+fly – kärbes
+
+wasp – herilane
+
+mosquito – sääsk
+
+insect – putukas
+
+pest – kahjur
+
+sting – nõelama
+
+bucket – ämber
+
+spade – kühvel; labidas
+
+towel – käterätt
+
+sandcastle – liivaloss
+
+merry-go-round – karussell
+
+dodgem – elektriline põrkeauto
+
+
+
+
+
+
+
+
+
+
