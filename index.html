@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inglise-Eesti Sõnade Testija</title>
+    <title>Sõnade Testija</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,7 +17,7 @@
             background: #fff;
         }
         h1 { text-align: center; color: #2c3e50; font-size: 24px; }
-        .menu, .game, .print-view { margin-top: 20px; }
+        .menu, .game { margin-top: 20px; }
         button {
             background-color: #3498db;
             color: white;
@@ -73,13 +73,13 @@
         }
         .print-only { display: none; }
         table.print-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        table.print-table th, table.print-table td { border: 1px solid #333; padding: 8px; text-align: left; }
+        table.print-table th, table.print-table td { border: 1px solid #333; padding: 10px; text-align: left; }
     </style>
 </head>
 <body>
 
     <div class="no-print">
-        <h1>🇬🇧 Inglise-Eesti Sõnade Testija 🇪🇪</h1>
+        <h1>🇬🇧 Sõnade Testija 🇪🇪</h1>
 
         <!-- Peamenüü -->
         <div id="menu-screen" class="menu">
@@ -90,7 +90,13 @@
             </select>
             
             <select id="unit-select" style="width:100%; padding:10px; margin-bottom:15px; font-size:16px;">
-                <!-- Täidetakse automaatselt skriptiga koos nimedega -->
+                <!-- Täidetakse automaatselt skriptiga -->
+            </select>
+
+            <p><strong>Vali testi suund:</strong></p>
+            <select id="direction-select" style="width:100%; padding:10px; margin-bottom:15px; font-size:16px;">
+                <option value="en-et">Inglise ➔ Eesti</option>
+                <option value="et-en">Eesti ➔ Inglise</option>
             </select>
 
             <p><strong>Vali vastamise viis:</strong></p>
@@ -105,12 +111,12 @@
             
             <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px;">
                 <p id="question-text" style="font-size: 20px; font-weight: bold; margin: 0;"></p>
-                <button class="audio-btn" onclick="speakCurrentWord()" title="Kuula hääldust">🔊</button>
+                <button id="audio-button" class="audio-btn" onclick="speakCurrentWord()" title="Kuula hääldust">🔊</button>
             </div>
 
             <!-- Kirjalik sisend -->
             <div id="write-mode">
-                <input type="text" id="user-answer" placeholder="Kirjuta eesti keeles..." autocomplete="off">
+                <input type="text" id="user-answer" placeholder="Kirjuta vastus..." autocomplete="off">
                 <button onclick="checkWrittenAnswer()">Vasta</button>
             </div>
 
@@ -136,13 +142,9 @@
 
     <!-- Printimise vaade -->
     <div id="print-screen" class="print-only">
-        <h2 style="text-align:center;">Inglise-Eesti Sõnade Tööleht</h2>
+        <h2 style="text-align:center;" id="print-title">Sõnade Tööleht</h2>
         <p>Nimi: ___________________________ Kuupäev: _______________</p>
         <div id="print-content"></div>
-        <div class="no-print" style="margin-top: 20px;">
-            <button onclick="window.print()">Prindi leht</button>
-            <button class="secondary-btn" onclick="location.reload()">Tagasi</button>
-        </div>
     </div>
 
     <script>
@@ -189,10 +191,12 @@
         };
 
         let currentWords = [];
+        let remainingWords = [];
         let currentPair = {};
         let score = 0;
         let total = 0;
         let mode = 'write';
+        let direction = 'en-et';
         let currentChoices = [];
 
         function updateUnitOptions() {
@@ -212,6 +216,7 @@
 
         function startTest(selectedMode) {
             mode = selectedMode;
+            direction = document.getElementById('direction-select').value;
             let bookKey = document.getElementById('book-select').value;
             let unitVal = document.getElementById('unit-select').value;
             
@@ -230,6 +235,9 @@
                 return;
             }
 
+            remainingWords = [...currentWords];
+            shuffleArray(remainingWords);
+
             score = 0;
             total = 0;
             document.getElementById('menu-screen').classList.add('hidden');
@@ -238,22 +246,40 @@
             if (mode === 'write') {
                 document.getElementById('write-mode').classList.remove('hidden');
                 document.getElementById('choice-mode').classList.add('hidden');
+                document.getElementById('user-answer').placeholder = direction === 'en-et' ? "Kirjuta eesti keeles..." : "Kirjuta inglise keeles...";
             } else {
                 document.getElementById('write-mode').classList.add('hidden');
                 document.getElementById('choice-mode').classList.remove('hidden');
             }
 
+            // Häälduse nupp on vajalik ainult siis, kui küsitakse inglise keelest
+            document.getElementById('audio-button').style.display = (direction === 'en-et') ? 'inline' : 'none';
+
             nextQuestion();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
         }
 
         function nextQuestion() {
             document.getElementById('feedback').innerText = "";
             document.getElementById('user-answer').value = "";
             
-            let randomIndex = Math.floor(Math.random() * currentWords.length);
-            currentPair = currentWords[randomIndex];
+            if (remainingWords.length === 0) {
+                remainingWords = [...currentWords];
+                shuffleArray(remainingWords);
+            }
+
+            currentPair = remainingWords.pop();
             
-            document.getElementById('question-text').innerText = `Mis on eesti keeles sõna: "${currentPair[0]}"?`;
+            let questionWord = direction === 'en-et' ? currentPair[0] : currentPair[1];
+            let targetLangText = direction === 'en-et' ? "eesti keeles" : "inglise keeles";
+            
+            document.getElementById('question-text').innerText = `Mis on ${targetLangText} sõna: "${questionWord}"?`;
             document.getElementById('score').innerText = score;
             document.getElementById('total').innerText = total;
 
@@ -265,12 +291,12 @@
         }
 
         function setupChoices() {
-            let correctAns = currentPair[1];
+            let correctAns = direction === 'en-et' ? currentPair[1] : currentPair[0];
             currentChoices = [correctAns];
 
             while (currentChoices.length < 4 && currentChoices.length < currentWords.length) {
                 let randomPair = currentWords[Math.floor(Math.random() * currentWords.length)];
-                let wrongAns = randomPair[1];
+                let wrongAns = direction === 'en-et' ? randomPair[1] : randomPair[0];
                 if (!currentChoices.includes(wrongAns)) {
                     currentChoices.push(wrongAns);
                 }
@@ -290,7 +316,7 @@
 
         function checkWrittenAnswer() {
             let userAns = document.getElementById('user-answer').value.trim().toLowerCase();
-            let correctAns = currentPair[1].toLowerCase();
+            let correctAns = (direction === 'en-et' ? currentPair[1] : currentPair[0]).toLowerCase();
 
             total++;
             if (userAns === correctAns) {
@@ -300,23 +326,25 @@
                 setTimeout(nextQuestion, 1200);
             } else {
                 document.getElementById('feedback').style.color = "red";
-                document.getElementById('feedback').innerText = `Vale! Õige vastus oli: ${currentPair[1]}`;
+                let properCorrect = direction === 'en-et' ? currentPair[1] : currentPair[0];
+                document.getElementById('feedback').innerText = `Vale! Õige vastus oli: ${properCorrect}`;
                 setTimeout(nextQuestion, 2000);
             }
         }
 
         function checkChoiceAnswer(index) {
             let chosenAns = currentChoices[index];
+            let correctAns = direction === 'en-et' ? currentPair[1] : currentPair[0];
             total++;
 
-            if (chosenAns === currentPair[1]) {
+            if (chosenAns === correctAns) {
                 score++;
                 document.getElementById('feedback').style.color = "green";
                 document.getElementById('feedback').innerText = "Õige! 🎉";
                 setTimeout(nextQuestion, 1200);
             } else {
                 document.getElementById('feedback').style.color = "red";
-                document.getElementById('feedback').innerText = `Vale! Õige vastus oli: ${currentPair[1]}`;
+                document.getElementById('feedback').innerText = `Vale! Õige vastus oli: ${correctAns}`;
                 setTimeout(nextQuestion, 2000);
             }
         }
@@ -345,6 +373,10 @@
             let bookKey = document.getElementById('book-select').value;
             let unitVal = document.getElementById('unit-select').value;
             
+            let bookName = bookKey === 'book1' ? 'Book 1' : 'Book 2';
+            let unitText = unitVal === 'all' ? 'Kõik unitid' : `Unit ${unitVal}: ${CURRICULUM[bookKey][unitVal].name}`;
+            document.getElementById('print-title').innerText = `Sõnade Tööleht (${bookName} - ${unitText})`;
+
             let sourceDict = {};
             if (unitVal === 'all') {
                 for (let u in CURRICULUM[bookKey]) {
@@ -354,15 +386,14 @@
                 sourceDict = CURRICULUM[bookKey][unitVal].words || {};
             }
 
-            let html = `<table class="print-table"><thead><tr><th>Inglise keel</th><th>Eesti keel (kirjuta siia)</th></tr></thead><tbody>`;
+            let html = `<table class="print-table"><thead><tr><th>Eesti keel</th><th>Inglise keel (kirjuta siia)</th></tr></thead><tbody>`;
             for (let [eng, est] of Object.entries(sourceDict)) {
-                html += `<tr><td><strong>${eng}</strong></td><td></td></tr>`;
+                html += `<tr><td><strong>${est}</strong></td><td>..................................................</td></tr>`;
             }
             html += `</tbody></table>`;
 
             document.getElementById('print-content').innerHTML = html;
-            document.getElementById('menu-screen').classList.add('hidden');
-            document.getElementById('print-screen').classList.remove('hidden');
+            window.print();
         }
     </script>
 </body>
