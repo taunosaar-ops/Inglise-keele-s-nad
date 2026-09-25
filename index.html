@@ -90,7 +90,7 @@
             </select>
             
             <select id="unit-select" style="width:100%; padding:10px; margin-bottom:15px; font-size:16px;">
-                <!-- Täidetakse automaatselt skriptiga -->
+                <!-- Täidetakse automaatselt skriptiga koos nimedega -->
             </select>
 
             <p><strong>Vali vastamise viis:</strong></p>
@@ -148,43 +148,43 @@
     <script>
         const CURRICULUM = {
             book1: {
-                1: {"hello": "tere", "goodbye": "nägemist", "name": "nimi", "friend": "sõber"},
-                2: {"mum": "ema", "dad": "isa", "sister": "õde", "brother": "vend", "family": "perekond"},
-                3: {"cat": "kass", "dog": "koer", "bird": "lind", "fish": "kala", "horse": "hobune"},
-                4: {"red": "punane", "blue": "sinine", "green": "roheline", "yellow": "kollane"},
-                5: {"one": "üks", "two": "kaks", "three": "kolm", "four": "neli", "five": "viis"},
-                6: {"school": "kool", "book": "raamat", "pen": "pastakas", "rubber": "kustukumm", "ruler": "joonlaud"},
-                7: {"apple": "õun", "banana": "banaan", "milk": "piim", "water": "vesi"},
-                8: {"head": "pea", "hand": "käsi", "leg": "jalg", "eye": "silm"},
-                9: {"house": "maja", "door": "uks", "window": "aken", "room": "tuba"},
-                10: {"car": "auto", "bike": "jalgratas", "bus": "buss", "train": "rong"},
-                11: {"sun": "päike", "rain": "vihm", "snow": "lumi", "wind": "tuul"},
-                12: {"happy": "õnnelik", "sad": "kurb", "big": "suur", "small": "väike"},
-                13: {"play": "mängima", "run": "jooksma", "jump": "hüppama", "swim": "ujuma"},
-                14: {"morning": "hommik", "day": "päev", "evening": "õhtu", "night": "öö"},
-                15: {"winter": "talv", "spring": "kevad", "summer": "suvi", "autumn": "sügis"}
+                1: { name: "Hello", words: {"hello": "tere", "goodbye": "nägemist", "name": "nimi", "friend": "sõber"} },
+                2: { name: "Family", words: {"mum": "ema", "dad": "isa", "sister": "õde", "brother": "vend", "family": "perekond"} },
+                3: { name: "Animals", words: {"cat": "kass", "dog": "koer", "bird": "lind", "fish": "kala", "horse": "hobune"} },
+                4: { name: "Colours", words: {"red": "punane", "blue": "sinine", "green": "roheline", "yellow": "kollane"} },
+                5: { name: "Numbers", words: {"one": "üks", "two": "kaks", "three": "kolm", "four": "neli", "five": "viis"} },
+                6: { name: "School", words: {"school": "kool", "book": "raamat", "pen": "pastakas", "rubber": "kustukumm", "ruler": "joonlaud"} },
+                7: { name: "Food & Drink", words: {"apple": "õun", "banana": "banaan", "milk": "piim", "water": "vesi"} },
+                8: { name: "Body Parts", words: {"head": "pea", "hand": "käsi", "leg": "jalg", "eye": "silm"} },
+                9: { name: "House", words: {"house": "maja", "door": "uks", "window": "aken", "room": "tuba"} },
+                10: { name: "Transport", words: {"car": "auto", "bike": "jalgratas", "bus": "buss", "train": "rong"} },
+                11: { name: "Weather", words: {"sun": "päike", "rain": "vihm", "snow": "lumi", "wind": "tuul"} },
+                12: { name: "Feelings & Adjectives", words: {"happy": "õnnelik", "sad": "kurb", "big": "suur", "small": "väike"} },
+                13: { name: "Action Verbs", words: {"play": "mängima", "run": "jooksma", "jump": "hüppama", "swim": "ujuma"} },
+                14: { name: "Time of Day", words: {"morning": "hommik", "day": "päev", "evening": "õhtu", "night": "öö"} },
+                15: { name: "Seasons", words: {"winter": "talv", "spring": "kevad", "summer": "suvi", "autumn": "sügis"} }
             },
             book2: {
-                1: {"dear": "kallis, armas", "lovely": "armas", "mate": "kaaslane", "over": "läbi, möödas"},
-                2: {"Swedish": "rootsi keel", "classmate": "klassikaaslane", "Sweden": "Rootsi", "language": "keel"},
-                3: {"turn on": "sisse lülitama", "turn off": "välja lülitama", "light": "valgus", "leave": "jätma"},
-                4: {"puppy": "kutsikas", "kitten": "kassipoeg", "twin": "kaksik", "textbook": "õpik"},
-                5: {"test": "kontrolltöö", "lucky": "õnnelik", "secret": "saladus", "why": "miks"},
-                6: {"thirty": "kolmkümmend", "forty": "nelikümmend", "fifty": "viiskümmend", "sixty": "kuuskümmend"},
-                7: {"address": "aadress", "laptop": "sülearvuti", "paper": "paber", "station": "jaam"},
-                8: {"helpful": "abivalmis", "alien": "tulnukas", "invisible": "nähtamatu", "serious": "tõsine"},
-                9: {"huge": "hiigelsuur", "basket": "korv", "biscuit": "küpsis", "lunch": "keskpäevaeine"},
-                10: {"zoo": "loomaaed", "hippo": "jõehobu", "elephant": "elevant", "kangaroo": "känguru"},
-                11: {"grass": "rohi", "acorn": "tammetõru", "oak": "tamm", "heavy": "raske"},
-                12: {"shout": "karjuma", "polite": "viisakas", "noise": "lärm", "ladder": "redel"},
-                13: {"thunder": "kõu", "fireworks": "ilutulestik", "gymnastics": "võimlemine", "friendship": "sõprus"},
-                14: {"brush": "harjama", "comb": "kammima", "honey": "mesi", "piano": "klaver"},
-                15: {"circus": "tsirkus", "cinema": "kino", "pasta": "pasta", "healthy": "tervislik"},
-                16: {"hamburger": "hamburger", "chips": "friikartulid", "weekday": "tööpäev", "judo": "juudo"},
-                17: {"bounce": "põrgatama", "dodgeball": "rahvastepall", "tournament": "turniir", "coach": "treener"},
-                18: {"spaceship": "kosmoselaev", "giant": "hiiglane", "dwarf": "kääbus", "dentist": "hambaarst"},
-                19: {"picnic": "piknik", "woods": "mets", "strawberry": "maasikas", "blanket": "tekk"},
-                20: {"emergency": "erakorraline olukord", "dangerous": "ohtlik", "accident": "õnnetus", "reflector": "helkur"}
+                1: { name: "Unit 1", words: {"dear": "kallis, armas", "lovely": "armas", "mate": "kaaslane", "over": "läbi, möödas", "again": "jälle"} },
+                2: { name: "Unit 2", words: {"Swedish": "rootsi keel; rootslane", "classmate": "klassikaaslane", "take": "viima", "Sweden": "Rootsi"} },
+                3: { name: "Unit 3", words: {"English": "inglane; inglise keel", "language": "keel", "funny": "naljakas", "Finnish": "soome keel; soomlane", "French": "prantsuse keel; prantslane", "turn on": "sisse lülitama", "turn off": "välja lülitama", "light": "valgus, valgustus, tuli; hele", "leave": "jätma; lahkuma", "tomorrow": "homme"} },
+                4: { name: "Unit 4", words: {"puppy": "kutsikas", "kitten": "kassipoeg", "kind to sb": "lahke kellegi vastu", "car boot": "auto pagasiruum", "twin": "kaksik", "hair clip": "juukseklambr", "textbook": "õpik"} },
+                5: { name: "Unit 5", words: {"them": "neid", "all": "kõik", "bad": "halb", "especially": "eriti", "test": "kontrolltöö", "lucky": "õnnelik, õnnetoov", "tell": "ütlema; siin: saladust reetma", "secret": "saladus"} },
+                6: { name: "Unit 6", words: {"why": "miks", "may": "võima, tohtima", "lose": "kaotama", "magic": "nõidus, maagia", "guess": "ära arvama", "thirty": "kolmkümmend", "forty": "nelikümmend", "fifty": "viiskümmend", "sixty": "kuuskümmend", "seventy": "seitsekümmend", "eighty": "kaheksakümmend", "ninety": "üheksakümmend", "hundred": "sada"} },
+                7: { name: "Unit 7", words: {"afternoon": "pärastlõuna", "hold": "hoidma; pidama", "address": "aadress", "laptop": "sülearvuti", "love": "armastama", "paper": "paber", "remember": "mäletama", "swan": "luik", "station": "jaam", "road": "tee; maantee"} },
+                8: { name: "Unit 8", words: {"helpful": "abivalmis", "same": "sama", "bigger": "suurem", "smaller": "väiksem", "friendly": "sõbralik", "tissue": "pabertaskurätik", "alien": "tulnukas", "message": "teade", "invisible": "nähtamatu", "serious": "tõsine", "become": "saama", "visible": "nähtav", "spot": "märkama"} },
+                9: { name: "Unit 9", words: {"bottle": "pudel", "ready": "valmis", "catch": "püüdma", "huge": "hiigelsuur", "basket": "korv", "biscuit": "küpsis", "lunch": "keskpäevaeine", "unhappy": "õnnetu"} },
+                10: { name: "Unit 10", words: {"zoo": "loomaaed", "hippo": "jõehobu", "elephant": "elevant", "kangaroo": "känguru", "tiger": "tiiger", "lion": "lõvi", "penguin": "pingviin", "queue": "järjekord", "poster": "plakat", "cage": "puur", "carry": "kandma", "baby": "beebi"} },
+                11: { name: "Unit 11", words: {"grass": "rohi", "dive": "sukelduma", "fish": "kala; kalad", "rock": "kivi; kalju", "acorn": "tammetõru", "oak": "tamm", "heavy": "raske"} },
+                12: { name: "Unit 12", words: {"people": "inimene", "stupid": "rumal", "rule": "reegel", "rush": "tormama", "shout": "karjuma", "raise": "tõstma", "polite": "viisakas", "noise": "lärm", "litter": "praht", "sweet": "maiustus; magus", "ladder": "redel", "wrapper": "pakend", "meal": "eine; söögikord", "button": "nööp", "rainbow": "vikerkaar", "wave": "lehvitama"} },
+                13: { name: "Unit 13", words: {"angry": "kuri; vihane", "fluffy": "kohev", "knit": "kuduma", "sound": "heli", "thunder": "kõu, müristamine", "fireworks": "ilutulestik", "walk": "jalutuskäik; kõndima", "gymnastics": "võimlemine", "train": "treenima", "club": "klubi", "friendship": "sõprus", "band": "pael"} },
+                14: { name: "Unit 14", words: {"sometimes": "mõnikord", "never": "mitte kunagi", "stay": "jääma, viibima", "quickly": "kiiresti", "enjoy": "nautima", "hate": "vihkama", "enough": "küllalt", "hop": "hüppama", "wing": "tiib", "loud": "vali", "icy": "jäine", "keep": "hoidma", "always": "alati", "boat": "paat", "get dressed": "riidesse panema", "get up": "üles tõusma", "brush": "hari; harjama", "before": "enne", "because": "sellepärast, et", "usually": "tavaliselt", "comb": "kamm; kammima", "honey": "mesi", "recorder": "plokkflööt", "win": "võitma", "bed": "voodi", "piano": "klaver", "badminton": "sulgpall", "supper": "õhtusöök", "evening": "õhtu", "every": "iga", "key": "võti", "practise": "harjutama"} },
+                15: { name: "Unit 15", words: {"glove": "sõrmkinnas", "high": "kõrge", "low": "madal", "young": "noor", "thick": "paks, jäme", "thin": "õhuke", "circus": "tsirkus", "sleeve": "varrukas", "bow tie": "kikilips", "cinema": "kino", "pasta": "pasta, makaronitooted", "wear": "seljas, jalas kandma", "hard": "kõvasti; raske", "healthy": "tervislik", "laugh": "naerma", "show": "etendus", "fit": "heas vormis", "slim": "sale", "need": "vajama", "programme": "programm"} },
+                16: { name: "Unit 16", words: {"hamburger": "hamburger", "chips": "friikartulid", "fast": "kiire", "weekday": "tööpäev", "chicken": "kana", "together": "koos", "judo": "juudo", "next": "järgmine", "night": "öö", "easy": "lihtne, kerge", "tennis": "tennis", "alone": "üksinda"} },
+                17: { name: "Unit 17", words: {"kick": "jalaga lööma", "head": "pea", "score": "punktiseis", "bounce": "põrgatama", "throw": "viskama", "dodgeball": "rahvastepall", "team": "meeskond", "tournament": "turniir", "skill": "oskus", "practice": "harjutamine, treenimine", "basketball": "korvpall", "join": "liituma, liikmeks astuma", "coach": "treener", "forward": "edasi, ettepoole", "roll": "veeretama", "member": "liige"} },
+                18: { name: "Unit 18", words: {"borrow": "laenama, laenuks võtma", "expensive": "hinnaline, kallis", "scary": "hirmutav", "trip": "reis", "mummy": "emme", "race": "võidujooks, sõit", "daddy": "issi", "travel": "reisima", "space": "kosmos", "spaceship": "kosmoselaev", "giant": "hiiglane", "joke": "nali", "tale": "lugu, jutt", "sun": "päike", "large": "suur", "earth": "maa (planeet)", "dwarf": "kääbus", "warmth": "soojus", "plant": "taim", "grow": "kasvama", "cleaner": "puhastaja, koristaja", "centimetre": "sentimeeter", "ocean": "ookean", "poke": "torkima, tõukama", "piece": "tükk, tükike", "dentist": "hambaarst", "dragon": "draakon"} },
+                19: { name: "Unit 19", words: {"caterpillar": "röövik, tõuk", "hole": "auk", "picnic": "piknik, eine vabas õhus", "pack": "pakkima", "woods": "mets", "snack": "suupiste; näksima", "juice": "mahl", "forget": "unustama", "bread": "leib", "egg": "muna", "cheese": "juust", "butter": "või", "cucumber": "kurk", "carrot": "porgand", "cake": "kook", "radish": "redis", "some": "veidi", "sausage": "vorst", "idea": "mõte", "strawberry": "maasikas", "yummy": "maitsev, nämma", "blanket": "tekk", "cup": "tass", "plate": "taldrik", "pull": "tirima, tõmbama"} },
+                20: { name: "Unit 20", words: {"bee": "mesilane", "snail": "tigu", "pond": "tiik", "motorbike": "mootorratas", "person": "inimene, isik", "whole": "terve, kogu", "fire": "tulekahju", "smoke": "suits", "alarm": "häire", "helmet": "kiiver", "reflector": "helkur", "uniform": "vormiriietus", "emergency": "erakorraline olukord", "dangerous": "ohtlik", "accident": "õnnetus", "ice": "jää", "somebody": "keegi", "everybody": "igaüks", "calm": "rahulik", "panic": "paanika", "possible": "võimalik", "safe": "ohutu, turvaline", "injure": "vigastama", "driver": "autojuht", "crack": "pragunema", "fall": "kukkuma", "safety": "ohutus, turvalisus", "cross": "ületama", "way": "tee; suund", "pavement": "kõnnitee", "afraid": "hirmunud", "ask": "küsima", "pocket": "tasku"} }
             }
         };
 
@@ -204,7 +204,7 @@
             for (let uNum in units) {
                 let opt = document.createElement('option');
                 opt.value = uNum;
-                opt.innerText = `Unit ${uNum}`;
+                opt.innerText = `Unit ${uNum}: ${units[uNum].name}`;
                 unitSelect.appendChild(opt);
             }
         }
@@ -218,10 +218,10 @@
             let sourceDict = {};
             if (unitVal === 'all') {
                 for (let u in CURRICULUM[bookKey]) {
-                    Object.assign(sourceDict, CURRICULUM[bookKey][u]);
+                    Object.assign(sourceDict, CURRICULUM[bookKey][u].words);
                 }
             } else {
-                sourceDict = CURRICULUM[bookKey][unitVal] || {};
+                sourceDict = CURRICULUM[bookKey][unitVal].words || {};
             }
 
             currentWords = Object.entries(sourceDict);
@@ -348,10 +348,10 @@
             let sourceDict = {};
             if (unitVal === 'all') {
                 for (let u in CURRICULUM[bookKey]) {
-                    Object.assign(sourceDict, CURRICULUM[bookKey][u]);
+                    Object.assign(sourceDict, CURRICULUM[bookKey][u].words);
                 }
             } else {
-                sourceDict = CURRICULUM[bookKey][unitVal] || {};
+                sourceDict = CURRICULUM[bookKey][unitVal].words || {};
             }
 
             let html = `<table class="print-table"><thead><tr><th>Inglise keel</th><th>Eesti keel (kirjuta siia)</th></tr></thead><tbody>`;
