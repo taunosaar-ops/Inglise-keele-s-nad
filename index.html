@@ -1,143 +1,183 @@
-import random
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inglise-Eesti Sõnade Testija</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: #fff;
+        }
+        h1 { text-align: center; color: #2c3e50; }
+        .menu, .game { margin-top: 20px; }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            margin: 6px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        button:hover { background-color: #2980b9; }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .hidden { display: none; }
+        #stats { font-weight: bold; margin-bottom: 15px; color: #555; }
+        #feedback { font-weight: bold; margin-top: 10px; font-size: 18px; }
+    </style>
+</head>
+<body>
 
-# Book 1 (Units 1-15) ja Book 2 (Units 1-20) struktureeritud andmebaas
-CURRICULUM = {
-    "Book 1": {
-        1: {"hello": "tere", "goodbye": "nägemist", "name": "nimi", "friend": "sõber"},
-        2: {"mum": "ema", "dad": "isa", "sister": "õde", "brother": "vend", "family": "perekond"},
-        3: {"cat": "kass", "dog": "koer", "bird": "lind", "fish": "kala", "horse": "hobune"},
-        4: {"red": "punane", "blue": "sinine", "green": "roheline", "yellow": "kollane"},
-        5: {"one": "üks", "two": "kaks", "three": "kolm", "four": "neli", "five": "viis"},
-        6: {"school": "kool", "book": "raamat", "pen": "pastakas", "rubber": "kustukumm", "ruler": "joonlaud"},
-        7: {"apple": "õun", "banana": "banaan", "milk": "piim", "water": "vesi"},
-        8: {"head": "pea", "hand": "käsi", "leg": "jalg", "eye": "silm"},
-        9: {"house": "maja", "door": "uks", "window": "aken", "room": "tuba"},
-        10: {"car": "auto", "bike": "jalgratas", "bus": "buss", "train": "rong"},
-        11: {"sun": "päike", "rain": "vihm", "snow": "lumi", "wind": "tuul"},
-        12: {"happy": "õnnelik", "sad": "kurb", "big": "suur", "small": "väike"},
-        13: {"play": "mängima", "run": "jooksma", "jump": "hüppama", "swim": "ujuma"},
-        14: {"morning": "hommik", "day": "päev", "evening": "õhtu", "night": "öö"},
-        15: {"winter": "talv", "spring": "kevad", "summer": "suvi", "autumn": "sügis"}
-    },
-    "Book 2": {
-        1: {"dear": "kallis, armas", "lovely": "armas", "mate": "kaaslane", "over": "läbi, möödas"},
-        2: {"Swedish": "rootsi keel", "classmate": "klassikaaslane", "Sweden": "Rootsi", "language": "keel"},
-        3: {"turn on": "sisse lülitama", "turn off": "välja lülitama", "light": "valgus", "leave": "jätma"},
-        4: {"puppy": "kutsikas", "kitten": "kassipoeg", "twin": "kaksik", "textbook": "õpik"},
-        5: {"test": "kontrolltöö", "lucky": "õnnelik", "secret": "saladus", "why": "miks"},
-        6: {"thirty": "kolmkümmend", "forty": "nelikümmend", "fifty": "viiskümmend", "sixty": "kuuskümmend"},
-        7: {"address": "aadress", "laptop": "sülearvuti", "paper": "paber", "station": "jaam"},
-        8: {"helpful": "abivalmis", "alien": "tulnukas", "invisible": "nähtamatu", "serious": "tõsine"},
-        9: {"huge": "hiigelsuur", "basket": "korv", "biscuit": "küpsis", "lunch": "keskpäevaeine"},
-        10: {"zoo": "loomaaed", "hippo": "jõehobu", "elephant": "elevant", "kangaroo": "känguru"},
-        11: {"grass": "rohi", "acorn": "tammetõru", "oak": "tamm", "heavy": "raske"},
-        12: {"shout": "karjuma", "polite": "viisakas", "noise": "lärm", "ladder": "redel"},
-        13: {"thunder": "kõu", "fireworks": "ilutulestik", "gymnastics": "võimlemine", "friendship": "sõprus"},
-        14: {"brush": "harjama", "comb": "kammima", "honey": "mesi", "piano": "klaver"},
-        15: {"circus": "tsirkus", "cinema": "kino", "pasta": "pasta", "healthy": "tervislik"},
-        16: {"hamburger": "hamburger", "chips": "friikartulid", "weekday": "tööpäev", "judo": "juudo"},
-        17: {"bounce": "põrgatama", "dodgeball": "rahvastepall", "tournament": "turniir", "coach": "treener"},
-        18: {"spaceship": "kosmoselaev", "giant": "hiiglane", "dwarf": "kääbus", "dentist": "hambaarst"},
-        19: {"picnic": "piknik", "woods": "mets", "strawberry": "maasikas", "blanket": "tekk"},
-        20: {"emergency": "erakorraline olukord", "dangerous": "ohtlik", "accident": "õnnetus", "reflector": "helkur"}
-    }
-}
+    <h1>🇬🇧 Inglise-Eesti Sõnade Testija 🇪🇪</h1>
 
-def vali_sõnastik():
-    print("=========================================")
-    print(" 🇬🇧 Inglise-Eesti Sõnade Testija 🇪🇪 ")
-    print("=========================================")
-    print("Vali raamat:")
-    print("1. Book 1 (Units 1–15)")
-    print("2. Book 2 (Units 1–20)")
-    print("3. Kõik raamatud ja unitid koos")
-    
-    valik = input("Sisesta valik (1, 2 või 3): ").strip()
-    
-    valitud_sonad = {}
-    
-    if valik == "1":
-        print("\nValisid Book 1.")
-        unit_valik = input("Sisesta uniti number (1-15) või kirjuta 'kõik': ").strip().lower()
-        if unit_valik == "kõik":
-            for u_dict in CURRICULUM["Book 1"].values():
-                valitud_sonad.update(u_dict)
-        else:
-            try:
-                u_num = int(unit_valik)
-                if u_num in CURRICULUM["Book 1"]:
-                    valitud_sonad = CURRICULUM["Book 1"][u_num]
-                else:
-                    print("Sellist uniti ei leitud, laen kõik Book 1 sõnad.")
-                    for u_dict in CURRICULUM["Book 1"].values():
-                        valitud_sonad.update(u_dict)
-            except ValueError:
-                print("Vigane sisend, laen kõik Book 1 sõnad.")
-                for u_dict in CURRICULUM["Book 1"].values():
-                    valitud_sonad.update(u_dict)
-                    
-    elif valik == "2":
-        print("\nValisid Book 2.")
-        unit_valik = input("Sisesta uniti number (1-20) või kirjuta 'kõik': ").strip().lower()
-        if unit_valik == "kõik":
-            for u_dict in CURRICULUM["Book 2"].values():
-                valitud_sonad.update(u_dict)
-        else:
-            try:
-                u_num = int(unit_valik)
-                if u_num in CURRICULUM["Book 2"]:
-                    valitud_sonad = CURRICULUM["Book 2"][u_num]
-                else:
-                    print("Sellist uniti ei leitud, laen kõik Book 2 sõnad.")
-                    for u_dict in CURRICULUM["Book 2"].values():
-                        valitud_sonad.update(u_dict)
-            except ValueError:
-                print("Vigane sisend, laen kõik Book 2 sõnad.")
-                for u_dict in CURRICULUM["Book 2"].values():
-                    valitud_sonad.update(u_dict)
-    else:
-        print("\nValisid kõik raamatud.")
-        for book in CURRICULUM.values():
-            for u_dict in book.values():
-                valitud_sonad.update(u_dict)
-                
-    return valitud_sonad
+    <!-- Menüü -->
+    <div id="menu-screen" class="menu">
+        <p>Vali raamat:</p>
+        <button onclick="startTest('book1')">Book 1 (Units 1–15)</button>
+        <button onclick="startTest('book2')">Book 2 (Units 1–20)</button>
+        <button onclick="startTest('all')">Kõik raamatud ja unitid koos</button>
+    </div>
 
-def sona_testija():
-    aktiivsed_sonad = vali_sõnastik()
-    
-    if not aktiivsed_sonad:
-        print("Sõnu ei leitud!")
-        return
-        
-    print(f"\nValitud andmebaasis on kokku {len(aktiivsed_sonad)} sõna.")
-    print("Väljumiseks kirjuta igal hetkel 'valja'.\n")
-    print("-----------------------------------------")
-    
-    sonad_list = list(aktiivsed_sonad.items())
-    punkte = 0
-    kokku = 0
+    <!-- Mängu vaade -->
+    <div id="game-screen" class="game hidden">
+        <div id="stats">Punkte: <span id="score">0</span> | Küsimusi: <span id="total">0</span></div>
+        <p id="question-text" style="font-size: 20px; font-weight: bold;"></p>
+        <input type="text" id="user-answer" placeholder="Kirjuta eesti keeles..." autocomplete="off">
+        <button onclick="checkAnswer()">Vasta</button>
+        <button onclick="endTest()" style="background-color: #e74c3c;">Lõpeta / Välju</button>
+        <p id="feedback"></p>
+    </div>
 
-    while True:
-        inglise, oige_eesti = random.choice(sonad_list)
-        
-        vastus = input(f'Mis on eesti keeles sõna "{inglise}"?: ').strip()
-        
-        if vastus.lower() == "valja":
-            print(f"\nTest lõppenud! Said {punkte} õiget vastust {kokku} küsimusest.")
-            if kokku > 0:
-                protsent = int((punkte / kokku) * 100)
-                print(f"Tulemus: {protsent}% õigeid vastuseid.")
-            print("Aitäh mängimast!")
-            break
+    <!-- Tulemuste vaade -->
+    <div id="result-screen" class="menu hidden">
+        <h2>Test on lõppenud!</h2>
+        <p id="final-stats" style="font-size: 18px;"></p>
+        <button onclick="location.reload()">Proovi uuesti</button>
+    </div>
+
+    <script>
+        const CURRICULUM = {
+            book2: {
+                1: {"dear": "kallis, armas", "lovely": "armas", "mate": "kaaslane", "over": "läbi, möödas", "again": "jälle"},
+                2: {"Swedish": "rootsi keel; rootslane", "classmate": "klassikaaslane", "take": "viima", "Sweden": "Rootsi"},
+                3: {"English": "inglane; inglise keel", "language": "keel", "funny": "naljakas", "Finnish": "soome keel; soomlane", "French": "prantsuse keel; prantslane", "turn on": "sisse lülitama", "turn off": "välja lülitama", "light": "valgus, valgustus, tuli; hele", "leave": "jätma; lahkuma", "tomorrow": "homme"},
+                4: {"puppy": "kutsikas", "kitten": "kassipoeg", "kind to sb": "lahke kellegi vastu", "car boot": "auto pagasiruum", "twin": "kaksik", "hair clip": "juukseklambr", "textbook": "õpik"},
+                5: {"them": "neid", "all": "kõik", "bad": "halb", "especially": "eriti", "test": "kontrolltöö", "lucky": "õnnelik, õnnetoov", "tell": "ütlema; siin: saladust reetma", "secret": "saladus"},
+                6: {"why": "miks", "may": "võima, tohtima", "lose": "kaotama", "magic": "nõidus, maagia", "guess": "ära arvama", "thirty": "kolmkümmend", "forty": "nelikümmend", "fifty": "viiskümmend", "sixty": "kuuskümmend", "seventy": "seitsekümmend", "eighty": "kaheksakümmend", "ninety": "üheksakümmend", "hundred": "sada"},
+                7: {"afternoon": "pärastlõuna", "hold": "hoidma; pidama", "address": "aadress", "laptop": "sülearvuti", "love": "armastama", "paper": "paber", "remember": "mäletama", "swan": "luik", "station": "jaam", "road": "tee; maantee"},
+                8: {"helpful": "abivalmis", "same": "sama", "bigger": "suurem", "smaller": "väiksem", "friendly": "sõbralik", "tissue": "pabertaskurätik", "alien": "tulnukas", "message": "teade", "invisible": "nähtamatu", "serious": "tõsine", "become": "saama", "visible": "nähtav", "spot": "märkama"},
+                9: {"bottle": "pudel", "ready": "valmis", "catch": "püüdma", "huge": "hiigelsuur", "basket": "korv", "biscuit": "küpsis", "lunch": "keskpäevaeine", "unhappy": "õnnetu"},
+                10: {"zoo": "loomaaed", "hippo": "jõehobu", "elephant": "elevant", "kangaroo": "känguru", "tiger": "tiiger", "lion": "lõvi", "penguin": "pingviin", "queue": "järjekord", "poster": "plakat", "cage": "puur", "carry": "kandma", "baby": "beebi"},
+                11: {"grass": "rohi", "dive": "sukelduma", "fish": "kala; kalad", "rock": "kivi; kalju", "acorn": "tammetõru", "oak": "tamm", "heavy": "raske"},
+                12: {"people": "inimene", "stupid": "rumal", "rule": "reegel", "rush": "tormama", "shout": "karjuma", "raise": "tõstma", "polite": "viisakas", "noise": "lärm", "litter": "praht", "sweet": "maiustus; magus", "ladder": "redel", "wrapper": "pakend", "meal": "eine; söögikord", "button": "nööp", "rainbow": "vikerkaar", "wave": "lehvitama"},
+                13: {"angry": "kuri; vihane", "fluffy": "kohev", "knit": "kuduma", "sound": "heli", "thunder": "kõu, müristamine", "fireworks": "ilutulestik", "walk": "jalutuskäik; kõndima", "gymnastics": "võimlemine", "train": "treenima", "club": "klubi", "friendship": "sõprus", "band": "pael"},
+                14: {"sometimes": "mõnikord", "never": "mitte kunagi", "stay": "jääma, viibima", "quickly": "kiiresti", "enjoy": "nautima", "hate": "vihkama", "enough": "küllalt", "hop": "hüppama", "wing": "tiib", "loud": "vali", "icy": "jäine", "keep": "hoidma", "always": "alati", "boat": "paat", "get dressed": "riidesse panema", "get up": "üles tõusma", "brush": "hari; harjama", "before": "enne", "because": "sellepärast, et", "usually": "tavaliselt", "comb": "kamm; kammima", "honey": "mesi", "recorder": "plokkflööt", "win": "võitma", "bed": "voodi", "piano": "klaver", "badminton": "sulgpall", "supper": "õhtusöök", "evening": "õhtu", "every": "iga", "key": "võti", "practise": "harjutama"},
+                15: {"glove": "sõrmkinnas", "high": "kõrge", "low": "madal", "young": "noor", "thick": "paks, jäme", "thin": "õhuke", "circus": "tsirkus", "sleeve": "varrukas", "bow tie": "kikilips", "cinema": "kino", "pasta": "pasta, makaronitooted", "wear": "seljas, jalas kandma", "hard": "kõvasti; raske", "healthy": "tervislik", "laugh": "naerma", "show": "etendus", "fit": "heas vormis", "slim": "sale", "need": "vajama", "programme": "programm"},
+                16: {"hamburger": "hamburger", "chips": "friikartulid", "fast": "kiire", "weekday": "tööpäev", "chicken": "kana", "together": "koos", "judo": "juudo", "next": "järgmine", "night": "öö", "easy": "lihtne, kerge", "tennis": "tennis", "alone": "üksinda"},
+                17: {"kick": "jalaga lööma", "head": "pea", "score": "punktiseis", "bounce": "põrgatama", "throw": "viskama", "dodgeball": "rahvastepall", "team": "meeskond", "tournament": "turniir", "skill": "oskus", "practice": "harjutamine, treenimine", "basketball": "korvpall", "join": "liituma, liikmeks astuma", "coach": "treener", "forward": "edasi, ettepoole", "roll": "veeretama", "member": "liige"},
+                18: {"borrow": "laenama, laenuks võtma", "expensive": "hinnaline, kallis", "scary": "hirmutav", "trip": "reis", "mummy": "emme", "race": "võidujooks, sõit", "daddy": "issi", "travel": "reisima", "space": "kosmos", "spaceship": "kosmoselaev", "giant": "hiiglane", "joke": "nali", "tale": "lugu, jutt", "sun": "päike", "large": "suur", "earth": "maa (planeet)", "dwarf": "kääbus", "warmth": "soojus", "plant": "taim", "grow": "kasvama", "cleaner": "puhastaja, koristaja", "centimetre": "sentimeeter", "ocean": "ookean", "poke": "torkima, tõukama", "piece": "tükk, tükike", "dentist": "hambaarst", "dragon": "draakon"},
+                19: {"caterpillar": "röövik, tõuk", "hole": "auk", "picnic": "piknik, eine vabas õhus", "pack": "pakkima", "woods": "mets", "snack": "suupiste; näksima", "juice": "mahl", "forget": "unustama", "bread": "leib", "egg": "muna", "cheese": "juust", "butter": "või", "cucumber": "kurk", "carrot": "porgand", "cake": "kook", "radish": "redis", "some": "veidi", "sausage": "vorst", "idea": "mõte", "strawberry": "maasikas", "yummy": "maitsev, nämma", "blanket": "tekk", "cup": "tass", "plate": "taldrik", "pull": "tirima, tõmbama"},
+                20: {"bee": "mesilane", "snail": "tigu", "pond": "tiik", "motorbike": "mootorratas", "person": "inimene, isik", "whole": "terve, kogu", "fire": "tulekahju", "smoke": "suits", "alarm": "häire", "helmet": "kiiver", "reflector": "helkur", "uniform": "vormiriietus", "emergency": "erakorraline olukord", "dangerous": "ohtlik", "accident": "õnnetus", "ice": "jää", "somebody": "keegi", "everybody": "igaüks", "calm": "rahulik", "panic": "paanika", "possible": "võimalik", "safe": "ohutu, turvaline", "injure": "vigastama", "driver": "autojuht", "crack": "pragunema", "fall": "kukkuma", "safety": "ohutus, turvalisus", "cross": "ületama", "way": "tee; suund", "pavement": "kõnnitee", "afraid": "hirmunud", "ask": "küsima", "pocket": "tasku"}
+            },
+            book1: {
+                1: {"Hello": "Tere!", "family": "perekond", "dad": "isa", "friend": "sõber", "mum": "ema"},
+                2: {"granny": "vanaema", "grandad": "vanaisa", "brother": "vend", "sister": "õde", "cat": "kass"},
+                3: {"school": "kool", "pen": "pastapliiats", "ruler": "joonlaud", "rubber": "kustukumm", "book": "raamat"},
+                4: {"apple": "õun", "red": "punane", "blue": "sinine", "green": "roheline", "yellow": "kollane"},
+                5: {"dog": "koer", "horse": "hobune", "cow": "lehm", "pig": "siga", "sheep": "lammas"}
+            }
+        };
+
+        let currentWords = [];
+        let currentPair = {};
+        let score = 0;
+        let total = 0;
+
+        function startTest(type) {
+            currentWords = [];
+            if (type === 'book1' || type === 'all') {
+                for (let unit in CURRICULUM.book1) {
+                    Object.assign(currentWords, CURRICULUM.book1[unit]);
+                }
+            }
+            if (type === 'book2' || type === 'all') {
+                for (let unit in CURRICULUM.book2) {
+                    Object.assign(currentWords, CURRICULUM.book2[unit]);
+                }
+            }
+
+            currentWords = Object.entries(currentWords);
+            if (currentWords.length === 0) {
+                alert("Sõnu ei leitud!");
+                return;
+            }
+
+            document.getElementById('menu-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('user-answer').value = "";
             
-        kokku += 1
-        
-        if vastus.lower() == oige_eesti.lower():
-            print("Õige! 🎉\n")
-            punkte += 1
-        else:
-            print(f"Vale! Õige vastus oli: {oige_eesti}\n")
+            let randomIndex = Math.floor(Math.random() * currentWords.length);
+            currentPair = currentWords[randomIndex];
+            
+            document.getElementById('question-text').innerText = `Mis on eesti keeles sõna: "${currentPair[0]}"?`;
+            document.getElementById('score').innerText = score;
+            document.getElementById('total').innerText = total;
+            document.getElementById('user-answer').focus();
+        }
 
-if __name__ == "__main__":
-    sona_testija()
+        function checkAnswer() {
+            let userAns = document.getElementById('user-answer').value.trim().toLowerCase();
+            let correctAns = currentPair[1].toLowerCase();
+
+            total++;
+            if (userAns === correctAns) {
+                score++;
+                document.getElementById('feedback').style.color = "green";
+                document.getElementById('feedback').innerText = "Õige! 🎉";
+            } else {
+                document.getElementById('feedback').style.color = "red";
+                document.getElementById('feedback').innerText = `Vale! Õige vastus oli: ${currentPair[1]}`;
+            }
+
+            setTimeout(nextQuestion, 1500);
+        }
+
+        // Enter klahvi vajutus vastuse saatmiseks
+        document.getElementById('user-answer').addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                checkAnswer();
+            }
+        });
+
+        function endTest() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            let percentage = total > 0 ? Math.round((score / total) * 100) : 0;
+            document.getElementById('final-stats').innerText = `Said ${score} õiget vastust ${total} küsimusest. Tulemus: ${percentage}%`;
+        }
+    </script>
+</body>
+</html>
