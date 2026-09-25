@@ -167,13 +167,13 @@
                     "he": "tema (meessoost)", "she": "tema (naissoost)", "this": "see", "is": "on (olema 3. pööre ainsuses)", "He's / She's from": "Ta on pärit",
                     "good": "hea", "morning": "hommik", "Good morning!": "Tere hommikust!", "Miss": "preili", "what": "mis (küsisõna)", "what's": "mis on",
                     "your": "sinu; teie", "name": "nimi", "Sorry.": "Vabandust.", "late": "hilja", "Sorry, I'm late.": "Vabandust, et ma hilinesin.",
-                    "that": "see (seal)", "that's": "see on", "OK": "okei, korras, hästi", "That's OK.": "Siin: Sellest pole midagi.", "Goodbye!": "Head päeva! Head aega!", "Bye-bye!": "Head päeva! Head aega!"
+                    "that": "see (seal)", "that's": "see on", "OK": "okei, korras, hästi", "That's OK.": "Siin: Sellest pole madagi.", "Goodbye!": "Head päeva! Head aega!", "Bye-bye!": "Head päeva! Head aega!"
                 }},
                 2: { name: "Family", words: {
                     "family": "perekond", "dad": "isa", "my": "minu (oma)", "friend": "sõber", "Mr": "härra", "dog": "koer", "mum": "ema",
                     "granny": "vanaema", "grandad": "vanaisa", "brother": "vend", "sister": "õde", "cat": "kass", "his": "tema (oma) (meessoost)",
                     "her": "tema (oma) (naissoost)", "these": "need (siin)", "are": "oled, oleme, olete, on (mitmuses)", "big": "suur", "small": "väike",
-                    "girl": "tüdruk", "girls": "tüdrukud", "boy": "poiss", "poisid": "boys", "book": "raamat", "ball": "pall", "pencil": "pliiats",
+                    "girl": "tüdruk", "girls": "tüdrukud", "boy": "poiss", "boys": "poisid", "book": "raamat", "ball": "pall", "pencil": "pliiats",
                     "horse": "hobune", "horses": "hobused", "new": "uus", "bike": "jalgratas", "cool": "äge, vinge", "police": "politsei",
                     "in": "sees; sisse (eessõna)", "come": "tulema", "say": "ütlema", "the": "artikkel", "the ABC": "tähestik", "shoe": "king",
                     "shoes": "kingad", "so": "nii", "beautiful": "ilus", "Thanks.": "Tänan.", "ladybird": "lepatriinu", "tooth": "hammas", "teeth": "hambad",
@@ -212,24 +212,24 @@
                     "remember": "mäletama", "swan": "luik", "station": "jaam", "road": "tee; maantee", "helpful": "abivalmis", "same": "sama",
                     "bigger": "suurem", "smaller": "väiksem", "than": "kui (võrdluses)", "circle": "ring", "make up": "moodustama"
                 }},
-                3: { name: "Unit 3", words: {} },
-                4: { name: "Unit 4", words: {} },
-                5: { name: "Unit 5", words: {} },
-                6: { name: "Unit 6", words: {} },
-                7: { name: "Unit 7", words: {} },
-                8: { name: "Unit 8", words: {} },
-                9: { name: "Unit 9", words: {} },
-                10: { name: "Unit 10", words: {} },
-                11: { name: "Unit 11", words: {} },
-                12: { name: "Unit 12", words: {} },
-                13: { name: "Unit 13", words: {} },
-                14: { name: "Unit 14", words: {} },
-                15: { name: "Unit 15", words: {} },
-                16: { name: "Unit 16", words: {} },
-                17: { name: "Unit 17", words: {} },
-                18: { name: "Unit 18", words: {} },
-                19: { name: "Unit 19", words: {} },
-                20: { name: "Unit 20", words: {} }
+                3: { name: "My day", words: {} },
+                4: { name: "Food and drink", words: {} },
+                5: { name: "At home", words: {} },
+                6: { name: "Hobbies", words: {} },
+                7: { name: "Free time", words: {} },
+                8: { name: "Animals", words: {} },
+                9: { name: "Town and country", words: {} },
+                10: { name: "Clothes", words: {} },
+                11: { name: "Weather and seasons", words: {} },
+                12: { name: "Health", words: {} },
+                13: { name: "Travel", words: {} },
+                14: { name: "Holidays", words: {} },
+                15: { name: "Jobs", words: {} },
+                16: { name: "Technology", words: {} },
+                17: { name: "Space", words: {} },
+                18: { name: "Environment", words: {} },
+                19: { name: "Culture", words: {} },
+                20: { name: "Review", words: {} }
             }
         };
 
@@ -274,7 +274,7 @@
 
             currentWords = Object.entries(sourceDict);
             if (currentWords.length === 0) {
-                alert("Valitud unitis pole sõnu!");
+                alert("Valitud unitis pole sõnu! (Lisa sõnad CURRICULUM objekti sisse).");
                 return;
             }
 
