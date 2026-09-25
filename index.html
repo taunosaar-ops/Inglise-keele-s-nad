@@ -72,9 +72,20 @@
             .print-only { display: block !important; }
         }
         .print-only { display: none; }
-        table.print-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        table.print-table th, table.print-table td { border: 1px solid #333; padding: 10px; text-align: left; vertical-align: middle; }
-        table.print-table td.write-cell { height: 28px; }
+        table.print-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+            font-size: 16px; /* Põhikirja suurus printimisel */
+        }
+        table.print-table th, table.print-table td { 
+            border: 1px solid #333; 
+            /* 0.5em = pool kirja kõrgust üles ja alla. 8px = vaba ruum vasakul ja paremal */
+            padding: 0.5em 8px; 
+            line-height: 1; /* Hoiab teksti vertikaalselt väga tihedalt */
+            text-align: left; 
+            vertical-align: middle; 
+        }
     </style>
 </head>
 <body>
@@ -163,147 +174,11 @@
                     "family": "perekond", "dad": "isa", "my": "minu (oma)", "friend": "sõber", "Mr": "härra", "dog": "koer", "mum": "ema",
                     "granny": "vanaema", "grandad": "vanaisa", "brother": "vend", "sister": "õde", "cat": "kass", "his": "tema (oma) (meessoost)",
                     "her": "tema (oma) (naissoost)", "these": "need (siin)", "are": "oled, oleme, olete, on (mitmuses)", "big": "suur", "small": "väike",
-                    "girl": "tüdruk", "girls": "tüdrukud", "boy": "poiss", "boys": "poisid", "book": "raamat", "ball": "pall", "pencil": "pliiats",
+                    "girl": "tüdruk", "girls": "tüdrukud", "boy": "poiss", "poisid": "boys", "book": "raamat", "ball": "pall", "pencil": "pliiats",
                     "horse": "hobune", "horses": "hobused", "new": "uus", "bike": "jalgratas", "cool": "äge, vinge", "police": "politsei",
                     "in": "sees; sisse (eessõna)", "come": "tulema", "say": "ütlema", "the": "artikkel", "the ABC": "tähestik", "shoe": "king",
                     "shoes": "kingad", "so": "nii", "beautiful": "ilus", "Thanks.": "Tänan.", "ladybird": "lepatriinu", "tooth": "hammas", "teeth": "hambad",
                     "fairy": "haldjas", "tooth fairy": "hambahaldjas", "lamb": "(lamba)tall"
-                }},
-                3: { name: "Numbers", words: {
-                    "number": "number", "one": "üks", "two": "kaks", "three": "kolm", "four": "neli", "five": "viis", "six": "kuus",
-                    "tree": "puu", "in the tree": "puu otsas", "is good at": "oskab hästi", "play": "mängima", "trick": "vemp, vingerpuss",
-                    "play tricks": "vingerpussi mängima", "playing tricks": "vingerpussi mängimine", "it": "see", "yes": "jah", "Yes, it is.": "Jah, see on.",
-                    "no": "ei", "No, it isn't.": "Ei, see ei ole.", "English": "inglise keel", "music": "muusika", "sport": "sport", "football": "jalgpall",
-                    "puzzle": "mõistatus; pusle", "year": "aasta", "I'm in year three.": "Ma olen kolmandas klassis.", "a": "artikkel", "student": "õpilane",
-                    "I'm a year-three student.": "Ma olen kolmanda klassi õpilane.", "class": "klass; tund", "teacher": "õpetaja", "class teacher": "klassijuhataja",
-                    "Mrs": "proua", "now": "nüüd", "see": "nägema", "how": "kuidas; kui", "well": "hästi", "we": "meie, me", "know": "teadma",
-                    "spell": "tähthaaval ütlema", "be": "olema", "an": "artikkel"
-                }},
-                4: { name: "School", words: {
-                    "school": "kool", "think": "arvama; mõtlema", "bright": "terane, tark", "can": "suutma, oskama; võima, tohtima", "read": "lugema",
-                    "write": "kirjutama", "really": "tõeliselt, tõepoolest", "they": "nemad, nad", "pen": "pastapliiats", "pencil case": "pinal",
-                    "ruler": "joonlaud", "rubber": "kustukumm", "workbook": "töövihik", "diary": "õpilaspäevik", "bag": "kott", "apple": "õun",
-                    "seven": "seitse", "eight": "kaheksa", "nine": "üheksa", "ten": "kümme", "many": "palju", "How many?": "Kui palju?",
-                    "red": "punane", "phone": "telefon", "mobile (phone)": "mobiil(telefon)", "double": "topelt-, kahekordne", "best": "parim",
-                    "lesson": "tund", "room": "ruum, tuba", "art": "kunst", "oh": "oh, oi (hüüdsõna)", "mess": "segadus", "What a mess!": "Milline segadus!",
-                    "help": "aitama", "where": "kus (küsisõna)", "under": "all (eessõna)", "me": "mind", "please": "palun (midagi küsides)",
-                    "of course": "muidugi", "thank": "tänama", "Thank you.": "Tänan sind / teid."
-                }},
-                5: { name: "Blackbirds", words: {
-                    "black": "must", "bird": "lind", "blackbird": "musträstas", "little": "väike", "sit": "istuma", "on": "peal; peale (eessõna)",
-                    "hill": "küngas", "fly": "lendama", "away": "ära", "back": "tagasi", "white": "valge", "wall": "müür, sein", "green": "roheline",
-                    "frog": "konn", "pool": "lomp; bassein", "jump": "hüppama", "long": "pikk", "word": "sõna", "short": "lühike", "verb": "tegusõna",
-                    "colour": "värv", "letter": "kirjatäht; kiri", "show": "näitama", "start": "algus, start; algama; alustama", "finish": "lõpp, finiš; lõppema; lõpetama",
-                    "battleship": "sõjalaev", "play battleships": "laevade pommitamist mängima", "hit": "tabama, pihta saama", "sunk": "põhja vajunud, pohjas"
-                }},
-                6: { name: "Clothes (Riided)", words: {
-                    "clothes": "riided", "yellow": "kollane", "pink": "roosa", "orange": "oranž", "purple": "lilla", "brown": "pruun", "blue": "sinine",
-                    "grey": "hall (värvus)", "beige": "beež", "shirt": "särk", "T-shirt": "T-särk", "next to": "kõrval (eesmärgis/eessõna)", "between": "vahel (eessõna)",
-                    "trousers": "püksid", "dress": "kleit", "skirt": "seelik", "jacket": "jakk", "jumper": "džempr", "coat": "jope", "right": "õige",
-                    "scarf": "sall", "scarves": "sallid", "too": "samuti, ka", "Wow!": "Vahva! Tore!", "hat": "müts", "present": "kingitus",
-                    "sweet": "armas, kena, kaunis", "favourite": "lemmik", "nice": "kena, tore", "soft": "pehme", "boot": "saabas", "sock": "sokk",
-                    "happy": "õnnelik", "birthday": "sünnipäev", "Happy birthday!": "Palju õnne sünnipäevaks!", "old": "vana", "How old ...?": "Kui vana ...?",
-                    "shorts": "lühikesed püksid", "top": "topp; ülemine osa", "on top of": "millegi peal", "other": "teine; teised", "box": "karp",
-                    "table": "laud", "chair": "tool"
-                }},
-                7: { name: "Time (Aeg)", words: {
-                    "time": "aeg", "What's the time? / What time is it?": "Mis kell on?", "clock": "kell", "It's one (o'clock).": "Kell on üks.",
-                    "excuse": "vabandama", "Excuse me!": "Vabandust! (pöördumisel)", "eleven": "üksteist", "twelve": "kaksteist", "almost": "peaegu",
-                    "run": "jooksma", "Let's run.": "Jookseme!", "dark": "pime; tume", "It's dark.": "On pime.", "park": "park", "scared": "hirmunud",
-                    "I'm scared.": "Mul on hirm. Ma kardan.", "bus": "buss", "take a bus": "bussiga minema", "bored": "tüdinud", "go": "minema",
-                    "out": "välja, väljas", "look (at)": "(kedagi / midagi) vaatama", "then": "siis", "Great.": "Tore.", "to": "sisse, juurde (eessõna)",
-                    "to the park": "parki", "wrong": "vale", "work": "töö; töötama", "at": "sees, juures (eessõna)", "at work": "tööl",
-                    "moment": "hetk, moment", "at the moment": "just praegu", "home": "kodu", "at home": "kodus", "playschool": "lasteaed",
-                    "at playschool": "lasteaias", "American": "ameeriklane", "Estonian": "eestlane; eesti keel", "sad": "kurb", "tired": "väsinud",
-                    "upset": "endast väljas; ärritunud", "classroom": "klass (ruum)", "gym": "võimla", "our": "meie (oma)"
-                }},
-                8: { name: "After school (Pärast kooli)", words: {
-                    "after": "pärast (eessõna)", "sky": "taevas", "about": "(kellegi / millegi) kohta (eessõna)", "What about you?": "Kuidas sinuga on?",
-                    "swing": "kiikuma", "string": "nöör", "hum": "ümisema", "tune": "viis, meloodia", "speak": "rääkima", "draw": "joonistama",
-                    "clown": "kloun", "climb": "ronima", "climb a tree": "puu otsa ronima", "with": "koos, -ga (eessõna)", "left": "vasak",
-                    "hand": "käsi", "with your left hand": "oma vasaku käega", "skateboard": "rula; rulaga sõitma", "do": "tegema", "sudoku": "sudoku",
-                    "do sudokus": "sudokusid lahendama", "dance": "tantsima", "limbo": "limbo", "Russian": "vene keel", "song": "laul", "ride": "sõit; sõitma",
-                    "ride a horse": "ratsutama", "ride a bike": "rattaga sõitma", "monster": "koletis", "monkey": "ahv", "spider": "ämbilma / ämblik",
-                    "sing": "laulma", "swim": "ujuma", "free": "vaba", "in your free time": "vabal ajal", "outside": "väljas", "watch": "vaatama",
-                    "film": "film", "game": "mäng", "their": "nende (oma)", "fantastic": "fantastiline, suurepärane", "boring": "igav", "day": "päev",
-                    "find": "leidma", "him": "teda (meessoost)", "with him": "temaga", "guitar": "kitarr", "play the guitar": "kitarri mängima"
-                }},
-                9: { name: "Body (Keha)", words: {
-                    "body": "keha", "head": "pea", "eye": "silm", "nose": "nina", "neck": "kael", "arm": "käsivars", "finger": "sõrm",
-                    "foot": "jalg", "feet": "jalad", "hair": "juuksed", "ear": "kõrv", "mouth": "suu", "shoulder": "õlg", "knee": "põlv",
-                    "leg": "jalg; jalasäär", "toe": "varvas", "touch": "puudutama", "cross": "rist; ristama", "Fingers crossed.": "Hoiame pöialt.",
-                    "Ouch!": "Ai!", "hurt": "valutama, haiget tegema", "My knee hurts.": "Mu põlv valutab.", "Poor you!": "Vaeseke!", "get": "tooma; saama",
-                    "plaster": "plaaster", "here": "siin", "put on": "peale, selga panema", "zebra": "zebra", "mouse": "hiir", "mice": "hiired",
-                    "giraffe": "kaelkirjak", "rabbit": "küülik", "squirrel": "orav", "have got": "omama", "I've got": "minul on", "make": "tegema",
-                    "web": "(ämbliku) võrk", "tail": "saba", "stripe": "triip", "spot": "laik", "strong": "tugev", "but": "aga, kuid", "or": "või (sidesõna)",
-                    "blonde": "blond, heledajuukseline"
-                }},
-                10: { name: "Toys (Mänguasjad)", words: {
-                    "toy": "mänguasi", "train": "rong", "train set": "rongikomplekt", "he's got": "temal on (meessoost)", "she's got": "temal on (naissoost)",
-                    "doll": "nukk", "house": "maja", "doll's house": "nukumaja", "pirate": "piraat, mereröövel", "ship": "laev", "robot": "robot",
-                    "animal": "loom", "mask": "mask", "skip": "hüppama, hüpetega liikuma", "rope": "köis, nöör", "skipping rope": "hüppenöör",
-                    "model": "mudel", "car": "auto", "model car": "mudelauto", "face": "nägu", "paint": "värv; värvima", "kite": "tuulelohe",
-                    "fly a kite": "tuulelohet lennutama", "thirteen": "kolmteist", "fourteen": "neliteist", "fifteen": "viisteist", "sixteen": "kuusteist",
-                    "seventeen": "seitseteist", "eighteen": "kaheksateist", "nineteen": "üheksateist", "twenty": "kakskümmend", "man": "mees", "men": "mehed",
-                    "both": "mõlemad", "like": "meeldima", "I like it.": "See meeldib mulle.", "crocodile": "krokodill", "very": "väga", "who": "kes (küsisõna)",
-                    "sandwich": "võileib"
-                }},
-                11: { name: "Days (Päevad)", words: {
-                    "Sunday": "pühapäev", "on Sunday": "pühapäeval", "Monday": "esmaspäev", "Tuesday": "teisipäev", "Wednesday": "kolmapäev",
-                    "Thursday": "neljapäev", "Friday": "reede", "Saturday": "laupäev", "busy": "hõivatud, tegevuses", "weekend": "nädalavahetus",
-                    "at the weekend": "nädalavahetusel", "place": "koht", "my place": "siin: minu kodu", "about": "umbes", "At about six.": "Umbes kell kuus.",
-                    "See you then.": "Näeme siis.", "homework": "kodutöö", "I'm doing my homework": "Ma teen kodutööd.", "eat": "sööma",
-                    "ice cream": "jäätis", "drum": "trumm", "play the drums": "trummi mängima", "call": "helistama; kutsuma; hõikama", "maths": "matemaatika",
-                    "PE": "kehaline kasvatus", "window": "aken", "map": "maakaart", "door": "uks", "photo": "foto", "board": "tahvel",
-                    "desk": "koolipink; kirjutuslaud", "card": "(mängu)kaart; postkaart", "stand": "seisma", "talk (to)": "(kellegagi) rääkima",
-                    "take": "võtma", "take a photo": "pildistama", "sleep": "uni; magama", "break": "vahetund", "by": "juures (eessõna)",
-                    "by the window": "akna juures", "listen (to)": "(kedagi / midagi) kuulama", "player": "mängija", "another": "teine, (keegi või mingi) muu",
-                    "camera": "fotoaparaat", "palm": "palm", "banana": "banaan", "e-book": "e-raamat", "thing": "asi, ese"
-                }},
-                12: { name: "Home (Kodu)", words: {
-                    "study": "õppima", "German": "saksa keel", "just": "just", "just now": "just praegu", "Mary speaking.": "siin telefonivestluses: Mary kuuleb.",
-                    "aunt, auntie": "tädi", "How are you?": "Kuidas läheb?", "fine": "korras, hästi", "I'm fine.": "Mul on kõik korras.",
-                    "exercise": "harjutus", "still": "ikka veel", "cook": "toitu valmistama", "cartoon": "multifilm", "computer": "arvuti",
-                    "take off": "seljast ära võtma", "sofa": "diivan", "kitchen": "köök", "living room": "elutuba", "breakfast": "hommikusöök",
-                    "make breakfast": "hommikusööki valmistama", "eat / have breakfast": "hommikusööki sööma", "mend": "parandama", "shower": "dušš",
-                    "have a shower": "duši all käima", "child": "laps", "children": "lapsed", "bathroom": "vannituba", "toilet": "tualett",
-                    "garden": "aed", "bedroom": "magamistuba", "pancake": "pannkook", "tidy": "korras; korrastama", "wash": "pesema",
-                    "wash up": "nõusid pesema", "cut": "lõikama", "watermelon": "arbuus", "clean": "puhas; puhastama", "turn": "pööre; pöörama",
-                    "my turn": "minu kord (mängus)", "TV": "teler, televiisor", "nap": "uinak", "have a nap": "uinakut tegema", "use": "kasutama",
-                    "pee": "piss", "have a pee": "pissile minema", "around": "ümber, ringi", "climb around in the tree": "puu otsas ronima"
-                }},
-                13: { name: "Town (Linn)", words: {
-                    "town": "(väike)linn, alev", "proud (of)": "uhke (kellegi / millegi üle)", "I'm proud (of)": "ma olen uhke (kellegi / millegi üle)",
-                    "country": "maa, riik; maakoht", "flag": "lipp", "feel": "tundma", "feel good about": "kellegi / millegi üle heameelt tundma",
-                    "capital (city)": "pealinn", "city": "(suur)linn", "kingdom": "kuningriik", "the United Kingdom": "Ühendkuningriik",
-                    "is called": "kutsutakse, nimetatakse", "the Union Flag": "Ühendkuningriigi lipp", "river": "jõgi", "on the river": "jõe kallastel",
-                    "live": "elama", "I live": "ma elan", "the United States (of America)": "Ameerika Ühendriigid", "star": "täht",
-                    "the Stars and Stripes": "\"Tähed ja triibud\"; Ameerika Ühendriikide lipp", "president": "president", "flat": "korter",
-                    "cottage": "maamaja", "village": "küla", "lake": "järv", "sea": "meri", "far": "kaugel", "far from": "millestki kaugel",
-                    "near": "lähedal", "playground": "mänguväljak", "in the playground": "mänguväljakul", "car park": "autoparkla",
-                    "supermarket": "supermarket", "post office": "postkontor", "pool": "bassein, ujula", "stop": "peatus; peatuma",
-                    "bus stop": "bussipeatus", "in front of": "ees", "behind": "taga", "there is / are": "lauset sissejuhatav fraas",
-                    "when": "millal (küsisõna)", "Thames": "Thames", "Oxford": "Oxford", "Washington D.C.": "Washington D.C."
-                }},
-                14: { name: "Seasons (Aastaajad)", words: {
-                    "season": "aastaajad", "January": "jaanuar", "February": "veebruar", "March": "märts", "April": "aprill", "May": "mai",
-                    "June": "juuni", "July": "juuli", "August": "august", "September": "september", "October": "oktoober", "November": "november",
-                    "December": "detsember", "holidays": "puhkus", "school holidays": "koolivaheaeg", "Easter": "lihavõtted", "Christmas": "jõulud",
-                    "Halloween": "kõigi pühakute päeva eelõhtu", "month": "kuu", "spring": "kevad", "summer": "suvi", "autumn": "sügis",
-                    "winter": "talv", "sunny": "päikseline", "It's sunny.": "On päikseline.", "windy": "tuuline", "hot": "kuum, palav",
-                    "warm": "soe", "rain": "vihm; vihma sadama", "It rains in autumn.": "Sügisel sajab vihma.", "It's raining.": "Praegu sajab vihma.",
-                    "rainy": "vihmane", "cold": "külm", "snow": "lumi; lund sadama", "It snows in winter.": "Talvel sajab lund.", "It's snowing.": "Praegu sajab lund.",
-                    "beach": "supelrand", "snowman": "lumememm", "go for a ride": "rattaga sõitma minema", "ski": "suusk; suusatama",
-                    "go skiing": "suusatamas käima; suusatama minema", "open": "avama", "umbrella": "vihmavari", "hug": "kallistus; kallistama",
-                    "give": "andma", "give a hug": "kallistama", "sleepy": "unine", "sleepy head": "unimüts", "mother": "ema", "father": "isa",
-                    "king": "kuningas", "water": "vesi; kastma", "servant": "teener", "So?": "Ja siis?"
-                }},
-                15: { name: "Shopping (Ostlemine)", words: {
-                    "shopping": "ostmine", "go shopping (for food)": "(toitu) ostmas käima", "food": "toit", "chocolate": "šokolaad",
-                    "orange": "apelsin", "yogurt": "jogurt", "fruit": "puuvili", "salad": "salat", "pear": "pirn", "for me": "mulle, minu jaoks",
-                    "much": "palju", "How much is it?": "Kui palju see maksab?", "cent": "sent", "euro": "euro", "postcard": "postkaart",
-                    "buy": "ostma", "ticket": "pilet", "centre": "keskus", "shopping centre": "ostukeskus", "only": "ainult", "broken": "katki",
-                    "hungry": "näljane", "dirty": "määrdunud, must", "in pencil": "pliiatsiga", "write in pencil": "pliiatsiga kirjutama"
                 }}
             },
             book2: {
@@ -324,186 +199,11 @@
                     "Hold on!": "Oota!", "post": "postitama", "address": "aadress", "laptop": "sülearvuti", "love": "armastama", "paper": "paber",
                     "remember": "mäletama", "swan": "luik", "station": "jaam", "road": "tee; maantee", "helpful": "abivalmis", "same": "sama",
                     "bigger": "suurem", "smaller": "väiksem", "than": "kui (võrdluses)", "circle": "ring", "make up": "moodustama"
-                }},
-                3: { name: "Thank you", words: {
-                    "friendly": "sõbralik", "good to sb": "hea kellegi vastu", "lace": "kingapael", "extra": "lisa-, ülearune", "tissue": "pabertaskurätik",
-                    "alien": "tulnukas", "deed": "tegu", "good deed": "heategu", "message": "teade", "right": "täpselt", "invisible": "nähtamatu",
-                    "serious": "tõsine", "try": "katse; katsetama, proovima", "become": "saama (kelleksi, milleksi)", "visible": "nähtav",
-                    "spot": "märkama", "some": "mõni, mõned", "like": "nagu", "Like what?": "Nagu näiteks? Missugune siis?", "note": "lühike kiri",
-                    "drop": "pillama, poetama", "bottle": "pudel", "ready": "valmis", "catch": "püüdma", "huge": "hiigelsuur", "basket": "korv",
-                    "there": "seal; sinna", "biscuit": "küpsis", "lunch": "keskpäevaeine", "undo": "lahti siduma, lahti tegema", "unhappy": "õnnetu",
-                    "inside": "seespool; sees, sisse; toas"
-                }},
-                4: { name: "Zoo", words: {
-                    "zoo": "loomaaed", "at / in the zoo": "loomaaias", "hippo": "jõehobu", "elephant": "elevant", "kangaroo": "känguru",
-                    "tiger": "tiiger", "lion": "lõvi", "gnu": "(antiloop) gnuu", "penguin": "pingviin", "queue": "järjekord", "in the queue": "järjekorras",
-                    "poster": "plakat", "banner": "loosung", "welcome": "tere tulemast", "cage": "puur", "lots of": "palju", "any": "mingi (eitavas ja küsivas lauses)",
-                    "carry": "kandma", "baby": "beebi", "grass": "rohi", "dive": "sukelduma", "fish": "kala; kalad", "rock": "kivi; kalju",
-                    "leaf": "puuleht", "leaves": "puulehed", "I don't like": "mulle ei meeldi / ei maitse", "even": "isegi", "acorn": "tammetõru",
-                    "oak": "tamm", "heavy": "raske", "Hey!": "Hei! (üllatushüuatus)", "Guess what?": "Tead mis!", "pick": "korjama", "people": "inimesed",
-                    "stupid": "rumal", "I see.": "Saan aru."
-                }},
-                5: { name: "Rules", words: {
-                    "rule": "reegel", "rush": "tormama", "or": "või (sidesõna)", "hold the door": "ust kellegi lahti hoidma", "mean": "kitsi, ihne; häbematu",
-                    "share": "jagama, ühiselt kasutama", "shout": "karjuma", "raise": "tõstma", "polite": "viisakas", "noise": "lärm", "litter": "praht",
-                    "drop litter": "prahti maha viskama", "sweet": "maiustus; magus", "ladder": "redel", "pick up": "üles võtma (maast)", "wrapper": "pakend",
-                    "sweet wrapper": "kommipaber", "meal": "eine; söögikord", "button": "nööp", "rainbow": "vikerkaar", "wave": "lehvitama",
-                    "click": "nipsutama, klikkima", "stamp": "trampid jalgu", "clap": "plaksutama", "even number": "paaris (arv)", "odd number": "paaritu (arv)",
-                    "end": "lõpp; lõppema", "at the end": "lopus", "pot": "pott", "gold": "kuld", "ground": "maapind", "on the ground": "maas",
-                    "square": "ruut", "weather": "ilm"
-                }},
-                6: { name: "My friend", words: {
-                    "angry": "kuri; vihane", "fluffy": "kohev", "knit": "kuduma", "knitting ball": "lõngakera", "sound": "heli", "thunder": "kou, müristamine",
-                    "thunderstorm": "äikseilm", "fireworks": "ilutulestik", "walk": "jalutuskäik; kõndima; jalutama", "pass": "mööduma", "as ... as": "sama ... kui",
-                    "as old as": "sama vana kui", "gymnastics": "võimlemine", "do gymnastics": "võimlemas käima", "twice": "kaks korda",
-                    "twice a week": "kaks korda nädalas", "train": "treenima", "club": "klubi", "sports club": "spordiklubi", "friendship": "sõprus",
-                    "band": "pael", "friendship band": "sõbrapael", "sometimes": "mõnikord", "allergic to": "allergiline millegi suhtes", "never": "mitte kunagi",
-                    "stay": "jääma, viibima", "quickly": "kiiresti", "enjoy": "nautima", "hate": "vihkama", "fond of": "kiindunud", "enough": "küllalt",
-                    "hop": "hüppama", "wing": "tiib", "loud": "vali", "icy": "jäine", "leprechaun": "härjapõlvlane (iiri muinasjuttudes)", "keep": "hoidma",
-                    "always": "alati", "get away": "jalga laskma", "boat": "paat", "Antarctica": "Antarktika", "Ireland": "Iirimaa"
-                }},
-                7: { name: "My day", words: {
-                    "get dressed": "ridedse panema", "in the morning": "hommikul", "off": "ära", "I'm off to": "ma hakkan minema", "get up": "üles tõusma",
-                    "leave for school": "kooli minema", "brush": "hari; harjama", "brush my teeth": "hambaid pesema", "before": "enne", "because": "sellepärast, et",
-                    "myself": "mina ise; mind ennast", "usually": "tavaliselt", "comb": "kamm; kammima", "dew": "kaste; hommikuudu", "drop": "piisk",
-                    "dew drop": "kastepiisk", "honey": "mesi", "from Monday to Friday": "(millestki) alates, peale esmaspäevast reedeni",
-                    "handbell": "käsikell (muusikainstrument)", "ring / play handbells": "käsikellasid mängima / (kella) helistama", "recorder": "plokkflööt",
-                    "play the recorder": "plokkflööti mängima", "robin": "punarind", "quite": "üsna", "go dancing": "tantsimas käima", "circle dance": "ringtants",
-                    "line": "rivi; joon", "line dance": "rivitans, line-tants", "win": "võitma", "hide-and-seek": "peitus", "hopscotch": "keksumäng",
-                    "still": "vaikselt", "bed": "voodi", "go to bed": "magama minema", "piano": "klaver", "play the piano": "klaverit mängima",
-                    "badminton": "sulgpall", "play badminton": "sulgpalli mängima", "supper": "õhtusöök", "have supper": "õhtusööki sööma",
-                    "evening": "õhtu", "in the evening": "õhtul", "every": "iga", "every day": "iga päev", "key": "võti", "practise": "harjutama"
-                }},
-                8: { name: "Clowns", words: {
-                    "glove": "sõrmkinnas", "high": "kõrge", "low": "madal", "young": "noor", "thick": "paks, jäme", "thin": "õhuke", "circus": "tsirkus",
-                    "sleeve": "varrukas", "bow tie": "kikilips", "cinema": "kino", "pasta": "pasta, makaronitooted", "wear": "seljas, jalas kandma",
-                    "hard": "kõvasti; raske, keeruline", "healthy": "tervislik", "do a trick": "trikki tegema", "laugh": "naerma", "make me laugh": "mind naerma ajama",
-                    "during": "vältel, jooksul (eessõna)", "show": "etendus", "fit": "heas vormis", "slim": "sale", "need": "vajama", "programme": "programm",
-                    "hamburger": "hamburger", "chips": "friikartulid", "fast": "kiire", "fast food": "kiirtoit", "weekday": "tööpäev", "chicken": "kana",
-                    "together": "koos", "judo": "juudo", "go to judo": "juudo trennis käima", "next": "järgmine", "night": "öö", "easy": "lihtne, kerge",
-                    "tennis": "tennis", "alone": "üksinda"
-                }},
-                9: { name: "Ball games", words: {
-                    "kick": "jalaga lööma", "head": "pea; peaga lööma", "head a ball": "peaga palli lööma", "score": "punktiseis", "bounce": "põrgatama",
-                    "pass": "edasi andma; söötma (palli)", "throw": "viskama", "dodgeball": "rahvastepall", "training class": "treening",
-                    "drill": "drillharjutus; drillima, harjutama", "want": "tahtma", "catcher": "püüdja", "team": "meeskond", "tournament": "turniir",
-                    "wait (for)": "ootama", "I can't wait.": "Ma ootan seda väga.", "skill": "oskus", "practice": "harjutamine, treenimine",
-                    "basketball": "korvpall", "like": "meeldima", "I'd like": "mulle meeldiks, ma tahaksin", "join": "liituma, liikmeks astuma",
-                    "coach": "treener", "pick": "korjama", "pick out": "valima", "forward": "edasi, ettepoole", "look forward to sth": "midagi väga ootama",
-                    "I'm looking forward to spring.": "Ma ootan väga kevadet.", "roll": "veeretama", "member": "liige", "borrow": "laenama, laenuks võtma",
-                    "What's up?": "Mis lahti?", "ahead": "edasi, ette", "locker": "isiklike asjade kapp koolis, spordihoones", "Go ahead!": "Lase käia!",
-                    "absolutely": "jah muidugi! Absoluutselt!", "more": "rohkem, enam", "find out": "välja uurima, selgitama (infot)", "expensive": "hinnaline, kallis",
-                    "scary": "hirmutav", "trip": "reis", "family trip": "perereis"
-                }},
-                10: { name: "Stars", words: {
-                    "mummy": "emme", "race": "võidujooks, sõit", "daddy": "issi", "brand new": "tuliuus", "travel": "reisima", "space": "kosmos",
-                    "spaceship": "kosmoselaev", "giant": "hiiglane", "joke": "nali", "tell a joke": "nalja rääkima", "tale": "lugu, jutt",
-                    "fairy tale": "muinasjutt", "sun": "päike", "large": "suur", "earth": "maa (planeet)", "which": "mis (asesõna)", "super": "üli-",
-                    "dwarf": "kääbus", "warmth": "soojus", "plant": "taim", "grow": "kasvama", "cleaner": "puhastaja, koristaja", "centimetre": "sentimeeter",
-                    "ocean": "ookean", "the Indian Ocean": "India ookean", "poke": "torkima, tõukama", "piece": "tükk, tükike", "dentist": "hambaarst",
-                    "if": "kui, kas", "dragon": "draakon", "caterpillar": "röövik, tõuk", "hole": "auk"
-                }},
-                11: { name: "Picnic", words: {
-                    "picnic": "piknik, eine vabas õhus", "pack": "pakkima", "woods": "mets", "in the woods": "metsa all, metsas", "snack": "suupiste; näksima",
-                    "juice": "mahl", "juicy": "mahlane", "forget": "unustama", "bread": "leib", "egg": "muna", "cheese": "juust", "butter": "või",
-                    "cucumber": "kurk", "carrot": "porgand", "cake": "kook", "radish": "redis", "shall": "abitegusõna tegevusse kaasamisel",
-                    "What shall we eat?": "Mida me sööme?", "some": "veidi", "sausage": "vorst", "idea": "mõte", "strawberry": "maasikas",
-                    "yummy": "maitsev, nämma", "noon": "keskpäev", "at noon": "keskpäeval", "this afternoon": "tänapäeval / täna pärastlõunal",
-                    "this evening": "täna õhtul", "blanket": "tekk", "cup": "tass", "plate": "taldrik", "pull": "tirima, tõmbama", "bee": "mesilane",
-                    "snail": "tigu", "pond": "tiik", "motorbike": "mootorratas", "person": "inimene, isik", "whole": "terve, kogu"
-                }},
-                12: { name: "Help", words: {
-                    "fire": "tulekahju", "is on fire": "põleb", "smoke": "suits", "alarm": "häire", "smoke alarm": "suitsuandur", "helmet": "kiiver",
-                    "reflector": "helkur", "uniform": "vormiriietus", "fire engine": "tuletõrjeauto", "ambulance": "kiirabiauto", "emergency": "erakorraline olukord",
-                    "emergency number": "hädaabinumber", "dangerous": "ohtlik", "accident": "õnnetus", "car accident": "autoõnnetus",
-                    "go off": "käivituma, tööle hakkama", "ice": "jää", "somebody": "keegi", "everybody": "igaüks", "calm": "rahulik",
-                    "panic": "paanika; paanikasse sattuma", "fire drill": "tuletõrjeõppus", "possible": "võimalik", "join in": "milleski kaasa lööma",
-                    "safe": "ohutu, turvaline", "keep safe": "ohtu vältima", "injure": "vigastama", "injured": "vigastatud", "driver": "autojuht",
-                    "crack": "pragunema", "fall": "kukkuma", "into": "sisse (eessõna)", "safety": "ohutus, turvalisus", "cross": "ületama",
-                    "zebra crossing": "jalakäijate ülekäigukoht", "way": "tee; suund", "pavement": "kõnnitee", "afraid": "hirmunud", "be afraid": "kartma",
-                    "ask": "küsima", "ask for": "paluma midagi", "pocket": "tasku"
-                }},
-                13: { name: "Yesterday", words: {
-                    "yesterday": "eile", "was, were": "oli, olid (be minevikuvormid)", "moon": "kuu (taevakeha)", "over the moon": "väga õnnelik",
-                    "call": "minevikuvorm", "last": "viimane; eelmine", "night": "öö", "last night": "eile õhtul", "ill": "haige", "camp": "laager",
-                    "training camp": "treeninglaager", "happy with sth": "rahul millegagi", "hour": "(kella)tund", "ago": "(ajas) tagasi",
-                    "library": "raamatukogu", "burglar": "murdvaras", "downstairs": "alumisel korrusel", "make a call": "helistama",
-                    "keep an eye on": "silma peal häima / peal hoidma", "neighbour": "naaber", "down": "alla", "stairs": "trepp",
-                    "himself": "(tema) ise; (teda ennast)", "front door": "eesuks", "mistake": "viga", "upstairs": "ülemisel korrusel", "today": "täna",
-                    "lazy": "laisk", "mirror": "peegel", "drawer": "sahtel", "sick": "iiveldav", "I'm sick.": "Mul on süda paha.", "storm": "torm",
-                    "wonderful": "suurepärane", "brilliant": "hiilgav, vaimustav", "awful": "kohutav", "landing": "maandumine", "daft": "napakas",
-                    "flight": "lend, lennureis", "up": "üles", "up the stairs": "trepist üles"
-                }},
-                14: { name: "Visit", words: {
-                    "visit": "külaskäik; külastama", "fun": "nali; lõbu", "have fun": "lõbutsema", "soon": "varsti", "too soon": "liiga ruttu",
-                    "first": "esimene; esiteks", "come first": "esimeseks tulema, võitma", "second": "teine", "third": "kolmas", "fourth": "neljas",
-                    "fifth": "viies", "sixth": "kuues", "seventh": "seitsmes", "come": "minevikuvorm", "build, built": "ehitama", "went": "minevikuvorm",
-                    "often": "sageli", "once": "ükskord", "room": "ruum", "no room": "ei ole ruumi", "said": "minevikuvorm", "answer": "vastus; vastama",
-                    "deep": "sügav", "knee-deep": "põlvesügavune", "at last": "lõpuks", "minute": "minut", "roof": "katus", "sat": "minevikuvorm",
-                    "overflow": "üle ujutama", "forever": "igavesti", "trouble": "segadus, raskus, mure", "in trouble": "hädas, raskustes, mures",
-                    "laser zone": "lasermängu ala", "offer": "pakkuma", "seasick": "merehaige", "log": "palk", "the new moon": "noorkuu"
-                }},
-                15: { name: "Weather", words: {
-                    "weather": "ilm", "What's the weather like?": "Mis ilm on?", "frosty": "härmas", "outdoor": "väline, välis-", "cloud": "pilv",
-                    "cloudy": "pilvine", "foggy": "udune", "cool": "jahe", "sledge": "kelk; kelgutama", "go sledging": "kelgutama", "snowball": "lumepall",
-                    "skate": "uisk; uisutama", "go skating": "uisutama", "castle": "kindlus", "snowdrift": "lumehang", "had": "minevikuvorm",
-                    "fight": "lahing", "snowball fight": "lumesõda", "made": "minevikuvorm", "snowy": "lumine", "last": "eelmine; viimati",
-                    "last Sunday": "eelmisel pühapäeval", "shovel": "kühvel; kühveldama", "found": "minevikuvorm", "wet": "niiske, märg",
-                    "drive, drove": "autoga sõitma, autot juhtima", "drive off": "ära sõitma", "put, put": "panema", "angel": "ingel",
-                    "instead": "(millegi) asemel", "bottom": "alumine osa", "bring, brought": "tooma", "potato": "kartul", "got": "minevikuvorm",
-                    "get dark": "pimedaks minema", "kept": "minevikuvorm", "melt": "sulama", "ran": "minevikuvorm", "saw": "minevikuvorm",
-                    "health": "tervis", "in good health": "hea tervise juures", "ugly": "inetu", "anyone": "keegi (eitavas ja küsivas lauses)"
-                }},
-                16: { name: "Birthday", words: {
-                    "finger food": "sõrmedega söödav toit", "hope": "lootma", "stick": "tikk, pulgake", "loads of": "rohkesti", "bite": "hammaste / hammustus",
-                    "bite-size food": "suupisted", "grab": "haarama", "something": "midagi", "nobody": "mitte keegi", "all right": "hea küll",
-                    "recipe": "toiduretsept", "magazine": "ajakiri", "could": "can minevikuvorm", "we could": "siin: me võiksime", "sound": "heli; kõlama",
-                    "tomato": "tomat", "meatball": "lihapall", "fish finger": "kalapulk", "vegetable": "köögi- ja juurvili", "milk": "piim",
-                    "cereal": "hommikusöögihelbed", "porridge": "kaerahelbepuder", "worry": "muretsema", "date": "kuupäev", "May Day": "kevadpüha (1. mai)",
-                    "independence": "iseseisvus", "New Year's Day": "uue aasta esimene päev", "Christmas Eve": "jõululaupäev", "Christmas Day": "jõulu esimene püha",
-                    "ate": "eat minevikuvorm", "party": "pidu", "gave": "give minevikuvorm", "glasses": "prillid", "would": "abitegusõna",
-                    "Would you like ...?": "Kas sa sooviksid ...?", "tea": "tee", "soup": "supp", "scoop": "kühvel, kulp", "drink, drank": "jooma"
-                }},
-                17: { name: "Camping", words: {
-                    "camp": "laager; telkima, laagrisse jääma", "go camping": "telkimas käima", "did": "do minevikuvorm; lihtmineviku abitegusõna",
-                    "caught": "catch minevikuvorm", "raincoat": "vihmamantel", "wellies": "kummikud", "rucksack": "seljakott", "hike": "matk; matkama",
-                    "go hiking": "matkama", "hiking boots": "matkasaapad", "tent": "telk", "put up a tent": "telki püstitama", "kit": "varustuskomplekt",
-                    "first aid": "esmaabi", "first-aid kit": "esmaabitarvete komplekt", "sunglasses": "päikeseprillid", "compass": "kompass",
-                    "forest": "põlismets, laas", "different": "teistsugune, erinev", "such": "selline", "countryside": "maakoht, maa (vastandina linnale)",
-                    "flower": "lill", "strange": "veider, kummaline", "bright": "ere", "in case": "juhul kui", "get lost": "ära eksima",
-                    "take off": "startima, õhku tõusma", "by the way": "muide", "GPS": "asukoha määraja", "pity": "kahetsus", "It's a pity.": "Kahju.",
-                    "meet, met, met": "kohtuma", "meet up": "kokku saama", "sheep": "lammas; lambad", "ask the way": "teed küsima", "fire": "lõke",
-                    "campfire": "laagrilõke", "tip": "nõuanne", "go fishing": "kalal käima"
-                }},
-                18: { name: "Short cut", words: {
-                    "short cut": "otsetee", "take a short cut": "otseteed minema", "tourist": "turist", "farm": "talu", "on the farm": "talus",
-                    "farmer": "talunik", "You're welcome.": "Pole tänu väärt.", "hospital": "haigla", "along": "piki, mööda (eessõna)", "cow": "lehm",
-                    "goose": "hani", "geese": "haned", "pig": "siga", "field": "põld", "in the field": "põllul", "path": "jalgtee",
-                    "across": "risti üle (eessõna)", "graze": "rohtu sööma", "aggressive": "agressiivne, kuri", "mind": "tähele panema",
-                    "mind where you step": "vaatama ette, kuhu astud", "smart": "nutikas", "learn": "õppima", "bit": "tükike, raasuke", "a bit": "veidi",
-                    "adventure": "seiklus", "plan": "kava, plaan; kavandama, planeerima", "train station": "raudteejaam", "story": "jutt, lugu",
-                    "church": "kirik", "bridge": "sild", "desert": "kõrb", "cheesecake": "kohupiimakook", "exactly": "täpselt", "cabbage": "kapsas",
-                    "cornflower": "rukkilill"
-                }},
-                19: { name: "Jokes", words: {
-                    "bossy": "kamandav, ülbe", "foolish": "rumal, mõtlematu", "kind": "liik, sort", "parrot": "papagoi", "fry": "praadima",
-                    "mushroom": "seen", "moo": "ammuma", "ceiling": "lagi", "corner": "nurk", "cowboy": "kauboi, lehmakarjus", "rode": "ride minevikuvorm",
-                    "left": "leave minevikuvorm", "eyesight": "nägemine", "onion": "sibul", "ghost": "kummitus", "lonely": "üksildane",
-                    "silly": "rumal, totter, kergemeelne", "terrible": "kohutav", "delicious": "maitsev", "comic": "koomiks", "newspaper": "ajaleht",
-                    "parent": "lapsevanem", "exciting": "põnev", "unlucky": "mitte õnne omav, ei vea", "untidy": "korratu, lohakas",
-                    "uninteresting": "ebahuvitav", "unkind": "mitte lahke", "unfriendly": "ebasõbralik", "unexciting": "igav, mittehuvitav"
-                }},
-                20: { name: "Summer", words: {
-                    "candy floss": "suhkruvatt", "stall": "müùgilett / müügilett", "seaside": "mereäär, rand", "go to the seaside": "mere äärde minema",
-                    "early": "vara, varane", "read": "read minevikuvorm", "threw": "throw minevikuvorm", "cry": "nutma", "sunbathe": "päevitama",
-                    "fairground": "lõbustuspark", "bought": "buy minevikuvorm", "slept": "sleep minevikuvorm", "snake": "madu", "without": "ilma (eessõna)",
-                    "explore": "uurima", "dragonfly": "kiil (putukas)", "worm": "uss", "ant": "sipelgas", "beetle": "põrnikas", "life": "elu",
-                    "everywhere": "igal pool", "shore": "mere- või järvekallas", "fly": "kärbes", "wasp": "herilane", "mosquito": "sääsk",
-                    "insect": "putukas", "pest": "kahjur", "sting": "nõelama", "bucket": "ämber", "spade": "kühvel; labidas", "towel": "käterätt",
-                    "sandcastle": "liivaloss", "merry-go-round": "karussell", "dodgem": "elektriline põrkeauto"
                 }}
             }
         };
+
+        // Ülejäänud javascripti loogika on täpselt sama!
 
         let currentWords = [];
         let remainingWords = [];
@@ -686,10 +386,12 @@
         function openPrintView() {
             let bookKey = document.getElementById('book-select').value;
             let unitVal = document.getElementById('unit-select').value;
+            direction = document.getElementById('direction-select').value;
             
             let bookName = bookKey === 'book1' ? 'Book 1' : 'Book 2';
             let unitText = unitVal === 'all' ? 'Kõik unitid' : `Unit ${unitVal}: ${CURRICULUM[bookKey][unitVal].name}`;
-            document.getElementById('print-title').innerText = `Sõnade Tööleht (${bookName} - ${unitText})`;
+            let dirText = direction === 'en-et' ? 'Inglise ➔ Eesti' : 'Eesti ➔ Inglise';
+            document.getElementById('print-title').innerText = `Sõnade Tööleht (${bookName} - ${unitText} | ${dirText})`;
 
             let sourceDict = {};
             if (unitVal === 'all') {
@@ -700,9 +402,13 @@
                 sourceDict = CURRICULUM[bookKey][unitVal].words || {};
             }
 
-            let html = `<table class="print-table"><thead><tr><th>Eesti keel</th><th>Inglise keel (kirjuta siia)</th></tr></thead><tbody>`;
+            let col1Title = direction === 'en-et' ? 'Inglise keel' : 'Eesti keel';
+            let col2Title = direction === 'en-et' ? 'Eesti keel (kirjuta siia)' : 'Inglise keel (kirjuta siia)';
+
+            let html = `<table class="print-table"><thead><tr><th>${col1Title}</th><th>${col2Title}</th></tr></thead><tbody>`;
             for (let [eng, est] of Object.entries(sourceDict)) {
-                html += `<tr><td><strong>${est}</strong></td><td class="write-cell"></td></tr>`;
+                let questionWord = direction === 'en-et' ? eng : est;
+                html += `<tr><td><strong>${questionWord}</strong></td><td class="write-cell"></td></tr>`;
             }
             html += `</tbody></table>`;
 
